@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import { getUser } from "./utils/authStorage";
 import { useDispatch } from "react-redux";
 import { setUser } from "./redux/auth/authActions";
+import { ProtectedRoute } from "./routes/ProtectedRoute/ProtectedRoute";
+import { Profile } from "./pages/Profile/Profile";
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -23,6 +25,14 @@ export const App = () => {
         <Route index element={<h1>Home Page - Ogloszenia</h1>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<h2>Register</h2>} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<h2>Not Found</h2>} />
       </Route>
     </Routes>
