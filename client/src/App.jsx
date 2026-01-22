@@ -2,23 +2,10 @@ import { Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout/Layout";
 import "./App.css";
 import { Login } from "./pages/Login/Login";
-import { useEffect } from "react";
-import { getUser } from "./utils/authStorage";
-import { useDispatch } from "react-redux";
-import { setUser } from "./redux/auth/authActions";
 import { ProtectedRoute } from "./routes/ProtectedRoute/ProtectedRoute";
 import { Profile } from "./pages/Profile/Profile";
 
 export const App = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const savedUser = getUser();
-    if (savedUser) {
-      dispatch(setUser(savedUser));
-    }
-  }, [dispatch]);
-
   return (
     <Routes>
       <Route element={<Layout />}>

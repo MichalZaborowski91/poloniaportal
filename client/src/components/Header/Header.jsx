@@ -1,15 +1,10 @@
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux/auth/authActions";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { clearUser } from "../../utils/authStorage";
+
 export const Header = () => {
-  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
 
-  const handleLogout = () => {
-    clearUser();
-    dispatch(logout());
-  };
+  const handleLogout = () => {};
 
   return (
     <header>
