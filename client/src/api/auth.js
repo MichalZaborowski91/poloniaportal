@@ -8,14 +8,30 @@ export const getMe = async () => {
   return res.json();
 };
 
-export const login = async (data) => {
+export const login = async ({ email, password }) => {
   const res = await fetch(`${API_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify(data),
+    body: JSON.stringify({ email, password }),
   });
-  if (!res.ok) throw new Error("Login failed");
+  if (!res.ok) {
+    throw new Error("Invalid credentials");
+  }
+  return res.json();
+};
+
+export const register = async ({ email, password }) => {
+  const res = await fetch(`${API_URL}/api/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email, password }),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.message || "Register failed");
+  }
   return res.json();
 };
 

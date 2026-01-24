@@ -11,9 +11,9 @@ export const AuthProvider = ({ children }) => {
       try {
         const me = await getMe();
         setUser(me);
-        // eslint-disable-next-line no-unused-vars
       } catch (error) {
         setUser(null);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -22,8 +22,21 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
+  const refreshUser = async () => {
+    try {
+      const me = await getMe();
+      setUser(me);
+    } catch {
+      setUser(null);
+    }
+  };
+
+  useEffect(() => {
+    refreshUser().finally(() => setLoading(false));
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, setUser, loading }}>
+    <AuthContext.Provider value={{ user, setUser, loading, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

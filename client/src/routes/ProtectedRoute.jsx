@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 
 export const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -8,7 +8,6 @@ export const ProtectedRoute = ({ children }) => {
   if (loading) {
     return <div>Loading...</div>;
   }
-
   if (!user) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }

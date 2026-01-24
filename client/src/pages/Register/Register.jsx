@@ -1,19 +1,16 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { login } from "../../api/auth";
+import { login, register } from "../../api/auth";
 import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
-export const Login = () => {
+export const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const location = useLocation();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
-
-  const from = location.state?.from?.pathname || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,12 +18,13 @@ export const Login = () => {
     setLoading(true);
 
     try {
+      await register({ email, password });
       await login({ email, password });
       await refreshUser();
-      navigate(from, { replace: true });
+
+      navigate("/complete-profile", { replace: true });
     } catch (error) {
-      setError("Invalid email or password");
-      console.error(error);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -34,7 +32,7 @@ export const Login = () => {
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Register</h2>
 
       <form onSubmit={handleSubmit}>
         <div>
@@ -54,13 +52,14 @@ export const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            minLength={6}
           />
         </div>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
 
         <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "Creating account..." : "Register"}
         </button>
       </form>
     </div>

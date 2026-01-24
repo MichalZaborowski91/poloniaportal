@@ -20,10 +20,28 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    profile: {
+      displayName: { type: String },
+      displayNameNormalized: { type: String },
+      firstName: { type: String },
+      lastName: { type: String },
+      accountType: {
+        type: String,
+        enum: ["individual", "business"],
+      },
+      companyName: { type: String },
+    },
+    profileCompleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
+);
+
+userSchema.index(
+  { "profile.displayNameNormalized": 1 },
+  { unique: true, sparse: true },
 );
 
 //Hash password before save
