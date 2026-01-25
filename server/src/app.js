@@ -18,11 +18,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 //Health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "API is running" });
 });
-app.use("/api/users", userRoutes);
 
 export default app;

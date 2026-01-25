@@ -36,8 +36,11 @@ export const register = async ({ email, password }) => {
 };
 
 export const logout = async () => {
-  await fetch(`${API_URL}/api/auth/logout`, {
+  const res = await fetch(`${API_URL}/api/auth/logout`, {
     method: "POST",
     credentials: "include",
   });
+  if (!res.ok) {
+    throw new Error("Logout failed");
+  }
 };

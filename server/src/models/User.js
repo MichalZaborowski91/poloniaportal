@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
       displayNameNormalized: { type: String },
       firstName: { type: String },
       lastName: { type: String },
+      avatar: {
+        type: String,
+        default: null,
+      },
       accountType: {
         type: String,
         enum: ["individual", "business"],

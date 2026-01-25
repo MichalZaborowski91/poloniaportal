@@ -1,4 +1,5 @@
 import { User } from "../models/User.js";
+import cloudinary from "../config/cloudinary.js";
 
 export const updateMyProfile = async (req, res) => {
   try {
@@ -8,18 +9,8 @@ export const updateMyProfile = async (req, res) => {
     if (!displayName) {
       return res.status(400).json({ message: "Display name is required" });
     }
-    if (!accountType) {
-      return res.status(400).json({ message: "Account type is required" });
-    }
-    if (accountType === "business" && !companyName) {
-      return res.status(400).json({
-        message: "Company name is required for business account",
-      });
-    }
 
-    //REGEX NICKNAME
     const displayNameRegex = /^[a-zA-Z0-9]{3,}$/;
-
     if (!displayNameRegex.test(displayName)) {
       return res.status(400).json({
         message:
@@ -29,7 +20,6 @@ export const updateMyProfile = async (req, res) => {
 
     const normalizedDisplayName = displayName.trim().toLowerCase();
 
-    //Is displayName unique
     const existingUser = await User.findOne({
       "profile.displayNameNormalized": normalizedDisplayName,
       _id: { $ne: req.user.id },
@@ -44,15 +34,15 @@ export const updateMyProfile = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       req.user.id,
       {
-        profile: {
-          displayName,
-          displayNameNormalized: normalizedDisplayName,
-          firstName,
-          lastName,
-          accountType,
-          companyName: accountType === "business" ? companyName : "",
+        $set: {
+          "profile.displayName": displayName,
+          "profile.displayNameNormalized": normalizedDisplayName,
+          "profile.firstName": firstName,
+          "profile.lastName": lastName,
+          "profile.accountType": accountType,
+          "profile.companyName": accountType === "business" ? companyName : "",
+          profileCompleted: true,
         },
-        profileCompleted: true,
       },
       { new: true },
     );
@@ -65,13 +55,63 @@ export const updateMyProfile = async (req, res) => {
     });
   } catch (error) {
     console.error("UPDATE PROFILE ERROR", error);
+    res.status(500).json({ message: "Profile update failed" });
+  }
+};
 
-    if (error.code === 11000) {
-      return res.status(409).json({
-        message: "Display name is already taken",
-      });
+//CLOUDINARY
+//UPLOAD AVATAR
+export const uploadMyAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
     }
 
-    res.status(500).json({ message: "Profile update failed" });
+    const userId = req.user.id;
+
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "poloniaportal/avatars",
+        public_id: userId,
+        overwrite: true,
+        transformation: [
+          { width: 256, height: 256, crop: "fill", gravity: "face" },
+        ],
+      },
+      async (error, result) => {
+        if (error) {
+          return res.status(500).json({ message: "Cloudinary upload failed" });
+        }
+
+        const user = await User.findByIdAndUpdate(
+          userId,
+          { "profile.avatar": result.secure_url },
+          { new: true },
+        );
+
+        res.json({ user });
+      },
+    );
+
+    uploadStream.end(req.file.buffer);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+//DELETE AVATAR
+export const deleteMyAvatar = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    await cloudinary.uploader.destroy(`poloniaportal/avatars/${userId}`);
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { "profile.avatar": null } },
+      { new: true },
+    );
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete avatar" });
   }
 };

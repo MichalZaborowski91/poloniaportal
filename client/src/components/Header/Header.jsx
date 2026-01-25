@@ -1,28 +1,30 @@
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { UserMenu } from "../UserMenu/UserMenu";
+import styles from "./Header.module.scss";
 
 export const Header = () => {
-  const user = useSelector((state) => state.auth.user);
+  const { user, loading } = useAuth();
 
-  const handleLogout = () => {};
+  if (loading) {
+    return null;
+  }
 
   return (
-    <header>
-      <h1>Polonia Portal Logo</h1>
-      {!user && (
-        <nav>
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
-        </nav>
-      )}
-      {user && (
-        <div>
-          <span>Witaj {user.name}</span>
-          <button type="button" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-      )}
+    <header className={styles.header}>
+      <Link to="/" className={styles.logo}>
+        PoloniaPortal
+      </Link>
+      <nav>
+        {!user ? (
+          <div className={styles.authLinks}>
+            <Link to="/login">Zaloguj</Link>
+            <Link to="/register">Zarejestruj</Link>
+          </div>
+        ) : (
+          <UserMenu />
+        )}
+      </nav>
     </header>
   );
 };

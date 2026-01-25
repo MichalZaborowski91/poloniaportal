@@ -1,0 +1,15 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: "center";
+  padding: 12px 20px;
+  border-bottom: "1px solid #eee";
+}
+.logo {
+  font-weight: bold;
+  text-decoration: none;
+}
+.authLinks {
+  display: flex;
+  gap: 12px;
+}

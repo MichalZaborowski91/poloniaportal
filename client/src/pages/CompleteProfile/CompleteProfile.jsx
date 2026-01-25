@@ -3,6 +3,7 @@ import { updateMyProfile } from "../../api/user";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
+import { AvatarUpload } from "../../components/AvatarUpload/AvatarUpload";
 
 export const CompleteProfile = () => {
   const [displayName, setDisplayName] = useState("");
@@ -102,7 +103,9 @@ export const CompleteProfile = () => {
             />
           </div>
         )}
-
+        <div>
+          <AvatarUpload />
+        </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
 
         <button type="submit">Save profile</button>
