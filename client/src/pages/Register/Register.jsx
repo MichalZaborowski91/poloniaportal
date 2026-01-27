@@ -2,6 +2,8 @@ import { useState } from "react";
 import { login, register } from "../../api/auth";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useCountry } from "../../app/useCountry";
+import { routes } from "../../app/routes";
 
 export const Register = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +13,7 @@ export const Register = () => {
 
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
+  const country = useCountry();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +25,7 @@ export const Register = () => {
       await login({ email, password });
       await refreshUser();
 
-      navigate("/complete-profile", { replace: true });
+      navigate(routes.completeProfile(country), { replace: true });
     } catch (error) {
       setError(error.message);
     } finally {

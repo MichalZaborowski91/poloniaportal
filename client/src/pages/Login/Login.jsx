@@ -2,18 +2,21 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { login } from "../../api/auth";
 import { useAuth } from "../../hooks/useAuth";
+import { useCountry } from "../../app/useCountry";
+import { routes } from "../../app/routes";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const country = useCountry();
 
   const location = useLocation();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
 
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || routes.home(country);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

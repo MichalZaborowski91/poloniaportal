@@ -5,12 +5,15 @@ import { logout } from "../../api/auth";
 import toast from "react-hot-toast";
 import defaultAvatar from "../../assets/avatar/avt.jpg";
 import styles from "./UserMenu.module.scss";
+import { useCountry } from "../../app/useCountry";
+import { routes } from "../../app/routes";
 
 export const UserMenu = () => {
   const [open, setOpen] = useState(false);
   const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
   const menuRef = useRef(null);
+  const country = useCountry();
 
   const avatarSrc = useMemo(() => {
     if (!user?.profile?.avatar) {
@@ -21,7 +24,7 @@ export const UserMenu = () => {
 
   const handleLogout = async () => {
     try {
-      navigate("/", { replace: true });
+      navigate(routes.home(country), { replace: true });
       await logout();
       await refreshUser();
       toast.success("Wylogowano");
@@ -72,16 +75,19 @@ export const UserMenu = () => {
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <img src={avatarSrc} alt="avatar" className={styles.avatar} />
         <span>Witaj, {user.profile?.displayName || user.email}</span>
+        <img src={avatarSrc} alt="avatar" className={styles.avatar} />
       </button>
 
       {open && (
         <div className={styles.menu} role="menu">
-          <Link to="/profile" onClick={() => setOpen(false)}>
+          <Link to={routes.profile(country)} onClick={() => setOpen(false)}>
             Profil
           </Link>
-          <Link to="/complete-profile" onClick={() => setOpen(false)}>
+          <Link
+            to={routes.completeProfile(country)}
+            onClick={() => setOpen(false)}
+          >
             Edytuj profil
           </Link>
           <button onClick={handleLogout} className={styles.logout}>
