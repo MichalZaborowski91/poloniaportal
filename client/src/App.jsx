@@ -3,12 +3,15 @@ import { Layout } from "./components/Layout/Layout";
 import { Login } from "./pages/Login/Login";
 import { Register } from "./pages/Register/Register";
 import { Profile } from "./pages/Profile/Profile";
-import { CompleteProfile } from "./pages/CompleteProfile/CompleteProfile";
+import { Onboarding } from "./pages/Onboarding/Onboarding";
 import { AddOffer } from "./pages/AddOffer/AddOffer";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { ProfileCompletedRoute } from "./routes/ProfileCompletedRoute";
 import { DEFAULT_COUNTRY } from "./app/useCountry";
 import { Hero } from "./components/Hero/Hero";
+import { AccountLayout } from "./pages/Account/AccountLayout/AccountLayout";
+import { AccountProfile } from "./pages/Account/AccountProfile/AccountProfile";
+import { AccountSecurity } from "./pages/Account/AccountSecurity/AccountSecurity";
 
 export const App = () => {
   return (
@@ -31,14 +34,24 @@ export const App = () => {
         />
 
         <Route
-          path="complete-profile"
+          path="onboarding"
           element={
             <ProtectedRoute>
-              <CompleteProfile />
+              <Onboarding />
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="account"
+          element={
+            <ProtectedRoute>
+              <AccountLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<AccountProfile />} />
+          <Route path="security" element={<AccountSecurity />} />
+        </Route>
         <Route
           path="add-offer"
           element={

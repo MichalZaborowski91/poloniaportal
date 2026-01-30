@@ -3,6 +3,7 @@ export const routes = {
   login: (c) => `/${c}/login`,
   register: (c) => `/${c}/register`,
   profile: (c) => `/${c}/profile`,
-  completeProfile: (c) => `/${c}/complete-profile`,
+  onboarding: (c) => `/${c}/onboarding`,
+  account: (c) => `/${c}/account`,
   addOffer: (c) => `/${c}/add-offer`,
 };

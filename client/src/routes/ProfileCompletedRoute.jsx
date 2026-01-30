@@ -19,7 +19,7 @@ export const ProfileCompletedRoute = ({ children }) => {
   if (!user.profileCompleted) {
     return (
       <Navigate
-        to={routes.completeProfile(country)}
+        to={routes.onboarding(country)}
         replace
         state={{ from: location }}
       />

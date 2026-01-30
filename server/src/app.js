@@ -13,14 +13,14 @@ app.use(
   }),
 );
 
-//Middlewares
+//MIDDLEWARES
 app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
-//Health check
+//HEALTH CHECK
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "API is running" });
 });

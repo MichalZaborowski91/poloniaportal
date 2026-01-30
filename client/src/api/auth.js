@@ -8,15 +8,16 @@ export const getMe = async () => {
   return res.json();
 };
 
-export const login = async ({ email, password }) => {
+export const login = async ({ email, password, rememberMe }) => {
   const res = await fetch(`${API_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, rememberMe }),
   });
   if (!res.ok) {
-    throw new Error("Invalid credentials");
+    const data = await res.json();
+    throw new Error(data.message || "Login failed");
   }
   return res.json();
 };
@@ -43,4 +44,16 @@ export const logout = async () => {
   if (!res.ok) {
     throw new Error("Logout failed");
   }
+};
+
+export const deleteAccount = async () => {
+  const res = await fetch(`${API_URL}/api/auth/delete-account`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    throw new Error("Delete account failed");
+  }
+  return res.json();
 };

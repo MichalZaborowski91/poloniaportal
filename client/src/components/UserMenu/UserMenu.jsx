@@ -81,13 +81,10 @@ export const UserMenu = () => {
 
       {open && (
         <div className={styles.menu} role="menu">
-          <Link to={routes.profile(country)} onClick={() => setOpen(false)}>
-            Profil
+          <Link to={routes.account(country)} onClick={() => setOpen(false)}>
+            Account
           </Link>
-          <Link
-            to={routes.completeProfile(country)}
-            onClick={() => setOpen(false)}
-          >
+          <Link to={routes.onboarding(country)} onClick={() => setOpen(false)}>
             Edytuj profil
           </Link>
           <button onClick={handleLogout} className={styles.logout}>

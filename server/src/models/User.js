@@ -20,8 +20,23 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    emailVerifyToken: {
+      type: String,
+    },
+
+    emailVerifyExpires: {
+      type: Date,
+    },
+    verifyOrigin: {
+      type: String,
+    },
     profile: {
-      displayName: { type: String },
+      displayName: { type: String, minlength: 3, maxlength: 30 },
       displayNameNormalized: { type: String },
       firstName: { type: String },
       lastName: { type: String },
@@ -39,6 +54,18 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    firstLoginAt: {
+      type: Date,
+      default: null,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true },
 );
@@ -48,13 +75,13 @@ userSchema.index(
   { unique: true, sparse: true },
 );
 
-//Hash password before save
+//HASH PASSWORD BEFORE SAVE
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
-//Compare password (login)
+//COMPARE PASSWORD (LOGIN)
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };

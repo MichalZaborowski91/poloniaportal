@@ -10,8 +10,10 @@ export const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const country = useCountry();
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
+  const country = useCountry();
   const location = useLocation();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
@@ -24,11 +26,19 @@ export const Login = () => {
     setLoading(true);
 
     try {
-      await login({ email, password });
+      const response = await login({ email, password, rememberMe });
       await refreshUser();
-      navigate(from, { replace: true });
+      if (response.needsProfileOnboarding) {
+        navigate(routes.onboarding(country), { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (error) {
-      setError("Invalid email or password");
+      if (error.message === "Account deleted") {
+        setError("To konto zostało usunięte");
+      } else {
+        setError("Invalid email or password");
+      }
       console.error(error);
     } finally {
       setLoading(false);
@@ -50,16 +60,40 @@ export const Login = () => {
           />
         </div>
 
-        <div>
+        <div style={{ position: "relative" }}>
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            minLength={8}
           />
-        </div>
 
+          <span
+            onClick={() => setShowPassword((prev) => !prev)}
+            style={{
+              position: "absolute",
+              right: 10,
+              top: "50%",
+              transform: "translateY(-50%)",
+              cursor: "pointer",
+              userSelect: "none",
+            }}
+          >
+            {showPassword ? "🙈" : "👁️"}
+          </span>
+        </div>
+        <div style={{ marginTop: 8 }}>
+          <label style={{ cursor: "pointer" }}>
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />{" "}
+            Zapamiętaj mnie
+          </label>
+        </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
 
         <button type="submit" disabled={loading}>
