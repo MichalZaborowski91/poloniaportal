@@ -5,5 +5,6 @@ export const routes = {
   profile: (c) => `/${c}/profile`,
   onboarding: (c) => `/${c}/onboarding`,
   account: (c) => `/${c}/account`,
+  security: (c) => `/${c}/account/security`,
   addOffer: (c) => `/${c}/add-offer`,
 };

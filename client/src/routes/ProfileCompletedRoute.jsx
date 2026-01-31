@@ -8,23 +8,39 @@ export const ProfileCompletedRoute = ({ children }) => {
   const location = useLocation();
   const country = useCountry();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
+  //NOT LOGGED IN
   if (!user) {
     return (
       <Navigate to={routes.login(country)} replace state={{ from: location }} />
     );
   }
 
-  if (!user.profileCompleted) {
+  //EMAIL NOT VERIFIED
+  if (!user.emailVerified) {
     return (
       <Navigate
-        to={routes.onboarding(country)}
+        to={routes.security(country)}
         replace
         state={{ from: location }}
       />
     );
   }
 
+  //PROFILE NOT COMPLETED
+  if (!user.profileCompleted) {
+    return (
+      <Navigate
+        to={routes.account(country)}
+        replace
+        state={{ from: location }}
+      />
+    );
+  }
+
+  //ALL OK
   return children;
 };

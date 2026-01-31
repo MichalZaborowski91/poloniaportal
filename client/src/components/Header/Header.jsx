@@ -5,6 +5,7 @@ import styles from "./Header.module.scss";
 import logo from "../../assets/logo/PoloniaPortalLogo.png";
 import { routes } from "../../app/routes";
 import { useCountry } from "../../app/useCountry";
+import { AddOfferButton } from "../AddOfferButton/AddOfferButton";
 
 export const Header = () => {
   const { user, loading } = useAuth();
@@ -20,6 +21,9 @@ export const Header = () => {
         <Link to={routes.home(country)} className={styles.logo}>
           <img src={logo} className={styles.logo} />
         </Link>
+        <div>
+          <AddOfferButton />
+        </div>
         <nav>
           {!user ? (
             <div className={styles.authLinks}>

@@ -12,6 +12,7 @@ import { Hero } from "./components/Hero/Hero";
 import { AccountLayout } from "./pages/Account/AccountLayout/AccountLayout";
 import { AccountProfile } from "./pages/Account/AccountProfile/AccountProfile";
 import { AccountSecurity } from "./pages/Account/AccountSecurity/AccountSecurity";
+import { ListingsPage } from "./pages/Listings/Listings";
 
 export const App = () => {
   return (
@@ -22,6 +23,7 @@ export const App = () => {
       />
       <Route path="/:country" element={<Layout />}>
         <Route index element={<Hero />} />
+        <Route path="listings" element={<ListingsPage />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route

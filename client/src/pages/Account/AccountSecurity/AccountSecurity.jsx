@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCountry } from "../../../app/useCountry";
 import { routes } from "../../../app/routes";
 import { useAuth } from "../../../hooks/useAuth";
@@ -11,6 +11,11 @@ export const AccountSecurity = () => {
   const navigate = useNavigate();
   const country = useCountry();
   const { refreshUser } = useAuth();
+
+  const location = useLocation();
+
+  const cameFromAddOffer =
+    location.state?.from?.pathname?.includes("/add-offer");
 
   //DELETE ACC
   const handleDeleteAccount = async () => {
@@ -33,6 +38,19 @@ export const AccountSecurity = () => {
   };
   return (
     <div>
+      {cameFromAddOffer && (
+        <div
+          style={{
+            padding: "12px",
+            marginBottom: "16px",
+            borderRadius: "6px",
+            background: "#fff3cd",
+            color: "#664d03",
+          }}
+        >
+          Aby dodać ogłoszenie, musisz zweryfikować swój adres email.
+        </div>
+      )}
       <h2>Security</h2>
       <button
         onClick={handleDeleteAccount}
