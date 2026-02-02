@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
     profile: {
-      displayName: { type: String, minlength: 3, maxlength: 30 },
+      displayName: { type: String, minlength: 3, maxlength: 20 },
       displayNameNormalized: { type: String },
       firstName: { type: String },
       lastName: { type: String },
