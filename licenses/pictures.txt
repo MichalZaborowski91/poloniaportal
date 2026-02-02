@@ -1,0 +1,47 @@
+Images source: Pexels (https://www.pexels.com/)
+License: Pexels License (https://www.pexels.com/license/)
+
+Pictures:
+* map.webp (Login page)
+  Photo by Lara Jameson
+  https://www.pexels.com/photo/blue-pushpins-on-administrative-map-of-europe-8828587/
+
+* globe.webp (Register page)
+  Photo by Suzy Hazelwood
+  https://www.pexels.com/photo/shallow-focus-photo-of-world-globe-1098515/
+
+* berlin.webp (subdomain: de)
+  Photo by Michaela St
+  https://www.pexels.com/photo/cityscape-of-berlin-19932126/
+
+* madrid.webp (subdomain: es)
+  Photo by Jo Kassis
+  https://www.pexels.com/photo/high-rise-buildings-near-snowy-mountains-under-white-clouds-5006029/
+
+* paris.webp (subdomain: fr)
+  Photo by Diego F. Parra
+  https://www.pexels.com/photo/paris-with-eiffel-tower-15452274/
+
+* dublin.webp (subdomain: ie)
+  Photo by Luciann Photography
+  https://www.pexels.com/photo/white-concrete-bridge-3566191/
+
+* rome.webp (subdomain: it)
+  Photo by Alberto Capparelli
+  https://www.pexels.com/photo/old-stone-coliseum-and-arch-of-titus-in-rome-4319586/
+
+* amsterdam.webp (subdomain: nl)
+  Photo by Vish Pix
+  https://www.pexels.com/photo/waterfront-with-renaissance-railway-station-and-water-buses-17121022/
+
+* oslo.webp (subdomain: no)
+  Photo by Nils R
+  https://www.pexels.com/photo/munch-museum-in-oslo-24024574/
+
+* stockholm.webp (subdomain: se)
+  Photo by Antonio Di Giacomo
+  https://www.pexels.com/photo/mariahissen-building-on-shore-of-stockholm-sweden-13688812/
+
+* london.webp (subdomain: uk)
+  Photo by Samuel Sweet
+  https://www.pexels.com/photo/city-buildings-under-blue-sky-8461520/
