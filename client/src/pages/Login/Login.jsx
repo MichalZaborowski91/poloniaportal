@@ -4,6 +4,11 @@ import { login } from "../../api/auth";
 import { useAuth } from "../../hooks/useAuth";
 import { useCountry } from "../../app/useCountry";
 import { routes } from "../../app/routes";
+import styles from "../Login/Login.module.scss";
+import Email from "../../assets/icons/mail.svg?react";
+import Lock from "../../assets/icons/lock.svg?react";
+import Eye from "../../assets/icons/eye.svg?react";
+import EyeOff from "../../assets/icons/eye-off.svg?react";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,6 +17,9 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [loginError, setLoginError] = useState(false);
 
   const country = useCountry();
   const location = useLocation();
@@ -20,25 +28,21 @@ export const Login = () => {
 
   const from = location.state?.from?.pathname || routes.home(country);
 
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setLoginError(false);
     setLoading(true);
 
     try {
-      const response = await login({ email, password, rememberMe });
+      await login({ email, password, rememberMe });
       await refreshUser();
-      if (response.needsProfileOnboarding) {
-        navigate(routes.onboarding(country), { replace: true });
-      } else {
-        navigate(from, { replace: true });
-      }
+      navigate(from, { replace: true });
     } catch (error) {
-      if (error.message === "Account deleted") {
-        setError("To konto zostało usunięte");
-      } else {
-        setError("Invalid email or password");
-      }
+      setLoginError(true);
+      setError("Nieprawidłowy email lub hasło.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -46,60 +50,86 @@ export const Login = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className={styles.login}>
+      <div className={styles.login__content}>
+        <div className={styles.login__container}>
+          <h2 className={styles.login__title}>Login</h2>
+          <form onSubmit={handleSubmit} className={styles.login__form}>
+            {error && <p className={styles.login__error}>{error}</p>}
+            <div className={styles.inputWrapper}>
+              <Email className={styles.inputIcon} />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                className={`${styles.register__input} ${
+                  emailError || loginError ? styles.inputError : ""
+                }`}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\s/g, "");
+                  setEmail(value);
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+                  if (!emailTouched && value.length > 0) {
+                    setEmailTouched(true);
+                  }
+
+                  if (emailError) setEmailError(false);
+                  if (loginError) setLoginError(false);
+                }}
+                onBlur={() => {
+                  if (emailTouched && email && !emailValid) {
+                    setEmailError(true);
+                  }
+                }}
+                required
+              />
+            </div>
+            <div className={styles.inputWrapper}>
+              <Lock className={styles.inputIcon} />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Hasło"
+                value={password}
+                className={`${styles.register__input} ${
+                  loginError ? styles.inputError : ""
+                }`}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (loginError) setLoginError(false);
+                }}
+                required
+              />
+              <button
+                type="button"
+                className={styles.inputAction}
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
+              >
+                {showPassword ? <Eye /> : <EyeOff />}
+              </button>
+            </div>
+
+            <div style={{ marginTop: 8 }}>
+              <label style={{ cursor: "pointer" }}>
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />{" "}
+                Zapamiętaj mnie
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={styles.login__submitButton}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
         </div>
-
-        <div style={{ position: "relative" }}>
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
-          />
-
-          <span
-            onClick={() => setShowPassword((prev) => !prev)}
-            style={{
-              position: "absolute",
-              right: 10,
-              top: "50%",
-              transform: "translateY(-50%)",
-              cursor: "pointer",
-              userSelect: "none",
-            }}
-          >
-            {showPassword ? "🙈" : "👁️"}
-          </span>
-        </div>
-        <div style={{ marginTop: 8 }}>
-          <label style={{ cursor: "pointer" }}>
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />{" "}
-            Zapamiętaj mnie
-          </label>
-        </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+      </div>
     </div>
   );
 };
