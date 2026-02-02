@@ -1,0 +1,41 @@
+.mobileMenu {
+  max-height: 0;
+  overflow: hidden;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  transition: none;
+  color: #1f2937;
+  width: 100%;
+  min-width: unset;
+
+  &--open {
+    max-height: 700px;
+    transition: max-height 250ms ease-in-out;
+  }
+
+  &__navigation {
+    padding: 20px;
+    gap: 10px;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  &__naviBox {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobileMenu {
+    &__addOffer {
+      display: none;
+    }
+  }
+}

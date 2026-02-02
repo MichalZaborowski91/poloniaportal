@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { AccountInfoForm } from "../../../components/AccountInfoForm/AccountInfoForm";
 import { VerifyEmailMessage } from "../../../components/VerifyEmailMessage/VerifyEmailMessage";
+import styles from "../AccountProfile/AccountProfile.module.scss";
 
 export const AccountProfile = () => {
   const location = useLocation();
@@ -11,15 +12,7 @@ export const AccountProfile = () => {
   return (
     <div>
       {cameFromAddOffer && (
-        <div
-          style={{
-            padding: "12px",
-            marginBottom: "16px",
-            borderRadius: "6px",
-            background: "#fff3cd",
-            color: "#664d03",
-          }}
-        >
+        <div className={styles.message}>
           Dokończ swój profil, aby móc dodać ogłoszenie.
         </div>
       )}

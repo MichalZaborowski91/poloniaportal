@@ -7,4 +7,6 @@ export const routes = {
   account: (c) => `/${c}/account`,
   security: (c) => `/${c}/account/security`,
   addOffer: (c) => `/${c}/add-offer`,
+  terms: () => "/terms",
+  privacy: () => "/privacy",
 };

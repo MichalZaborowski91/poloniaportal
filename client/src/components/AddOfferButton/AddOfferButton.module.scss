@@ -1,0 +1,21 @@
+.addOfferButton {
+  background-color: f1efef;
+  border: 2px solid #1f2937;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+  font-weight: 400;
+  transition: background-color 250ms ease-in-out;
+  text-decoration: none;
+  color: #1f2937;
+  text-align: center;
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+}
+
+.addOfferButton:focus,
+.addOfferButton:hover {
+  background-color: #f1efef;
+}

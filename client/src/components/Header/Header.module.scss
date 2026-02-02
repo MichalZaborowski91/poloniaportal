@@ -3,13 +3,101 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  height: 80px;
+  height: 70px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  gap: 10px;
+
+  &__link {
+    width: auto;
+    height: 60px;
+  }
+
+  &__logo {
+    width: auto;
+    height: 60px;
+  }
+
+  &__navigation {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__authLinks {
+    display: flex;
+    gap: 12px;
+  }
+
+  &__menuButton {
+    color: #1f2937;
+    cursor: pointer;
+  }
+
+  &__addOffer {
+    display: block;
+  }
+
+  &__authLinks {
+    display: flex;
+    gap: 12px;
+  }
 }
-.logo {
-  width: auto;
-  height: 60px;
+
+.mobileMenuIconContainer {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: block;
+
+  &__menuIcon {
+    position: absolute;
+    inset: 0;
+    color: #1f2937;
+    transition:
+      opacity 200ms ease-in-out,
+      transform 200ms ease-in-out;
+
+    &--hidden {
+      opacity: 0;
+      transform: scale(0.85);
+      pointer-events: none;
+    }
+
+    &--visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 }
-.authLinks {
-  display: flex;
-  gap: 12px;
+
+@media (max-width: 767px) {
+  .header {
+    &__addOfferGuest {
+      display: block;
+    }
+    &__addOfferUser {
+      display: none;
+    }
+    &__authLinks {
+      display: none;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .header {
+    &__addOffer {
+      display: block;
+    }
+    &__authLinks {
+      display: flex;
+    }
+  }
+  .mobileMenuIconContainer {
+    display: none;
+  }
 }

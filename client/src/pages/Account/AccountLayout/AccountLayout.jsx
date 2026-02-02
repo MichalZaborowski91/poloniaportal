@@ -1,17 +1,17 @@
 import { NavLink, Outlet } from "react-router-dom";
+import styles from "../AccountLayout/AccountLayout.module.scss";
 
 export const AccountLayout = () => {
   return (
-    <div style={{ display: "flex", gap: 24 }}>
-      <aside style={{ minWidth: 200 }}>
+    <div className={styles.accountLayout}>
+      <aside className={styles.accountLayout__aside}>
         <h3>Account</h3>
-
-        <nav style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <nav className={styles.accountLayout__navigation}>
           <NavLink to="">Profile</NavLink>
           <NavLink to="security">Security</NavLink>
         </nav>
       </aside>
-      <main style={{ flex: 1 }}>
+      <main className={styles.accountLayout__main}>
         <Outlet />
       </main>
     </div>

@@ -8,11 +8,13 @@ export const ProtectedRoute = ({ children }) => {
   const location = useLocation();
   const country = useCountry();
 
-  if (loading) return null;
+  if (loading) {
+    return null;
+  }
 
   if (!user) {
     return (
-      <Navigate to={routes.login(country)} replace state={{ from: location }} />
+      <Navigate to={routes.login(country)} state={{ from: location }} replace />
     );
   }
 

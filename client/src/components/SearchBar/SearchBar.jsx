@@ -1,31 +1,39 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LISTING_TYPE_OPTIONS } from "./listingTypes";
+import styles from "./SearchBar.module.scss";
+import SearchIcon from "../../assets/icons/search.svg?react";
 
 export const SearchBar = () => {
+  const [type, setType] = useState("");
+  const [query, setQuery] = useState("");
+
   const navigate = useNavigate();
   const { country } = useParams();
-
-  const [type, setType] = useState("");
-  const [city, setCity] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const params = new URLSearchParams();
 
-    if (type) params.set("type", type);
-    if (city) params.set("city", city);
+    if (type) {
+      params.set("type", type);
+    }
+    if (query) {
+      params.set("q", query);
+    }
 
     navigate(`/${country}/listings?${params.toString()}`);
   };
 
   return (
     <section>
-      <h1>Znajdź ogłoszenia</h1>
-
-      <form onSubmit={handleSubmit}>
-        <select value={type} onChange={(e) => setType(e.target.value)}>
+      <form onSubmit={handleSubmit} className={styles.searchForm}>
+        <select
+          className={styles.searchForm__type}
+          value={type}
+          onChange={(e) => setType(e.target.value)}
+        >
           <option value="">Co Cię interesuje?</option>
 
           {LISTING_TYPE_OPTIONS.map((opt) => (
@@ -36,13 +44,17 @@ export const SearchBar = () => {
         </select>
 
         <input
+          className={styles.searchForm__input}
           type="text"
-          placeholder="Miasto (np. Dublin)"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
+          placeholder="Miasto lub fraza (np. Dublin, dekarz)"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
 
-        <button type="submit">Szukaj</button>
+        <button className={styles.searchForm__submitButton} type="submit">
+          <SearchIcon className={styles.searchForm__icon} />
+          Szukaj
+        </button>
       </form>
     </section>
   );

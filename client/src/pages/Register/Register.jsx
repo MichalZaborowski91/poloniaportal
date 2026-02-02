@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { register } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { useCountry } from "../../app/useCountry";
 import { routes } from "../../app/routes";
+import styles from "../Register/Register.module.scss";
+import Email from "../../assets/icons/mail.svg?react";
+import Lock from "../../assets/icons/lock.svg?react";
+import Eye from "../../assets/icons/eye.svg?react";
+import EyeOff from "../../assets/icons/eye-off.svg?react";
+import LogIn from "../../assets/icons/log-in.svg?react";
 
 export const Register = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +19,13 @@ export const Register = () => {
   const [successRegister, setSuccessRegister] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [passwordMatchOk, setPasswordMatchOk] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [emailValidOk, setEmailValidOk] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const navigate = useNavigate();
   const country = useCountry();
@@ -30,7 +43,8 @@ export const Register = () => {
   const passwordValid = Object.values(passwordChecks).every(Boolean);
   const passwordsMatch = password === confirmPassword;
 
-  const canSubmit = emailValid && passwordValid && passwordsMatch && !loading;
+  const canSubmit =
+    emailValid && passwordValid && passwordsMatch && termsAccepted && !loading;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,115 +61,288 @@ export const Register = () => {
     }
   };
 
-  //SUCCESS INFO
-  if (successRegister) {
-    return (
-      <div>
-        <h2>Rejestracja zakończona 🎉</h2>
+  useEffect(() => {
+    if (!emailTouched || !email) {
+      setEmailValidOk(false);
+      return;
+    }
 
-        <p>
-          Gratulacje! Rejestracja powiodła się.
-          <br />
-          Sprawdź email w celu aktywacji konta.
-        </p>
+    const timeout = setTimeout(() => {
+      setEmailValidOk(emailValid);
+    }, 1000);
 
-        <button onClick={() => navigate(routes.login(country))}>
-          Przejdź do logowania
-        </button>
-      </div>
-    );
-  }
+    return () => clearTimeout(timeout);
+  }, [email, emailTouched, emailValid]);
+
+  useEffect(() => {
+    if (!confirmPassword) {
+      setPasswordMismatch(false);
+      setPasswordMatchOk(false);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      if (password === confirmPassword) {
+        setPasswordMismatch(false);
+        setPasswordMatchOk(true);
+      } else {
+        setPasswordMismatch(true);
+        setPasswordMatchOk(false);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [password, confirmPassword]);
+
+  const getPasswordStrength = (password) => {
+    let score = 0;
+
+    if (password.length >= 8) score += 1;
+    if (password.length >= 12) score += 1;
+    if (/[A-Z]/.test(password)) score += 1;
+    if (/[a-z]/.test(password)) score += 1;
+    if (/[0-9]/.test(password)) score += 1;
+
+    return score; // 0–5
+  };
+
+  const passwordStrength = getPasswordStrength(password);
 
   //REGISTER FORM
   return (
-    <div>
-      <h2>Register</h2>
+    <div className={styles.register}>
+      <div className={styles.register__content}>
+        <div className={styles.register__container}>
+          <h2 className={styles.register__title}>
+            {successRegister ? "Sukces" : "Rejestracja"}
+          </h2>
+          {successRegister ? (
+            <div className={styles.successBox}>
+              <p className={styles.successText}>
+                Gratulacje! Rejestracja powiodła się.
+                <br />
+                Sprawdź email w celu weryfikacji konta.
+              </p>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+              <button
+                className={`${styles.register__submitButton} ${styles["register__submitButton--success"]}`}
+                onClick={() => navigate(routes.login(country))}
+              >
+                <LogIn className={styles.buttonIcon} />
+                Przejdź do logowania
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className={styles.register__form}>
+              <div className={styles.inputWrapper}>
+                <Email
+                  className={`${styles.inputIcon} ${
+                    emailValidOk ? styles.iconSuccess : ""
+                  }`}
+                />
+                <input
+                  className={`${styles.register__input} ${
+                    emailError ? styles.inputError : ""
+                  }`}
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\s/g, "");
+                    setEmail(value);
+
+                    if (!emailTouched && value.length > 0) {
+                      setEmailTouched(true);
+                    }
+
+                    if (emailError) {
+                      setEmailError(false);
+                    }
+                  }}
+                  onBlur={() => {
+                    if (emailTouched && email && !emailValid) {
+                      setEmailError(true);
+                    }
+                  }}
+                  required
+                />
+              </div>
+              <div className={styles.inputWrapper}>
+                <Lock
+                  className={`${styles.inputIcon} ${
+                    passwordMismatch
+                      ? ""
+                      : passwordMatchOk
+                        ? styles.iconSuccess
+                        : ""
+                  }`}
+                />
+
+                <input
+                  className={`${styles.register__input} ${
+                    passwordMismatch ? styles.inputError : ""
+                  }`}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Hasło"
+                  value={password}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\s/g, ""); //SPACE DELETE !
+                    setPassword(value);
+
+                    if (!passwordTouched && value.length > 0) {
+                      setPasswordTouched(true);
+                    }
+                  }}
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.inputAction}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
+                >
+                  {showPassword ? <Eye /> : <EyeOff />}
+                </button>
+              </div>
+
+              <div className={styles.inputWrapper}>
+                <Lock
+                  className={`${styles.inputIcon} ${
+                    passwordMismatch
+                      ? ""
+                      : passwordMatchOk
+                        ? styles.iconSuccess
+                        : ""
+                  }`}
+                />
+                <input
+                  className={`${styles.register__input} ${
+                    passwordMismatch ? styles.inputError : ""
+                  }`}
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Potwierdź hasło"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\s/g, "");
+                    setConfirmPassword(value);
+                  }}
+                  required
+                />
+
+                <button
+                  type="button"
+                  className={styles.inputAction}
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  aria-label={
+                    showConfirmPassword ? "Ukryj hasło" : "Pokaż hasło"
+                  }
+                >
+                  {showConfirmPassword ? <Eye /> : <EyeOff />}
+                </button>
+              </div>
+
+              {passwordTouched && (
+                <div>
+                  <div className={styles.strengthWrapper}>
+                    <div
+                      className={`${styles.strengthBar} ${
+                        passwordStrength <= 2
+                          ? styles.strengthWeak
+                          : passwordStrength <= 4
+                            ? styles.strengthMedium
+                            : styles.strengthStrong
+                      }`}
+                      style={{ width: `${(passwordStrength / 5) * 100}%` }}
+                    />
+                  </div>
+                  {passwordTouched && (
+                    <p
+                      className={
+                        passwordMismatch
+                          ? styles.errorText
+                          : styles.passwordRulesHead
+                      }
+                    >
+                      {passwordMismatch
+                        ? "Hasła muszą być takie same."
+                        : "Hasło musi zawierać przynajmniej:"}
+                    </p>
+                  )}
+
+                  <ul className={styles.passwordRules}>
+                    <li
+                      className={
+                        passwordChecks.length ? styles.ruleOk : styles.ruleBad
+                      }
+                    >
+                      Minimum 8 znaków
+                    </li>
+                    <li
+                      className={
+                        passwordChecks.uppercase
+                          ? styles.ruleOk
+                          : styles.ruleBad
+                      }
+                    >
+                      Jedną dużą literę
+                    </li>
+                    <li
+                      className={
+                        passwordChecks.lowercase
+                          ? styles.ruleOk
+                          : styles.ruleBad
+                      }
+                    >
+                      Jedną małą literę
+                    </li>
+                    <li
+                      className={
+                        passwordChecks.number ? styles.ruleOk : styles.ruleBad
+                      }
+                    >
+                      Jedną cyfrę
+                    </li>
+                  </ul>
+                </div>
+              )}
+
+              {error && <p style={{ color: "red" }}>{error}</p>}
+              <div className={styles.termsWrapper}>
+                <label className={styles.termsLabel}>
+                  <input
+                    type="checkbox"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                    required
+                  />
+                  <span>
+                    Klikając „Rejestruj”, akceptuję{" "}
+                    <a href="/terms" target="_blank" rel="noopener noreferrer">
+                      Regulamin Polonia Portal
+                    </a>{" "}
+                    i{" "}
+                    <a
+                      href="/privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Politykę Prywatności
+                    </a>
+                  </span>
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className={styles.register__submitButton}
+                disabled={!canSubmit}
+              >
+                {loading ? "Tworzenie konta..." : "Rejestruj"}
+              </button>
+            </form>
+          )}
         </div>
-
-        <div style={{ position: "relative" }}>
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
-          />
-
-          <span
-            onClick={() => setShowPassword((prev) => !prev)}
-            style={{
-              position: "absolute",
-              right: 10,
-              top: "50%",
-              transform: "translateY(-50%)",
-              cursor: "pointer",
-              userSelect: "none",
-            }}
-          >
-            {showPassword ? "🙈" : "👁️"}
-          </span>
-        </div>
-
-        <div style={{ position: "relative" }}>
-          <input
-            type={showConfirmPassword ? "text" : "password"}
-            placeholder="Confirm password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-
-          <span
-            onClick={() => setShowConfirmPassword((prev) => !prev)}
-            style={{
-              position: "absolute",
-              right: 10,
-              top: "50%",
-              transform: "translateY(-50%)",
-              cursor: "pointer",
-              userSelect: "none",
-            }}
-          >
-            {showConfirmPassword ? "🙈" : "👁️"}
-          </span>
-        </div>
-
-        {confirmPassword && !passwordsMatch && (
-          <p style={{ color: "red" }}>Hasła nie są takie same</p>
-        )}
-
-        <ul style={{ listStyle: "none", paddingLeft: 0, marginTop: 8 }}>
-          <li style={{ color: passwordChecks.length ? "green" : "red" }}>
-            • Minimum 8 znaków
-          </li>
-          <li style={{ color: passwordChecks.uppercase ? "green" : "red" }}>
-            • Jedna duża litera
-          </li>
-          <li style={{ color: passwordChecks.lowercase ? "green" : "red" }}>
-            • Jedna mała litera
-          </li>
-          <li style={{ color: passwordChecks.number ? "green" : "red" }}>
-            • Jedna cyfra
-          </li>
-        </ul>
-
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        <button type="submit" disabled={!canSubmit}>
-          {loading ? "Creating account..." : "Register"}
-        </button>
-      </form>
+      </div>
     </div>
   );
 };

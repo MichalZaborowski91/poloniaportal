@@ -12,7 +12,7 @@ export const sendVerifyEmail = async ({ to, verifyLink }) => {
     to,
     subject: "Potwierdź swój adres email",
     html: `
-      <h2>Witaj 👋</h2>
+      <h2>Witaj</h2>
       <p>Dziękujemy za rejestrację.</p>
       <p>Kliknij w link poniżej, aby aktywować konto:</p>
       <p>

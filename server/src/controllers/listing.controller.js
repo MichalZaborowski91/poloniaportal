@@ -1,5 +1,7 @@
 import Listing from "../models/Listing.js";
 
+const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 export const createListing = async (req, res, next) => {
   try {
     const { country } = req.params;
@@ -25,9 +27,11 @@ export const createListing = async (req, res, next) => {
 };
 
 export const getListings = async (req, res) => {
+  console.log("PARAMS:", req.params);
+  console.log("QUERY:", req.query);
   try {
     const { country } = req.params;
-    const { type, city } = req.query;
+    const { type, q } = req.query;
 
     const now = new Date();
 
@@ -37,12 +41,23 @@ export const getListings = async (req, res) => {
       expiresAt: { $gt: now },
     };
 
+    //FILTER BY TYPE
     if (type) {
       filter.type = type;
     }
 
-    if (city) {
-      filter["data.city"] = new RegExp(`^${city}$`, "i");
+    //TEXT INPUT
+    if (q) {
+      const safe = escapeRegex(q.trim());
+
+      //CONTAINS + STARTSWITH
+      const regex = new RegExp(`.*${safe}.*`, "i");
+
+      filter.$or = [
+        { title: regex },
+        { "data.position": regex },
+        { "data.city": regex },
+      ];
     }
 
     const listings = await Listing.find(filter).sort({ createdAt: -1 });

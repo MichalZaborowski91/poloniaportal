@@ -1,0 +1,18 @@
+.accountLayout {
+  display: flex;
+  gap: 24px;
+
+  &__aside {
+    min-width: 200px;
+  }
+
+  &__navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__main {
+    flex: 1;
+  }
+}

@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { deleteAccount } from "../../../api/auth";
 import { VerifyEmailMessage } from "../../../components/VerifyEmailMessage/VerifyEmailMessage";
 import { ResendVerifyEmailButton } from "../../../components/ResendVerifyEmailButton/ResendVerifyEmailButton";
+import styles from "../AccountSecurity/AccountSecurity.module.scss";
 
 export const AccountSecurity = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export const AccountSecurity = () => {
       await deleteAccount();
       navigate(routes.home(country));
       await refreshUser();
+      toast.success("Konto zostało usunięte.");
     } catch (error) {
       toast.error("Nie udalo sie usunac konta.");
       console.error(error);
@@ -39,15 +41,7 @@ export const AccountSecurity = () => {
   return (
     <div>
       {cameFromAddOffer && (
-        <div
-          style={{
-            padding: "12px",
-            marginBottom: "16px",
-            borderRadius: "6px",
-            background: "#fff3cd",
-            color: "#664d03",
-          }}
-        >
+        <div className={styles.message}>
           Aby dodać ogłoszenie, musisz zweryfikować swój adres email.
         </div>
       )}

@@ -6,6 +6,7 @@ export const ResendVerifyEmailButton = () => {
 
   const handleResendVerify = async () => {
     try {
+      //WHEN WEB DEPLOY CHANGE URL - IMPORTANT
       const res = await fetch("http://localhost:5000/api/auth/resend-verify", {
         method: "POST",
         credentials: "include", //COOKIES
@@ -25,6 +26,7 @@ export const ResendVerifyEmailButton = () => {
       toast.error(err.message);
     }
   };
+
   return (
     <div>
       {user?.emailVerified === false ? (

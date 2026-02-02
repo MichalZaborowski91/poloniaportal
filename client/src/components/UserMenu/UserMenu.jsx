@@ -1,17 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { logout } from "../../api/auth";
-import toast from "react-hot-toast";
 import defaultAvatar from "../../assets/avatar/avt.jpg";
 import styles from "./UserMenu.module.scss";
 import { useCountry } from "../../app/useCountry";
 import { routes } from "../../app/routes";
+import { LogOutButton } from "../LogOutButton/LogOutButton";
 
-export const UserMenu = () => {
+export const UserMenu = ({ onMenuClose }) => {
   const [open, setOpen] = useState(false);
-  const { user, refreshUser } = useAuth();
-  const navigate = useNavigate();
+
+  const { user } = useAuth();
   const menuRef = useRef(null);
   const country = useCountry();
 
@@ -21,17 +20,6 @@ export const UserMenu = () => {
     }
     return `${user.profile.avatar}?v=${user.profile.avatar}`;
   }, [user?.profile?.avatar]);
-
-  const handleLogout = async () => {
-    try {
-      navigate(routes.home(country), { replace: true });
-      await logout();
-      await refreshUser();
-      toast.success("Wylogowano");
-    } catch {
-      toast.error("Błąd wylogowania");
-    }
-  };
 
   useEffect(() => {
     if (!open) {
@@ -70,26 +58,31 @@ export const UserMenu = () => {
   return (
     <div ref={menuRef} className={styles.userMenu}>
       <button
-        onClick={() => setOpen((prevState) => !prevState)}
-        className={styles.trigger}
-        aria-haspopup="menu"
-        aria-expanded={open}
+        onClick={() => {
+          onMenuClose?.(); //MOBILE MENU CLOSE
+          setOpen((prevState) => !prevState);
+        }}
+        className={styles.userMenu__triggerButton}
       >
-        <span>Witaj, {user.profile?.displayName || user.email}</span>
-        <img src={avatarSrc} alt="avatar" className={styles.avatar} />
+        <span className={styles.userMenu__greeting}>
+          Witaj, {user.profile?.displayName || user.email}
+        </span>
+        <img src={avatarSrc} alt="avatar" className={styles.userMenu__avatar} />
       </button>
 
       {open && (
         <div className={styles.menu} role="menu">
-          <Link to={routes.account(country)} onClick={() => setOpen(false)}>
-            Account
+          <Link
+            to={routes.account(country)}
+            onClick={() => setOpen(false)}
+            className={styles.menu__account}
+          >
+            Konto
           </Link>
           <Link to={routes.onboarding(country)} onClick={() => setOpen(false)}>
-            Edytuj profil
+            Dashboard
           </Link>
-          <button onClick={handleLogout} className={styles.logout}>
-            Wyloguj
-          </button>
+          <LogOutButton />
         </div>
       )}
     </div>

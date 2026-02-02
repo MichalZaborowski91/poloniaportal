@@ -15,7 +15,7 @@ export const ProfileCompletedRoute = ({ children }) => {
   //NOT LOGGED IN
   if (!user) {
     return (
-      <Navigate to={routes.login(country)} replace state={{ from: location }} />
+      <Navigate to={routes.login(country)} state={{ from: location }} replace />
     );
   }
 
@@ -24,8 +24,8 @@ export const ProfileCompletedRoute = ({ children }) => {
     return (
       <Navigate
         to={routes.security(country)}
-        replace
         state={{ from: location }}
+        replace
       />
     );
   }
@@ -35,8 +35,8 @@ export const ProfileCompletedRoute = ({ children }) => {
     return (
       <Navigate
         to={routes.account(country)}
-        replace
         state={{ from: location }}
+        replace
       />
     );
   }

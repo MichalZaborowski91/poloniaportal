@@ -13,6 +13,8 @@ import { AccountLayout } from "./pages/Account/AccountLayout/AccountLayout";
 import { AccountProfile } from "./pages/Account/AccountProfile/AccountProfile";
 import { AccountSecurity } from "./pages/Account/AccountSecurity/AccountSecurity";
 import { ListingsPage } from "./pages/Listings/Listings";
+import { Terms } from "./pages/Terms/Terms";
+import { Privacy } from "./pages/Privacy/Privacy";
 
 export const App = () => {
   return (
@@ -65,6 +67,8 @@ export const App = () => {
 
         <Route path="*" element={<h2>Not Found</h2>} />
       </Route>
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
     </Routes>
   );
 };
