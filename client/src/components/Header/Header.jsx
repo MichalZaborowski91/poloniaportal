@@ -16,7 +16,10 @@ export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose }) => {
   const country = useCountry();
   const location = useLocation();
 
-  const isRegisterPage = location.pathname.endsWith("/register");
+  const hideAddOffer =
+    location.pathname.endsWith("/forgot-password") ||
+    location.pathname.endsWith("/reset-password") ||
+    location.pathname.endsWith("/register");
 
   if (loading) {
     return null;
@@ -46,7 +49,7 @@ export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose }) => {
               user ? styles.header__addOfferUser : styles.header__addOfferGuest
             }`}
           >
-            {!isRegisterPage && (
+            {!hideAddOffer && (
               <AddOfferButton
                 onClick={() => {
                   if (isMenuOpen) {

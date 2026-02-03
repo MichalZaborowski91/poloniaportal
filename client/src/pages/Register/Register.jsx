@@ -9,6 +9,7 @@ import Lock from "../../assets/icons/lock.svg?react";
 import Eye from "../../assets/icons/eye.svg?react";
 import EyeOff from "../../assets/icons/eye-off.svg?react";
 import LogIn from "../../assets/icons/log-in.svg?react";
+import UserPlus from "../../assets/icons/user-plus.svg?react";
 
 export const Register = () => {
   const [email, setEmail] = useState("");
@@ -26,6 +27,7 @@ export const Register = () => {
   const [emailValidOk, setEmailValidOk] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [company, setCompany] = useState("");
 
   const navigate = useNavigate();
   const country = useCountry();
@@ -52,7 +54,7 @@ export const Register = () => {
     setLoading(true);
 
     try {
-      await register({ email, password });
+      await register({ email, password, company });
       setSuccessRegister(true);
     } catch (error) {
       setError(error.message);
@@ -125,7 +127,7 @@ export const Register = () => {
               </p>
 
               <button
-                className={`${styles.register__submitButton} ${styles["register__submitButton--success"]}`}
+                className={styles.register__submitButton}
                 onClick={() => navigate(routes.login(country))}
               >
                 <LogIn className={styles.buttonIcon} />
@@ -134,6 +136,19 @@ export const Register = () => {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className={styles.register__form}>
+              {error && <p className={styles.register__error}>{error}</p>}
+              <div className={styles.honeypot}>
+                <label htmlFor="company">Company</label>
+                <input
+                  type="text"
+                  name="company"
+                  id="company"
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  autoComplete="off"
+                  tabIndex="-1"
+                />
+              </div>
               <div className={styles.inputWrapper}>
                 <Email
                   className={`${styles.inputIcon} ${
@@ -275,7 +290,7 @@ export const Register = () => {
                         passwordChecks.length ? styles.ruleOk : styles.ruleBad
                       }
                     >
-                      Minimum 8 znaków
+                      8 znaków
                     </li>
                     <li
                       className={
@@ -306,7 +321,6 @@ export const Register = () => {
                 </div>
               )}
 
-              {error && <p style={{ color: "red" }}>{error}</p>}
               <div className={styles.termsWrapper}>
                 <label className={styles.termsLabel}>
                   <input
@@ -337,6 +351,7 @@ export const Register = () => {
                 className={styles.register__submitButton}
                 disabled={!canSubmit}
               >
+                <UserPlus />
                 {loading ? "Tworzenie konta..." : "Rejestruj"}
               </button>
             </form>

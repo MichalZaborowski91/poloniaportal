@@ -9,6 +9,8 @@ import Email from "../../assets/icons/mail.svg?react";
 import Lock from "../../assets/icons/lock.svg?react";
 import Eye from "../../assets/icons/eye.svg?react";
 import EyeOff from "../../assets/icons/eye-off.svg?react";
+import LogIn from "../../assets/icons/log-in.svg?react";
+import { Link } from "react-router-dom";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -108,9 +110,8 @@ export const Login = () => {
                 {showPassword ? <Eye /> : <EyeOff />}
               </button>
             </div>
-
-            <div style={{ marginTop: 8 }}>
-              <label style={{ cursor: "pointer" }}>
+            <div className={styles.rememberMe}>
+              <label className={styles.rememberMe__label}>
                 <input
                   type="checkbox"
                   checked={rememberMe}
@@ -119,14 +120,19 @@ export const Login = () => {
                 Zapamiętaj mnie
               </label>
             </div>
-
             <button
               type="submit"
               disabled={loading}
               className={styles.login__submitButton}
             >
+              <LogIn className={styles.buttonIcon} />
               {loading ? "Logging in..." : "Login"}
             </button>
+            <p className={styles.forgotPassword}>
+              <Link to={routes.forgotPassword(country)}>
+                Nie pamiętasz hasła?
+              </Link>
+            </p>
           </form>
         </div>
       </div>

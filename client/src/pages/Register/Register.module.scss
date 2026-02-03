@@ -18,7 +18,7 @@
     height: auto;
     border-radius: 4px;
     background-color: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
@@ -28,7 +28,7 @@
     margin-top: 0px;
     margin-bottom: 20px;
     text-align: center;
-    color: #1f2937;
+    color: #16191d;
     text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
   }
 
@@ -46,15 +46,21 @@
     color: #1f2937;
     font-weight: 600;
     transition: background-color 250ms ease-in-out;
-
-    &--success {
-      gap: 10px;
-    }
+    gap: 10px;
   }
 
   &__submitButton:focus,
   &__submitButton:hover {
     background-color: #acb2b9;
+  }
+
+  &__error {
+    color: #e70518;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.9);
   }
 }
 
@@ -86,7 +92,7 @@
 
 .register__input {
   width: 100%;
-  padding: 12px 14px 12px 44px; // 👈 miejsce na ikonę
+  padding: 12px 14px 12px 44px;
   border-radius: 4px;
   border: 1px solid #1f2937;
   background-color: #f1efef;
@@ -146,12 +152,13 @@
   margin-top: 10px;
   font-weight: 500;
   margin-bottom: 0;
+  text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.9);
 }
 .passwordRulesHead {
   text-align: center;
   margin-top: 10px;
   margin-bottom: 0;
-  color: #1f2937;
+  color: #16191d;
   font-size: 16px;
   text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
 }
@@ -167,13 +174,13 @@
 .ruleOk {
   color: #148a18;
   font-weight: 600;
-  text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
+  text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.9);
 }
 
 .ruleBad {
   color: #e70518;
   font-weight: 600;
-  text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
+  text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.9);
 }
 
 .successBox {
@@ -251,13 +258,14 @@
 .termsWrapper {
   margin-top: 12px;
   font-size: 12px;
+  margin-left: 5px;
 }
 
 .termsLabel {
   display: flex;
   gap: 8px;
   align-items: flex-start;
-  color: #1f2937;
+  color: #16191d;
 }
 
 .termsLabel input {
@@ -266,16 +274,25 @@
 }
 
 .termsLabel a {
-  color: #0078d7;
-  text-decoration: underline;
+  color: #077ddd;
+  text-decoration: none;
+  text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.9);
 }
-
+.termsLabel a:focus,
 .termsLabel a:hover {
-  opacity: 0.8;
+  text-decoration: underline;
 }
 
 .successTitle {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  height: 0;
+  overflow: hidden;
 }

@@ -15,6 +15,9 @@ import { AccountSecurity } from "./pages/Account/AccountSecurity/AccountSecurity
 import { ListingsPage } from "./pages/Listings/Listings";
 import { Terms } from "./pages/Terms/Terms";
 import { Privacy } from "./pages/Privacy/Privacy";
+import { PublicOnlyRoute } from "./routes/PublicOnlyRoutes";
+import { ForgotPassword } from "./pages/ForgotPassword/ForgotPassword";
+import { ResetPassword } from "./pages/ResetPassword/ResetPassword";
 
 export const App = () => {
   return (
@@ -28,6 +31,16 @@ export const App = () => {
         <Route path="listings" element={<ListingsPage />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+
+        <Route path="reset-password/:token" element={<ResetPassword />} />
+        <Route
+          path="forgot-password"
+          element={
+            <PublicOnlyRoute>
+              <ForgotPassword />
+            </PublicOnlyRoute>
+          }
+        />
         <Route
           path="profile"
           element={

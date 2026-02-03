@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import listingRoutes from "./routes/listing.routes.js";
+//import { loginLimiter } from "./middleware/rateLimit.js";
 
 const app = express();
 
@@ -17,6 +18,11 @@ app.use(
 //MIDDLEWARES
 app.use(express.json());
 app.use(cookieParser());
+
+//TEST LIMITER ENDPOINT
+//app.post("/api/test-rate-limit", loginLimiter, (req, res) => {
+//  res.json({ ok: true });
+//});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);

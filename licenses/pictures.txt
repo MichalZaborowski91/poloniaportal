@@ -45,3 +45,7 @@ Pictures:
 * london.webp (subdomain: uk)
   Photo by Samuel Sweet
   https://www.pexels.com/photo/city-buildings-under-blue-sky-8461520/
+
+* keyboard.webp (Forgot Password page)
+  Photo by Foysal Ahmed
+  https://www.pexels.com/photo/black-computer-keyboard-with-orange-light-on-keys-5548045/

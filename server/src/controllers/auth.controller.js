@@ -9,7 +9,13 @@ const RESEND_COOLDOWN = 15 * 60 * 1000;
 //REGISTER
 export const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, company } = req.body;
+
+    //HONEYPOT
+    if (company && company.length > 0) {
+      await new Promise((r) => setTimeout(r, 800));
+      return res.status(200).json({ ok: true });
+    }
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password required" });

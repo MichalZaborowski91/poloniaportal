@@ -9,4 +9,6 @@ export const routes = {
   addOffer: (c) => `/${c}/add-offer`,
   terms: () => "/terms",
   privacy: () => "/privacy",
+  forgotPassword: (c) => `/${c}/forgot-password`,
+  resetPassword: (c, token) => `/${c}/reset-password/${token}`,
 };
