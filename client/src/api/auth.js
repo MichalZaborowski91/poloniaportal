@@ -15,11 +15,17 @@ export const login = async ({ email, password, rememberMe }) => {
     credentials: "include",
     body: JSON.stringify({ email, password, rememberMe }),
   });
+
+  const data = await res.json();
+
   if (!res.ok) {
-    const data = await res.json();
-    throw new Error(data.message || "Login failed");
+    const error = new Error(data.message || "Login failed");
+    error.status = res.status;
+    error.data = data;
+    throw error;
   }
-  return res.json();
+
+  return data;
 };
 
 export const register = async ({ email, password, company }) => {
@@ -30,12 +36,16 @@ export const register = async ({ email, password, company }) => {
     body: JSON.stringify({ email, password, company }),
   });
 
+  const data = await res.json();
+
   if (!res.ok) {
-    const data = await res.json();
-    throw new Error(data.message || "Register failed");
+    const error = new Error(data.message || "Register failed");
+    error.status = res.status;
+    error.data = data;
+    throw error;
   }
 
-  return res.json();
+  return data;
 };
 
 export const logout = async () => {

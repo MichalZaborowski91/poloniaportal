@@ -99,10 +99,39 @@ export const login = async (req, res) => {
     if (user.isDeleted) {
       return res.status(401).json({ message: "Account deleted" });
     }
+    //SOFT LOCK CHECK
+    if (user.lockUntil && user.lockUntil > new Date()) {
+      return res.status(423).json({
+        message: "Account temporarily locked. Try again later.",
+      });
+    }
     const isMatch = await user.comparePassword(password);
+
     if (!isMatch) {
+      user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+
+      //CHECK IF SHOULD LOCK
+      if (user.failedLoginAttempts >= 5) {
+        user.lockUntil = new Date(Date.now() + 15 * 60 * 1000);
+      }
+
+      await user.save();
+
       return res.status(401).json({ message: "Invalid credentials" });
     }
+    //SUCCESSFUL LOGIN - RESET SOFT LOCK STATE
+    let shouldSave = false;
+
+    if (user.failedLoginAttempts > 0) {
+      user.failedLoginAttempts = 0;
+      shouldSave = true;
+    }
+
+    if (user.lockUntil) {
+      user.lockUntil = null;
+      shouldSave = true;
+    }
+
     //JWT
     const token = jwt.sign(
       { id: user._id, role: user.role },
@@ -128,9 +157,14 @@ export const login = async (req, res) => {
 
     if (!user.firstLoginAt) {
       user.firstLoginAt = new Date();
-      await user.save();
+      shouldSave = true;
       needsProfileOnboarding = true;
     }
+
+    if (shouldSave) {
+      await user.save();
+    }
+
     res.json({
       id: user._id,
       email: user.email,

@@ -44,7 +44,18 @@ export const Login = () => {
       navigate(from, { replace: true });
     } catch (error) {
       setLoginError(true);
-      setError("Nieprawidłowy email lub hasło.");
+      if (error.status === 423) {
+        setError(
+          "Konto zostało tymczasowo zablokowane. Spróbuj ponownie za 15 minut.",
+        );
+      } else if (error.status === 429) {
+        setError(
+          "Zbyt wiele prób logowania. Odczekaj chwilę i spróbuj ponownie.",
+        );
+      } else {
+        setError("Nieprawidłowy email lub hasło.");
+      }
+
       console.error(error);
     } finally {
       setLoading(false);
@@ -126,7 +137,7 @@ export const Login = () => {
               className={styles.login__submitButton}
             >
               <LogIn className={styles.buttonIcon} />
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Loguję..." : "Login"}
             </button>
             <p className={styles.forgotPassword}>
               <Link to={routes.forgotPassword(country)}>

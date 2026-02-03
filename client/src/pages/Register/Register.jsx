@@ -57,7 +57,13 @@ export const Register = () => {
       await register({ email, password, company });
       setSuccessRegister(true);
     } catch (error) {
-      setError(error.message);
+      if (error.status === 429) {
+        setError(
+          "Zbyt wiele prób rejestracji. Odczekaj chwilę i spróbuj ponownie.",
+        );
+      } else {
+        setError(error.message || "Rejestracja nie powiodła się.");
+      }
     } finally {
       setLoading(false);
     }

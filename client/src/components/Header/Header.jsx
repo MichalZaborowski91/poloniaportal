@@ -19,6 +19,7 @@ export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose }) => {
   const hideAddOffer =
     location.pathname.endsWith("/forgot-password") ||
     location.pathname.endsWith("/reset-password") ||
+    location.pathname.endsWith("/login") ||
     location.pathname.endsWith("/register");
 
   if (loading) {

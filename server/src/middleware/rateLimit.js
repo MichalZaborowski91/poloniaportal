@@ -44,16 +44,16 @@ export const loginLimiter = async (req, res, next) => {
 
     //IP BURST
     if (!(await loginIpBurst.limit(`login:ip:burst:${ip}`)).success) {
-      return res
-        .status(429)
-        .json({ message: "Too many login attempts. Slow down." });
+      return res.status(429).json({
+        message: "Too many requests. Please try again later.",
+      });
     }
 
     //IP LONG
     if (!(await loginIpLong.limit(`login:ip:long:${ip}`)).success) {
-      return res
-        .status(429)
-        .json({ message: "Too many login attempts from this IP." });
+      return res.status(429).json({
+        message: "Too many requests. Please try again later.",
+      });
     }
 
     if (email) {
@@ -61,14 +61,16 @@ export const loginLimiter = async (req, res, next) => {
       if (
         !(await loginEmailBurst.limit(`login:email:burst:${email}`)).success
       ) {
-        return res
-          .status(429)
-          .json({ message: "Too many attempts for this account." });
+        return res.status(429).json({
+          message: "Too many requests. Please try again later.",
+        });
       }
 
       //EMAIL LONG
       if (!(await loginEmailLong.limit(`login:email:long:${email}`)).success) {
-        return res.status(429).json({ message: "Account temporarily locked." });
+        return res.status(429).json({
+          message: "Too many requests. Please try again later.",
+        });
       }
     }
 
@@ -86,16 +88,16 @@ export const registerLimiter = async (req, res, next) => {
 
     //IP BURST
     if (!(await registerIpBurst.limit(`register:ip:burst:${ip}`)).success) {
-      return res
-        .status(429)
-        .json({ message: "Too many registrations. Slow down." });
+      return res.status(429).json({
+        message: "Too many requests. Please try again later.",
+      });
     }
 
     //IP LONG
     if (!(await registerIpLong.limit(`register:ip:long:${ip}`)).success) {
-      return res
-        .status(429)
-        .json({ message: "Registration limit reached. Try later." });
+      return res.status(429).json({
+        message: "Too many requests. Please try again later.",
+      });
     }
 
     next();
