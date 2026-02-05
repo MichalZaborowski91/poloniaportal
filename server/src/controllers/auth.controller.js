@@ -2,6 +2,29 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/User.js";
 import crypto from "crypto";
 import { sendVerifyEmail } from "../services/email.service.js";
+import {
+  getRegisterLock,
+  incrementRegisterAttempts,
+  applyRegisterLock,
+  resetRegisterProtection,
+  isCaptchaPending,
+  markCaptchaPending,
+  clearCaptchaPending,
+  resetLockCount,
+  incrementRegisterLockCount,
+  isHardBlockedByMaxLevel,
+  isBotHardBlocked,
+  isBotSoftLocked,
+  isBotCaptchaPending,
+  applyBotSoftLock,
+  markBotCaptchaPending,
+  grantBotOneShot,
+  hasBotOneShot,
+  consumeBotOneShot,
+  applyBotHardBlock,
+} from "../services/registerLock.service.js";
+import { verifyCaptcha } from "../services/captcha.service.js";
+import { getClientIp } from "../../utils/getClientIp.js";
 
 const VERIFY_TOKEN_TTL = 24 * 60 * 60 * 1000;
 const RESEND_COOLDOWN = 15 * 60 * 1000;
@@ -9,79 +32,170 @@ const RESEND_COOLDOWN = 15 * 60 * 1000;
 //REGISTER
 export const register = async (req, res) => {
   try {
-    const { email, password, company } = req.body;
+    const ip = getClientIp(req);
+    const { email, password, company, captchaToken, timeStamp } = req.body;
 
-    //HONEYPOT
-    if (company && company.length > 0) {
-      await new Promise((r) => setTimeout(r, 800));
+    //BOT FLOW
+    //BOT VALIDATION
+    const isBot =
+      (typeof company === "string" && company.length > 0) ||
+      (typeof company === "string" && company.length > 0 && timeStamp < 300);
+
+    //IF BOT === TRUE CHECK IF IS HARD BLOCKED (24H)
+    if (isBot) {
+      const hardBlocked = await isBotHardBlocked(ip);
+      if (hardBlocked) {
+        return res.status(429).json({ locked: true });
+      }
+    }
+
+    if (isBot) {
+      const hasOneShot = await hasBotOneShot(ip);
+      if (hasOneShot) {
+        await consumeBotOneShot(ip);
+        await applyBotHardBlock(ip);
+
+        return res.status(429).json({
+          locked: true,
+        });
+      }
+    }
+
+    if (isBot) {
+      const softLocked = await isBotSoftLocked(ip);
+      if (softLocked) {
+        return res.status(429).json({ locked: true });
+      }
+    }
+
+    if (isBot) {
+      const botCaptchaPending = await isBotCaptchaPending(ip);
+      if (botCaptchaPending) {
+        const captchaOk = await verifyCaptcha(captchaToken, ip);
+        if (!captchaOk) {
+          //FAIL → HARD BLOCK (24H)
+          await applyBotHardBlock(ip);
+          return res.status(429).json({ locked: true });
+        }
+        //CAPTCHA OK => 1 MORE CHANCE
+        await clearBotCaptchaPending(ip);
+        await grantBotOneShot(ip);
+
+        return res.status(200).json({ ok: true });
+      }
+    }
+
+    if (isBot) {
+      await applyBotSoftLock(ip);
+      await markBotCaptchaPending(ip);
+      //FAKE SUCCESS
       return res.status(200).json({ ok: true });
     }
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password required" });
+    //HARD BLOCK AFTER MAX LEVEL (24h)
+    const hardBlocked = await isHardBlockedByMaxLevel(ip);
+
+    if (hardBlocked) {
+      return res.status(429).json({
+        locked: true,
+      });
     }
 
+    //USER FLOW
+
+    //SOFT LOCK
+    const activeLock = await getRegisterLock(ip);
+    if (activeLock) {
+      return res.status(429).json({ locked: true });
+    }
+
+    //CAPTCHA AFTER LOCK
+    const userCaptchaPending = await isCaptchaPending(ip);
+    if (userCaptchaPending) {
+      const captchaOk = await verifyCaptcha(captchaToken, ip);
+
+      if (!captchaOk) {
+        return res.status(429).json({ requireCaptcha: true });
+      }
+
+      //CAPTCHA OK => NEW TRIES
+      await clearCaptchaPending(ip);
+      await resetRegisterProtection(ip);
+    }
+
+    //VALIDATION (NUMBER OF TRIES)
+    if (!email || !password) {
+      const attempts = await incrementRegisterAttempts(ip);
+
+      if (attempts % 5 === 0) {
+        const level = Math.floor(attempts / 5) - 1;
+        await applyRegisterLock(ip, level);
+      }
+
+      return res.status(400).json({
+        errorCode: "MISSING_FIELDS",
+      });
+    }
+
+    //EMAIL EXISTS (COUNT ENTRIES)
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
+      const attempts = await incrementRegisterAttempts(ip);
+
+      if (attempts % 5 === 0) {
+        const lockCount = await incrementRegisterLockCount(ip);
+        const level = lockCount - 1; // 1=>0, 2=>1, 3=>2, 4=>3
+
+        //SOFT LOCK
+        await applyRegisterLock(ip, level);
+
+        //CAPTCHA AFTER SOFT LOCK OFF
+        await markCaptchaPending(ip);
+      }
+
+      return res.status(409).json({
+        errorCode: "USER_ALREADY_EXISTS",
+      });
     }
 
-    //FIND OUT ORIGIN
+    //NORMAL REGISTRATION
     const verifyOrigin =
       req.headers.origin || `${req.protocol}://${req.get("host")}`;
 
-    //GENERATE TOKEN
     const rawToken = crypto.randomBytes(32).toString("hex");
-
     const hashedToken = crypto
       .createHash("sha256")
       .update(rawToken)
       .digest("hex");
 
-    const tokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-    //CREATE USER
     const user = await User.create({
       email,
       password,
       emailVerified: false,
       emailVerifyToken: hashedToken,
-      emailVerifyExpires: tokenExpires,
+      emailVerifyExpires: new Date(Date.now() + VERIFY_TOKEN_TTL),
       verifyOrigin,
     });
 
-    //VERIFY LINK
     const verifyLink = `${process.env.BACKEND_URL}/api/auth/verify-email/${rawToken}`;
 
-    try {
-      await sendVerifyEmail({
-        to: user.email,
-        verifyLink,
-      });
-      console.log("VERIFY EMAIL SENT");
-    } catch (err) {
-      console.error("EMAIL SEND ERROR:", err);
-    }
-
-    console.log("VERIFY EMAIL LINK:");
-    console.log(verifyLink);
-
-    console.log("NEW USER CREATED:", {
-      email: user.email,
-      emailVerified: user.emailVerified,
-      verifyOrigin: user.verifyOrigin,
-      emailVerifyToken: user.emailVerifyToken,
-      emailVerifyExpires: user.emailVerifyExpires,
+    await sendVerifyEmail({
+      to: user.email,
+      verifyLink,
     });
 
-    res.status(201).json({
+    //FULL RESET AFTER SUCCESS
+    await resetRegisterProtection(ip);
+    await resetLockCount(ip);
+
+    return res.status(201).json({
       id: user._id,
       email: user.email,
       role: user.role,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Register failed" });
+  } catch (err) {
+    console.error("REGISTER ERROR:", err);
+    return res.status(500).json({ errorCode: "REGISTER_FAILED" });
   }
 };
 

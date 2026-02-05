@@ -28,18 +28,30 @@ export const login = async ({ email, password, rememberMe }) => {
   return data;
 };
 
-export const register = async ({ email, password, company }) => {
+export const register = async ({
+  email,
+  password,
+  company,
+  captchaToken,
+  timeStamp,
+}) => {
   const res = await fetch(`${API_URL}/api/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ email, password, company }),
+    body: JSON.stringify({
+      email,
+      password,
+      company,
+      captchaToken,
+      timeStamp,
+    }),
   });
 
   const data = await res.json();
 
   if (!res.ok) {
-    const error = new Error(data.message || "Register failed");
+    const error = new Error("Register failed");
     error.status = res.status;
     error.data = data;
     throw error;

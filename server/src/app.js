@@ -7,6 +7,7 @@ import listingRoutes from "./routes/listing.routes.js";
 //import { loginLimiter } from "./middleware/rateLimit.js";
 
 const app = express();
+app.set("trust proxy", true);
 
 app.use(
   cors({

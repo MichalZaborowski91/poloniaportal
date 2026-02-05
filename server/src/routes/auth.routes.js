@@ -9,11 +9,11 @@ import {
   deleteAccount,
 } from "../controllers/auth.controller.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
-import { loginLimiter, registerLimiter } from "../middleware/rateLimit.js";
+import { loginLimiter } from "../middleware/rateLimit.js";
 
 const router = express.Router();
 
-router.post("/register", registerLimiter, register);
+router.post("/register", register);
 router.delete("/delete-account", requireAuth, deleteAccount);
 router.post("/login", loginLimiter, login);
 router.get("/me", requireAuth, me);

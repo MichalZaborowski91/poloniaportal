@@ -10,6 +10,7 @@ import Eye from "../../assets/icons/eye.svg?react";
 import EyeOff from "../../assets/icons/eye-off.svg?react";
 import LogIn from "../../assets/icons/log-in.svg?react";
 import UserPlus from "../../assets/icons/user-plus.svg?react";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export const Register = () => {
   const [email, setEmail] = useState("");
@@ -28,6 +29,10 @@ export const Register = () => {
   const [emailError, setEmailError] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [company, setCompany] = useState("");
+  const [requireCaptcha, setRequireCaptcha] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
+  //TIMESTAMP - ONLY ONCE
+  const [timeStamp] = useState(() => Date.now());
 
   const navigate = useNavigate();
   const country = useCountry();
@@ -46,23 +51,53 @@ export const Register = () => {
   const passwordsMatch = password === confirmPassword;
 
   const canSubmit =
-    emailValid && passwordValid && passwordsMatch && termsAccepted && !loading;
+    emailValid &&
+    passwordValid &&
+    passwordsMatch &&
+    termsAccepted &&
+    !loading &&
+    (!requireCaptcha || !!captchaToken);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
+    if (requireCaptcha && !captchaToken) {
+      setError("Potwierdź, że nie jesteś botem.");
+      return;
+    }
     try {
-      await register({ email, password, company });
+      await register({
+        email,
+        password,
+        company,
+        timeStamp,
+        captchaToken,
+      });
+
+      setRequireCaptcha(false);
+      setCaptchaToken(null);
+
       setSuccessRegister(true);
     } catch (error) {
+      if (error.data?.requireCaptcha) {
+        setRequireCaptcha(true);
+        setCaptchaToken(null);
+        setError("Wymagana dodatkowa weryfikacja.");
+        return;
+      }
+
+      setRequireCaptcha(false);
+      setCaptchaToken(null);
+
       if (error.status === 429) {
-        setError(
-          "Zbyt wiele prób rejestracji. Odczekaj chwilę i spróbuj ponownie.",
-        );
+        setError("Zbyt wiele prób. Spróbuj ponownie później.");
+      } else if (error.status === 400) {
+        setError("Wymagane pola: email i hasło.");
+      } else if (error.status === 409) {
+        setError("Użytkownik już istnieje.");
       } else {
-        setError(error.message || "Rejestracja nie powiodła się.");
+        setError("Rejestracja nie powiodła się.");
       }
     } finally {
       setLoading(false);
@@ -111,7 +146,7 @@ export const Register = () => {
     if (/[a-z]/.test(password)) score += 1;
     if (/[0-9]/.test(password)) score += 1;
 
-    return score; // 0–5
+    return score; //0–5
   };
 
   const passwordStrength = getPasswordStrength(password);
@@ -143,7 +178,7 @@ export const Register = () => {
           ) : (
             <form onSubmit={handleSubmit} className={styles.register__form}>
               {error && <p className={styles.register__error}>{error}</p>}
-              <div className={styles.honeypot}>
+              <div className={styles.fieldCompany}>
                 <label htmlFor="company">Company</label>
                 <input
                   type="text"
@@ -351,7 +386,15 @@ export const Register = () => {
                   </span>
                 </label>
               </div>
-
+              {requireCaptcha && (
+                <div className={styles.captchaWrapper}>
+                  <HCaptcha
+                    sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
+                    onVerify={(token) => setCaptchaToken(token)}
+                    onExpire={() => setCaptchaToken(null)}
+                  />
+                </div>
+              )}
               <button
                 type="submit"
                 className={styles.register__submitButton}
