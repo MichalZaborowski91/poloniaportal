@@ -200,9 +200,16 @@ export const register = async (req, res) => {
 };
 
 //LOGIN
+const LOGIN_LOCKS = [
+  15 * 60 * 1000, //LEVEL 1
+  30 * 60 * 1000, //LEVEL 2
+  60 * 60 * 1000, //LEVEL 3
+  2 * 60 * 60 * 1000, //LEVEL 4 (MAX)
+];
+
 export const login = async (req, res) => {
   try {
-    const { email, password, rememberMe } = req.body;
+    const { email, password, rememberMe, captchaToken } = req.body;
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password required" });
     }
@@ -219,20 +226,47 @@ export const login = async (req, res) => {
         message: "Account temporarily locked. Try again later.",
       });
     }
+    console.log("[LOGIN] captchaRequired:", user.captchaRequired);
+    console.log("[LOGIN] captchaToken:", captchaToken);
+    if (user.captchaRequired) {
+      if (!captchaToken) {
+        return res.status(403).json({
+          requireCaptcha: true,
+        });
+      }
+
+      const captchaOk = await verifyCaptcha(captchaToken);
+
+      if (!captchaOk) {
+        return res.status(403).json({
+          requireCaptcha: true,
+        });
+      }
+
+      // CAPTCHA OK → pozwalamy próbować
+      user.captchaRequired = false;
+      await user.save();
+    }
+
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
-      user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+      // ✅ JEDNA inkrementacja
+      user.failedLoginAttempts += 1;
 
-      //CHECK IF SHOULD LOCK
-      if (user.failedLoginAttempts >= 5) {
-        user.lockUntil = new Date(Date.now() + 15 * 60 * 1000);
+      // 🔐 LOCK TYLKO CO 5 PRÓB
+      if (user.failedLoginAttempts % 5 === 0) {
+        const level = Math.floor(user.failedLoginAttempts / 5) - 1;
+        const lockTime = LOGIN_LOCKS[Math.min(level, LOGIN_LOCKS.length - 1)];
+
+        user.lockUntil = new Date(Date.now() + lockTime);
+        user.captchaRequired = true;
       }
 
       await user.save();
-
       return res.status(401).json({ message: "Invalid credentials" });
     }
+
     //SUCCESSFUL LOGIN - RESET SOFT LOCK STATE
     let shouldSave = false;
 
@@ -243,6 +277,10 @@ export const login = async (req, res) => {
 
     if (user.lockUntil) {
       user.lockUntil = null;
+      shouldSave = true;
+    }
+    if (user.captchaRequired) {
+      user.captchaRequired = false;
       shouldSave = true;
     }
 

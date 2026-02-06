@@ -8,7 +8,7 @@ import { redis } from "../lib/redis.js";
  * 3 → 120 min (MAX)
  */
 
-const LOCK_LEVELS = [1, 2, 3, 4]; //LOCK LEVELS IN MUNUTES
+const LOCK_LEVELS = [15, 30, 60, 120]; //LOCK LEVELS IN MUNUTES
 const MAX_LEVEL = LOCK_LEVELS.length - 1;
 
 //KEYS

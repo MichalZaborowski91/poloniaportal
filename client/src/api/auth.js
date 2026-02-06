@@ -8,12 +8,12 @@ export const getMe = async () => {
   return res.json();
 };
 
-export const login = async ({ email, password, rememberMe }) => {
+export const login = async ({ email, password, rememberMe, captchaToken }) => {
   const res = await fetch(`${API_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ email, password, rememberMe }),
+    body: JSON.stringify({ email, password, rememberMe, captchaToken }),
   });
 
   const data = await res.json();

@@ -5,23 +5,23 @@ import { redis } from "../lib/redis.js";
 //IP
 const loginIpBurst = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(10, "1 m"),
+  limiter: Ratelimit.slidingWindow(10, "1 m"), //10
 });
 
 const loginIpLong = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(50, "15 m"),
+  limiter: Ratelimit.slidingWindow(50, "15 m"), //50
 });
 
 //EMAIL
 const loginEmailBurst = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(5, "1 m"),
+  limiter: Ratelimit.slidingWindow(5, "1 m"), //5
 });
 
 const loginEmailLong = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(10, "15 m"),
+  limiter: Ratelimit.slidingWindow(10, "15 m"), //10
 });
 
 //REGISTER LIMITERS

@@ -11,6 +11,7 @@ import Eye from "../../assets/icons/eye.svg?react";
 import EyeOff from "../../assets/icons/eye-off.svg?react";
 import LogIn from "../../assets/icons/log-in.svg?react";
 import { Link } from "react-router-dom";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,6 +23,8 @@ export const Login = () => {
   const [emailTouched, setEmailTouched] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [loginError, setLoginError] = useState(false);
+  const [requireCaptcha, setRequireCaptcha] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const country = useCountry();
   const location = useLocation();
@@ -34,19 +37,39 @@ export const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setError(null);
     setLoginError(false);
     setLoading(true);
 
+    if (requireCaptcha && !captchaToken) {
+      setError("Potwierdź, że nie jesteś botem.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      await login({ email, password, rememberMe });
+      await login({
+        email,
+        password,
+        rememberMe,
+        captchaToken: requireCaptcha ? captchaToken : undefined,
+      });
       await refreshUser();
       navigate(from, { replace: true });
     } catch (error) {
+      if (error?.data?.requireCaptcha) {
+        setRequireCaptcha(true);
+        setCaptchaToken(null);
+        setError("Potwierdź, że nie jesteś botem.");
+        return;
+      }
+      setRequireCaptcha(false);
+      setCaptchaToken(null);
       setLoginError(true);
       if (error.status === 423) {
         setError(
-          "Konto zostało tymczasowo zablokowane. Spróbuj ponownie za 15 minut.",
+          "Konto zostało tymczasowo zablokowane. Spróbuj ponownie później.",
         );
       } else if (error.status === 429) {
         setError(
@@ -131,9 +154,18 @@ export const Login = () => {
                 Zapamiętaj mnie
               </label>
             </div>
+            {requireCaptcha && (
+              <div className={styles.captchaWrapper}>
+                <HCaptcha
+                  sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
+                  onVerify={(token) => setCaptchaToken(token)}
+                  onExpire={() => setCaptchaToken(null)}
+                />
+              </div>
+            )}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (requireCaptcha && !captchaToken)}
               className={styles.login__submitButton}
             >
               <LogIn className={styles.buttonIcon} />

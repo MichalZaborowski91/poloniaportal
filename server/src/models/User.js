@@ -74,6 +74,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    captchaRequired: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
