@@ -222,12 +222,14 @@ export const login = async (req, res) => {
     }
     //SOFT LOCK CHECK
     if (user.lockUntil && user.lockUntil > new Date()) {
+      const remainingMs = user.lockUntil.getTime() - Date.now();
+
       return res.status(423).json({
         message: "Account temporarily locked. Try again later.",
+        lockRemaining: remainingMs,
       });
     }
-    console.log("[LOGIN] captchaRequired:", user.captchaRequired);
-    console.log("[LOGIN] captchaToken:", captchaToken);
+
     if (user.captchaRequired) {
       if (!captchaToken) {
         return res.status(403).json({
@@ -243,7 +245,7 @@ export const login = async (req, res) => {
         });
       }
 
-      // CAPTCHA OK → pozwalamy próbować
+      //CAPTCHA OK => LET TRY
       user.captchaRequired = false;
       await user.save();
     }
@@ -251,10 +253,8 @@ export const login = async (req, res) => {
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
-      // ✅ JEDNA inkrementacja
       user.failedLoginAttempts += 1;
 
-      // 🔐 LOCK TYLKO CO 5 PRÓB
       if (user.failedLoginAttempts % 5 === 0) {
         const level = Math.floor(user.failedLoginAttempts / 5) - 1;
         const lockTime = LOGIN_LOCKS[Math.min(level, LOGIN_LOCKS.length - 1)];

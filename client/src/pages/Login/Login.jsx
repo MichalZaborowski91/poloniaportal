@@ -35,6 +35,24 @@ export const Login = () => {
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  const formatRemainingTime = (ms) => {
+    const totalSeconds = Math.ceil(ms / 1000);
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+      return `${hours} godz ${minutes} min`;
+    }
+
+    if (minutes > 0) {
+      return `${minutes} min ${seconds} s`;
+    }
+
+    return `${seconds} s`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -43,7 +61,7 @@ export const Login = () => {
     setLoading(true);
 
     if (requireCaptcha && !captchaToken) {
-      setError("Potwierdź, że nie jesteś botem.");
+      setError("Wymagana dodatkowa weryfikacja.");
       setLoading(false);
       return;
     }
@@ -61,16 +79,26 @@ export const Login = () => {
       if (error?.data?.requireCaptcha) {
         setRequireCaptcha(true);
         setCaptchaToken(null);
-        setError("Potwierdź, że nie jesteś botem.");
+        setError("Wymagana dodatkowa weryfikacja.");
         return;
       }
       setRequireCaptcha(false);
       setCaptchaToken(null);
       setLoginError(true);
       if (error.status === 423) {
-        setError(
-          "Konto zostało tymczasowo zablokowane. Spróbuj ponownie później.",
-        );
+        const remaining = error?.data?.lockRemaining;
+
+        if (remaining) {
+          setError(
+            `Konto zostało tymczasowo zablokowane. Spróbuj ponownie za ${formatRemainingTime(
+              remaining,
+            )}.`,
+          );
+        } else {
+          setError(
+            "Konto zostało tymczasowo zablokowane. Spróbuj ponownie później.",
+          );
+        }
       } else if (error.status === 429) {
         setError(
           "Zbyt wiele prób logowania. Odczekaj chwilę i spróbuj ponownie.",
@@ -78,8 +106,6 @@ export const Login = () => {
       } else {
         setError("Nieprawidłowy email lub hasło.");
       }
-
-      console.error(error);
     } finally {
       setLoading(false);
     }
