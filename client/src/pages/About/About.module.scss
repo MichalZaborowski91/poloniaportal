@@ -1,0 +1,44 @@
+.aboutLayout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 40px;
+  padding-top: 30px;
+}
+
+.aboutUs {
+  position: sticky;
+  top: 100px;
+}
+
+.aboutContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &__picture {
+    max-width: 400px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+  }
+  &__sections {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding-top: 25px;
+  }
+  &__becomeMember {
+    margin: 0;
+
+    &--loggedIn {
+      margin-top: 0;
+      margin-bottom: 30px;
+    }
+  }
+
+  &__becomeButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+}

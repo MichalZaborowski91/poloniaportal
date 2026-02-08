@@ -11,4 +11,5 @@ export const routes = {
   privacy: () => "/privacy",
   forgotPassword: (c) => `/${c}/forgot-password`,
   resetPassword: (c, token) => `/${c}/reset-password/${token}`,
+  about: (c) => `/${c}/about`,
 };

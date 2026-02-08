@@ -3,6 +3,7 @@
   background-image: url("../../assets/login/map.webp");
   background-repeat: no-repeat;
   background-size: cover;
+  min-height: 100vh;
 
   &__content {
     background: rgba(0, 0, 0, 0.45);
@@ -14,11 +15,11 @@
     justify-content: center;
   }
   &__container {
-    width: 300px;
+    max-width: 350px;
     height: auto;
     border-radius: 4px;
     background-color: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
@@ -56,8 +57,12 @@
     transition: background-color 250ms ease-in-out;
     gap: 10px;
   }
-  &__submitButton:focus,
-  &__submitButton:hover {
+  &__submitButton:disabled {
+    color: #acb2b9;
+    cursor: not-allowed;
+  }
+  &__submitButton:not(:disabled):focus,
+  &__submitButton:not(:disabled):hover {
     background-color: #acb2b9;
   }
 }
@@ -147,10 +152,6 @@
   }
 }
 
-.buttonIcon {
-  color: #1f2937;
-}
-
 .forgotPassword {
   margin: 0;
   text-align: end;
@@ -165,4 +166,21 @@
 .forgotPassword a:focus,
 .forgotPassword a:hover {
   text-decoration: underline;
+}
+
+.captchaWrapper {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.authPage {
+  min-height: 100vh;
+  background: url("/images/login-bg.jpg") center/cover no-repeat;
+}
+
+.authContent {
+  padding-top: 120px;
+  display: flex;
+  justify-content: center;
 }

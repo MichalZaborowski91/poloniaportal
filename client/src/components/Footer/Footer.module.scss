@@ -1,0 +1,93 @@
+.footer {
+  width: 100%;
+  height: 300px;
+  padding: 15px;
+  padding-bottom: 35px;
+
+  &__container {
+    background-color: #222831;
+    box-shadow:
+      inset 0 20px 40px rgba(0, 0, 0, 0.35),
+      inset 0 -20px 40px rgba(0, 0, 0, 0.45),
+      2px 2px 8px rgba(0, 0, 0, 0.8);
+    height: 100%;
+    border-radius: 4px;
+    padding-top: 20px;
+  }
+
+  &__wrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__authButtons {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__currentCountry {
+    color: #f1efef;
+    margin: 0;
+    margin-bottom: 10px;
+    font-weight: 700;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__flag {
+    width: 22px;
+    height: 14px;
+  }
+}
+
+.terms {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 5px;
+  &__box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__box a {
+    text-decoration: none;
+    color: black;
+  }
+}
+
+.terms a {
+  text-decoration: none;
+  color: black;
+}
+
+.terms__box a:not(:last-child)::after {
+  content: "•";
+  margin: 0 8px;
+  color: black;
+}
+
+.heart {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.heart p {
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .terms {
+    flex-direction: column;
+  }
+}

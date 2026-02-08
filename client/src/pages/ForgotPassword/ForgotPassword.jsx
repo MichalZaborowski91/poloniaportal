@@ -23,6 +23,8 @@ export const ForgotPassword = () => {
   const country = useCountry();
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  const canSubmitForgotPassword = emailValid && !loading;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) {
@@ -65,83 +67,91 @@ export const ForgotPassword = () => {
   return (
     <div className={styles.forgotPassword}>
       <div className={styles.forgotPassword__content}>
-        <div className={styles.forgotPassword__container}>
-          {success ? (
-            <div className={styles.success}>
-              <div className={styles.success__head}>
-                <h2 className={styles.success__title}>Link wysłany</h2>
-                <CheckSquare className={styles.success__icon} />
-              </div>
+        <div className={styles.authPage}>
+          <div className={styles.authContent}>
+            <div className={styles.forgotPassword__container}>
+              {success ? (
+                <div className={styles.success}>
+                  <div className={styles.success__head}>
+                    <h2 className={styles.success__title}>Link wysłany</h2>
+                    <CheckSquare className={styles.success__icon} />
+                  </div>
 
-              <p className={styles.success__description} aria-live="polite">
-                Jeśli konto istnieje, wysłaliśmy link do resetu hasła.
-                <br />
-                Sprawdź swoją skrzynkę email.
-              </p>
+                  <p className={styles.success__description} aria-live="polite">
+                    Jeśli konto istnieje, wysłaliśmy link do resetu hasła.
+                    <br />
+                    Sprawdź swoją skrzynkę email.
+                  </p>
 
-              <button
-                className={styles.success__button}
-                disabled={countdown === 0}
-                onClick={() =>
-                  navigate(routes.home(country), { replace: true })
-                }
-              >
-                <CloseIcon />
-                Zamknij {countdown}
-              </button>
-            </div>
-          ) : (
-            <>
-              <h2 className={styles.forgotPassword__title}>
-                Zapomniałeś hasła ?
-              </h2>
-              <p className={styles.forgotPassword__description}>
-                Wpisz poniżej swój adres email, a my wyślemy Ci link
-                umożliwiający zresetowanie hasła.
-              </p>
-              {error && <p className={styles.forgotPassword__error}>{error}</p>}
-              <form onSubmit={handleSubmit}>
-                <div className={styles.inputWrapper}>
-                  <Email className={styles.inputIcon} />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    className={`${styles.register__input} ${
-                      emailError ? styles.inputError : ""
-                    }`}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\s/g, "");
-                      setEmail(value);
-
-                      if (!emailTouched && value.length > 0) {
-                        setEmailTouched(true);
-                      }
-
-                      if (emailError) setEmailError(false);
-                    }}
-                    onBlur={() => {
-                      if (emailTouched && email && !emailValid) {
-                        setEmailError(true);
-                      }
-                    }}
-                    required
-                  />
+                  <button
+                    className={styles.success__button}
+                    disabled={countdown === 0}
+                    onClick={() =>
+                      navigate(routes.home(country), { replace: true })
+                    }
+                  >
+                    <CloseIcon />
+                    Zamknij {countdown}
+                  </button>
                 </div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={styles.forgotPassword__submitButton}
-                >
-                  <Send className={styles.buttonIcon} />
-                  {loading ? "Wysyłanie..." : "Kontynuuj"}
-                </button>
-                <p className={styles.backToLogin}>
-                  <Link to={routes.login(country)}>Powrót do logowania</Link>
-                </p>
-              </form>
-            </>
-          )}
+              ) : (
+                <>
+                  <h2 className={styles.forgotPassword__title}>
+                    Zapomniałeś hasła ?
+                  </h2>
+                  <p className={styles.forgotPassword__description}>
+                    Wpisz poniżej swój adres email, a my wyślemy Ci link
+                    umożliwiający zresetowanie hasła.
+                  </p>
+                  {error && (
+                    <p className={styles.forgotPassword__error}>{error}</p>
+                  )}
+                  <form onSubmit={handleSubmit}>
+                    <div className={styles.inputWrapper}>
+                      <Email className={styles.inputIcon} />
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        className={`${styles.register__input} ${
+                          emailError ? styles.inputError : ""
+                        }`}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\s/g, "");
+                          setEmail(value);
+
+                          if (!emailTouched && value.length > 0) {
+                            setEmailTouched(true);
+                          }
+
+                          if (emailError) setEmailError(false);
+                        }}
+                        onBlur={() => {
+                          if (emailTouched && email && !emailValid) {
+                            setEmailError(true);
+                          }
+                        }}
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={!canSubmitForgotPassword}
+                      className={styles.forgotPassword__submitButton}
+                    >
+                      <Send />
+                      {loading ? "Wysyłanie..." : "Kontynuuj"}
+                    </button>
+                    <p className={styles.backToLogin}>
+                      <Link to={routes.login(country)}>
+                        Powrót do logowania
+                      </Link>
+                    </p>
+                  </form>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

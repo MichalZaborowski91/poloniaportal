@@ -1,0 +1,22 @@
+.service {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+
+  &__title {
+    margin: 0;
+    color: #077ddd;
+  }
+
+  &__link {
+    color: #f1efef;
+    text-decoration: none;
+  }
+
+  &__link:focus,
+  &__link:hover {
+    text-decoration: underline;
+    color: #acb2b9;
+    scale: calc(1.03);
+  }
+}

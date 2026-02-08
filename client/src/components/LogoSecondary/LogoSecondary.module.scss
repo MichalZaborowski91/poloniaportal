@@ -1,0 +1,29 @@
+.logoSecondary {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  text-decoration: none;
+
+  &__logoDescription {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+    text-align: center;
+    margin: 0;
+    margin-bottom: 5px;
+  }
+
+  &__logo {
+    width: 100%;
+    height: auto;
+    cursor: pointer;
+  }
+
+  &__logoIcon {
+    width: 14px;
+    height: auto;
+  }
+}

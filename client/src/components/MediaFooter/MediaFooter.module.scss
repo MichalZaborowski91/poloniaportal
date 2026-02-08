@@ -1,0 +1,42 @@
+.media {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+
+  &__title {
+    margin: 0;
+    color: #077ddd;
+  }
+
+  &__icons {
+    display: flex;
+    gap: 15px;
+  }
+
+  &__link {
+    color: #f1efef;
+    font-size: 28px;
+    transition:
+      color 200ms ease-in-out,
+      transform 200ms ease-in-out;
+    display: inline-flex;
+
+    &:hover {
+      scale: calc(1.15);
+    }
+  }
+  &__link--facebook:focus,
+  &__link--facebook:hover {
+    color: #0866ff;
+  }
+
+  &__link--linkedin:focus,
+  &__link--linkedin:hover {
+    color: #0a66c2;
+  }
+
+  &__link--instagram:focus,
+  &__link--instagram:hover {
+    color: #e1306c;
+  }
+}

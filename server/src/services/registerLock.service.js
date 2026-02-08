@@ -2,13 +2,13 @@ import { redis } from "../lib/redis.js";
 
 /**
  * LOCK PROGRESS
- * 0 → 15 min
+ * 0 → 10 min
  * 1 → 30 min
  * 2 → 60 min
  * 3 → 120 min (MAX)
  */
 
-const LOCK_LEVELS = [15, 30, 60, 120]; //LOCK LEVELS IN MUNUTES
+const LOCK_LEVELS = [10, 30, 60, 120]; //LOCK LEVELS IN MUNUTES
 const MAX_LEVEL = LOCK_LEVELS.length - 1;
 
 //KEYS

@@ -376,11 +376,9 @@ export const verifyEmail = async (req, res) => {
 
     await user.save();
 
-    console.log("EMAIL VERIFIED:", user.email);
-
     //REDIRECT TO FRONTEND ACCORDING TO ROUTING
     const redirectBase = user.verifyOrigin || process.env.FRONTEND_URL;
-    res.redirect(`${redirectBase}/login?verified=true`);
+    res.redirect(`${redirectBase}/?verified=true`);
   } catch (err) {
     console.error(err);
     res.status(500).send("Email verification failed");

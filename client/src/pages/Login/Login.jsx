@@ -35,6 +35,12 @@ export const Login = () => {
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  const canSubmitLogin =
+    emailValid &&
+    password.length > 0 &&
+    !loading &&
+    (!requireCaptcha || !!captchaToken);
+
   const formatRemainingTime = (ms) => {
     const totalSeconds = Math.ceil(ms / 1000);
 
@@ -67,14 +73,18 @@ export const Login = () => {
     }
 
     try {
-      await login({
+      const response = await login({
         email,
         password,
         rememberMe,
         captchaToken: requireCaptcha ? captchaToken : undefined,
       });
       await refreshUser();
-      navigate(from, { replace: true });
+      if (response.needsProfileOnboarding) {
+        navigate(routes.onboarding(country), { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (error) {
       if (error?.data?.requireCaptcha) {
         setRequireCaptcha(true);
@@ -114,95 +124,99 @@ export const Login = () => {
   return (
     <div className={styles.login}>
       <div className={styles.login__content}>
-        <div className={styles.login__container}>
-          <h2 className={styles.login__title}>Login</h2>
-          <form onSubmit={handleSubmit} className={styles.login__form}>
-            {error && <p className={styles.login__error}>{error}</p>}
-            <div className={styles.inputWrapper}>
-              <Email className={styles.inputIcon} />
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                className={`${styles.register__input} ${
-                  emailError || loginError ? styles.inputError : ""
-                }`}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\s/g, "");
-                  setEmail(value);
+        <div className={styles.authPage}>
+          <div className={styles.authContent}>
+            <div className={styles.login__container}>
+              <h2 className={styles.login__title}>Login</h2>
+              <form onSubmit={handleSubmit} className={styles.login__form}>
+                {error && <p className={styles.login__error}>{error}</p>}
+                <div className={styles.inputWrapper}>
+                  <Email className={styles.inputIcon} />
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    className={`${styles.register__input} ${
+                      emailError || loginError ? styles.inputError : ""
+                    }`}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\s/g, "");
+                      setEmail(value);
 
-                  if (!emailTouched && value.length > 0) {
-                    setEmailTouched(true);
-                  }
+                      if (!emailTouched && value.length > 0) {
+                        setEmailTouched(true);
+                      }
 
-                  if (emailError) setEmailError(false);
-                  if (loginError) setLoginError(false);
-                }}
-                onBlur={() => {
-                  if (emailTouched && email && !emailValid) {
-                    setEmailError(true);
-                  }
-                }}
-                required
-              />
+                      if (emailError) setEmailError(false);
+                      if (loginError) setLoginError(false);
+                    }}
+                    onBlur={() => {
+                      if (emailTouched && email && !emailValid) {
+                        setEmailError(true);
+                      }
+                    }}
+                    required
+                  />
+                </div>
+                <div className={styles.inputWrapper}>
+                  <Lock className={styles.inputIcon} />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Hasło"
+                    value={password}
+                    className={`${styles.register__input} ${
+                      loginError ? styles.inputError : ""
+                    }`}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (loginError) setLoginError(false);
+                    }}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className={styles.inputAction}
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
+                  >
+                    {showPassword ? <Eye /> : <EyeOff />}
+                  </button>
+                </div>
+                <div className={styles.rememberMe}>
+                  <label className={styles.rememberMe__label}>
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                    />{" "}
+                    Zapamiętaj mnie
+                  </label>
+                </div>
+                {requireCaptcha && (
+                  <div className={styles.captchaWrapper}>
+                    <HCaptcha
+                      sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
+                      onVerify={(token) => setCaptchaToken(token)}
+                      onExpire={() => setCaptchaToken(null)}
+                    />
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  disabled={!canSubmitLogin}
+                  className={styles.login__submitButton}
+                >
+                  <LogIn />
+                  {loading ? "Loguję..." : "Login"}
+                </button>
+                <p className={styles.forgotPassword}>
+                  <Link to={routes.forgotPassword(country)}>
+                    Nie pamiętasz hasła?
+                  </Link>
+                </p>
+              </form>
             </div>
-            <div className={styles.inputWrapper}>
-              <Lock className={styles.inputIcon} />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Hasło"
-                value={password}
-                className={`${styles.register__input} ${
-                  loginError ? styles.inputError : ""
-                }`}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (loginError) setLoginError(false);
-                }}
-                required
-              />
-              <button
-                type="button"
-                className={styles.inputAction}
-                onClick={() => setShowPassword((prev) => !prev)}
-                aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
-              >
-                {showPassword ? <Eye /> : <EyeOff />}
-              </button>
-            </div>
-            <div className={styles.rememberMe}>
-              <label className={styles.rememberMe__label}>
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />{" "}
-                Zapamiętaj mnie
-              </label>
-            </div>
-            {requireCaptcha && (
-              <div className={styles.captchaWrapper}>
-                <HCaptcha
-                  sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
-                  onVerify={(token) => setCaptchaToken(token)}
-                  onExpire={() => setCaptchaToken(null)}
-                />
-              </div>
-            )}
-            <button
-              type="submit"
-              disabled={loading || (requireCaptcha && !captchaToken)}
-              className={styles.login__submitButton}
-            >
-              <LogIn className={styles.buttonIcon} />
-              {loading ? "Loguję..." : "Login"}
-            </button>
-            <p className={styles.forgotPassword}>
-              <Link to={routes.forgotPassword(country)}>
-                Nie pamiętasz hasła?
-              </Link>
-            </p>
-          </form>
+          </div>
         </div>
       </div>
     </div>

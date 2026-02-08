@@ -16,3 +16,15 @@
 .registerButton:hover {
   background-color: #acb2b9;
 }
+
+.registerInFooter {
+  background-color: #acb2b9;
+  border: none;
+  box-shadow: none;
+  transition: transform 200ms ease-in-out;
+}
+
+.registerButton.registerInFooter:hover,
+.registerButton.registerInFooter:focus {
+  transform: scale(1.1);
+}

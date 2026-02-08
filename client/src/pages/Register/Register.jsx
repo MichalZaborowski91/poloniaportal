@@ -50,7 +50,7 @@ export const Register = () => {
   const passwordValid = Object.values(passwordChecks).every(Boolean);
   const passwordsMatch = password === confirmPassword;
 
-  const canSubmit =
+  const canSubmitRegister =
     emailValid &&
     passwordValid &&
     passwordsMatch &&
@@ -155,256 +155,268 @@ export const Register = () => {
   return (
     <div className={styles.register}>
       <div className={styles.register__content}>
-        <div className={styles.register__container}>
-          <h2 className={styles.register__title}>
-            {successRegister ? "Sukces" : "Rejestracja"}
-          </h2>
-          {successRegister ? (
-            <div className={styles.successBox}>
-              <p className={styles.successText}>
-                Gratulacje! Rejestracja powiodła się.
-                <br />
-                Sprawdź email w celu weryfikacji konta.
-              </p>
+        <div className={styles.authPage}>
+          <div className={styles.authContent}>
+            <div className={styles.register__container}>
+              <h2 className={styles.register__title}>
+                {successRegister ? "Sukces" : "Rejestracja"}
+              </h2>
+              {successRegister ? (
+                <div className={styles.successBox}>
+                  <p className={styles.successText}>
+                    Gratulacje! Rejestracja powiodła się.
+                    <br />
+                    Sprawdź email w celu weryfikacji konta.
+                  </p>
 
-              <button
-                className={styles.register__submitButton}
-                onClick={() => navigate(routes.login(country))}
-              >
-                <LogIn className={styles.buttonIcon} />
-                Przejdź do logowania
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className={styles.register__form}>
-              {error && <p className={styles.register__error}>{error}</p>}
-              <div className={styles.fieldCompany}>
-                <label htmlFor="company">Company</label>
-                <input
-                  type="text"
-                  name="company"
-                  id="company"
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                  autoComplete="off"
-                  tabIndex="-1"
-                />
-              </div>
-              <div className={styles.inputWrapper}>
-                <Email
-                  className={`${styles.inputIcon} ${
-                    emailValidOk ? styles.iconSuccess : ""
-                  }`}
-                />
-                <input
-                  className={`${styles.register__input} ${
-                    emailError ? styles.inputError : ""
-                  }`}
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\s/g, "");
-                    setEmail(value);
-
-                    if (!emailTouched && value.length > 0) {
-                      setEmailTouched(true);
-                    }
-
-                    if (emailError) {
-                      setEmailError(false);
-                    }
-                  }}
-                  onBlur={() => {
-                    if (emailTouched && email && !emailValid) {
-                      setEmailError(true);
-                    }
-                  }}
-                  required
-                />
-              </div>
-              <div className={styles.inputWrapper}>
-                <Lock
-                  className={`${styles.inputIcon} ${
-                    passwordMismatch
-                      ? ""
-                      : passwordMatchOk
-                        ? styles.iconSuccess
-                        : ""
-                  }`}
-                />
-
-                <input
-                  className={`${styles.register__input} ${
-                    passwordMismatch ? styles.inputError : ""
-                  }`}
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Hasło"
-                  value={password}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\s/g, ""); //SPACE DELETE !
-                    setPassword(value);
-
-                    if (!passwordTouched && value.length > 0) {
-                      setPasswordTouched(true);
-                    }
-                  }}
-                  required
-                />
-                <button
-                  type="button"
-                  className={styles.inputAction}
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
-                >
-                  {showPassword ? <Eye /> : <EyeOff />}
-                </button>
-              </div>
-
-              <div className={styles.inputWrapper}>
-                <Lock
-                  className={`${styles.inputIcon} ${
-                    passwordMismatch
-                      ? ""
-                      : passwordMatchOk
-                        ? styles.iconSuccess
-                        : ""
-                  }`}
-                />
-                <input
-                  className={`${styles.register__input} ${
-                    passwordMismatch ? styles.inputError : ""
-                  }`}
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Potwierdź hasło"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\s/g, "");
-                    setConfirmPassword(value);
-                  }}
-                  required
-                />
-
-                <button
-                  type="button"
-                  className={styles.inputAction}
-                  onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  aria-label={
-                    showConfirmPassword ? "Ukryj hasło" : "Pokaż hasło"
-                  }
-                >
-                  {showConfirmPassword ? <Eye /> : <EyeOff />}
-                </button>
-              </div>
-
-              {passwordTouched && (
-                <div>
-                  <div className={styles.strengthWrapper}>
-                    <div
-                      className={`${styles.strengthBar} ${
-                        passwordStrength <= 2
-                          ? styles.strengthWeak
-                          : passwordStrength <= 4
-                            ? styles.strengthMedium
-                            : styles.strengthStrong
-                      }`}
-                      style={{ width: `${(passwordStrength / 5) * 100}%` }}
+                  <button
+                    className={styles.register__submitButton}
+                    onClick={() => navigate(routes.login(country))}
+                  >
+                    <LogIn className={styles.buttonIcon} />
+                    Przejdź do logowania
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className={styles.register__form}>
+                  {error && <p className={styles.register__error}>{error}</p>}
+                  <div className={styles.fieldCompany}>
+                    <label htmlFor="company">Company</label>
+                    <input
+                      type="text"
+                      name="company"
+                      id="company"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                      autoComplete="off"
+                      tabIndex="-1"
                     />
                   </div>
-                  {passwordTouched && (
-                    <p
-                      className={
+                  <div className={styles.inputWrapper}>
+                    <Email
+                      className={`${styles.inputIcon} ${
+                        emailValidOk ? styles.iconSuccess : ""
+                      }`}
+                    />
+                    <input
+                      className={`${styles.register__input} ${
+                        emailError ? styles.inputError : ""
+                      }`}
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\s/g, "");
+                        setEmail(value);
+
+                        if (!emailTouched && value.length > 0) {
+                          setEmailTouched(true);
+                        }
+
+                        if (emailError) {
+                          setEmailError(false);
+                        }
+                      }}
+                      onBlur={() => {
+                        if (emailTouched && email && !emailValid) {
+                          setEmailError(true);
+                        }
+                      }}
+                      required
+                    />
+                  </div>
+                  <div className={styles.inputWrapper}>
+                    <Lock
+                      className={`${styles.inputIcon} ${
                         passwordMismatch
-                          ? styles.errorText
-                          : styles.passwordRulesHead
+                          ? ""
+                          : passwordMatchOk
+                            ? styles.iconSuccess
+                            : ""
+                      }`}
+                    />
+
+                    <input
+                      className={`${styles.register__input} ${
+                        passwordMismatch ? styles.inputError : ""
+                      }`}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Hasło"
+                      value={password}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\s/g, ""); //SPACE DELETE !
+                        setPassword(value);
+
+                        if (!passwordTouched && value.length > 0) {
+                          setPasswordTouched(true);
+                        }
+                      }}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className={styles.inputAction}
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
+                    >
+                      {showPassword ? <Eye /> : <EyeOff />}
+                    </button>
+                  </div>
+
+                  <div className={styles.inputWrapper}>
+                    <Lock
+                      className={`${styles.inputIcon} ${
+                        passwordMismatch
+                          ? ""
+                          : passwordMatchOk
+                            ? styles.iconSuccess
+                            : ""
+                      }`}
+                    />
+                    <input
+                      className={`${styles.register__input} ${
+                        passwordMismatch ? styles.inputError : ""
+                      }`}
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Potwierdź hasło"
+                      value={confirmPassword}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\s/g, "");
+                        setConfirmPassword(value);
+                      }}
+                      required
+                    />
+
+                    <button
+                      type="button"
+                      className={styles.inputAction}
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      aria-label={
+                        showConfirmPassword ? "Ukryj hasło" : "Pokaż hasło"
                       }
                     >
-                      {passwordMismatch
-                        ? "Hasła muszą być takie same."
-                        : "Hasło musi zawierać przynajmniej:"}
-                    </p>
+                      {showConfirmPassword ? <Eye /> : <EyeOff />}
+                    </button>
+                  </div>
+
+                  {passwordTouched && (
+                    <div>
+                      <div className={styles.strengthWrapper}>
+                        <div
+                          className={`${styles.strengthBar} ${
+                            passwordStrength <= 2
+                              ? styles.strengthWeak
+                              : passwordStrength <= 4
+                                ? styles.strengthMedium
+                                : styles.strengthStrong
+                          }`}
+                          style={{ width: `${(passwordStrength / 5) * 100}%` }}
+                        />
+                      </div>
+                      {passwordTouched && (
+                        <p
+                          className={
+                            passwordMismatch
+                              ? styles.errorText
+                              : styles.passwordRulesHead
+                          }
+                        >
+                          {passwordMismatch
+                            ? "Hasła muszą być takie same."
+                            : "Hasło musi zawierać przynajmniej:"}
+                        </p>
+                      )}
+
+                      <ul className={styles.passwordRules}>
+                        <li
+                          className={
+                            passwordChecks.length
+                              ? styles.ruleOk
+                              : styles.ruleBad
+                          }
+                        >
+                          8 znaków
+                        </li>
+                        <li
+                          className={
+                            passwordChecks.uppercase
+                              ? styles.ruleOk
+                              : styles.ruleBad
+                          }
+                        >
+                          Jedną dużą literę
+                        </li>
+                        <li
+                          className={
+                            passwordChecks.lowercase
+                              ? styles.ruleOk
+                              : styles.ruleBad
+                          }
+                        >
+                          Jedną małą literę
+                        </li>
+                        <li
+                          className={
+                            passwordChecks.number
+                              ? styles.ruleOk
+                              : styles.ruleBad
+                          }
+                        >
+                          Jedną cyfrę
+                        </li>
+                      </ul>
+                    </div>
                   )}
 
-                  <ul className={styles.passwordRules}>
-                    <li
-                      className={
-                        passwordChecks.length ? styles.ruleOk : styles.ruleBad
-                      }
-                    >
-                      8 znaków
-                    </li>
-                    <li
-                      className={
-                        passwordChecks.uppercase
-                          ? styles.ruleOk
-                          : styles.ruleBad
-                      }
-                    >
-                      Jedną dużą literę
-                    </li>
-                    <li
-                      className={
-                        passwordChecks.lowercase
-                          ? styles.ruleOk
-                          : styles.ruleBad
-                      }
-                    >
-                      Jedną małą literę
-                    </li>
-                    <li
-                      className={
-                        passwordChecks.number ? styles.ruleOk : styles.ruleBad
-                      }
-                    >
-                      Jedną cyfrę
-                    </li>
-                  </ul>
-                </div>
+                  <div className={styles.termsWrapper}>
+                    <label className={styles.termsLabel}>
+                      <input
+                        type="checkbox"
+                        checked={termsAccepted}
+                        onChange={(e) => setTermsAccepted(e.target.checked)}
+                        required
+                      />
+                      <span>
+                        Klikając „Rejestruj”, akceptuję{" "}
+                        <a
+                          href="/terms"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Regulamin Polonia Portal
+                        </a>{" "}
+                        i{" "}
+                        <a
+                          href="/privacy"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Politykę Prywatności
+                        </a>
+                      </span>
+                    </label>
+                  </div>
+                  {requireCaptcha && (
+                    <div className={styles.captchaWrapper}>
+                      <HCaptcha
+                        sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
+                        onVerify={(token) => setCaptchaToken(token)}
+                        onExpire={() => setCaptchaToken(null)}
+                      />
+                    </div>
+                  )}
+                  <button
+                    type="submit"
+                    className={styles.register__submitButton}
+                    disabled={!canSubmitRegister}
+                  >
+                    <UserPlus />
+                    {loading ? "Tworzenie konta..." : "Rejestruj"}
+                  </button>
+                </form>
               )}
-
-              <div className={styles.termsWrapper}>
-                <label className={styles.termsLabel}>
-                  <input
-                    type="checkbox"
-                    checked={termsAccepted}
-                    onChange={(e) => setTermsAccepted(e.target.checked)}
-                    required
-                  />
-                  <span>
-                    Klikając „Rejestruj”, akceptuję{" "}
-                    <a href="/terms" target="_blank" rel="noopener noreferrer">
-                      Regulamin Polonia Portal
-                    </a>{" "}
-                    i{" "}
-                    <a
-                      href="/privacy"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Politykę Prywatności
-                    </a>
-                  </span>
-                </label>
-              </div>
-              {requireCaptcha && (
-                <div className={styles.captchaWrapper}>
-                  <HCaptcha
-                    sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
-                    onVerify={(token) => setCaptchaToken(token)}
-                    onExpire={() => setCaptchaToken(null)}
-                  />
-                </div>
-              )}
-              <button
-                type="submit"
-                className={styles.register__submitButton}
-                disabled={!canSubmit}
-              >
-                <UserPlus />
-                {loading ? "Tworzenie konta..." : "Rejestruj"}
-              </button>
-            </form>
-          )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
