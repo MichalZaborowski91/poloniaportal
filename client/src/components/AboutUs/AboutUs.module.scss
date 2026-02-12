@@ -8,15 +8,24 @@
     color: #077ddd;
   }
 
-  &__link {
-    color: #f1efef;
-    text-decoration: none;
+  &__list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
   }
 
-  &__link:focus,
-  &__link:hover {
-    text-decoration: underline;
-    color: #acb2b9;
-    scale: calc(1.03);
+  &__link {
+    display: inline-block;
+    color: #f1efef;
+    text-decoration: none;
+    margin-left: 10px;
+    transition: transform 100ms ease-in-out;
+
+    &:focus,
+    &:hover {
+      text-decoration: underline;
+      color: #acb2b9;
+      transform: scale(1.03);
+    }
   }
 }

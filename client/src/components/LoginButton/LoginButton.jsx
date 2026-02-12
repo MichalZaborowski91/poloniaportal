@@ -9,7 +9,7 @@ export const LoginButton = ({ variant }) => {
     <Link
       to={routes.login(country)}
       className={`${styles.loginButton} ${
-        variant === "footer" ? styles.loginInFooter : ""
+        variant === "footer" ? styles["loginButton--footer"] : ""
       }`}
     >
       Zaloguj

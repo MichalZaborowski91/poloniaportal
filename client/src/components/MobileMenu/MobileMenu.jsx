@@ -18,16 +18,26 @@ export const MobileMenu = ({ isOpen, onClose, user }) => {
       className={`${styles.mobileMenu} ${isOpen ? styles["mobileMenu--open"] : ""}`}
     >
       <nav className={styles.mobileMenu__navigation} onClick={handleNavClick}>
-        <div className={styles.mobileMenu__naviBox}>
-          <button type="button">Start</button>
-          <button type="button">Placówki Dyplomatyczne</button>
-          <button type="button">Gazeta</button>
-          <button type="button">Katalog Polskich Firm</button>
-          <button type="button">Kalendarz Wydarzeń</button>
-        </div>
+        <ul className={styles.mobileMenu__list}>
+          <li className={styles.mobileMenu__item}>
+            <button type="button">Start</button>
+          </li>
+          <li className={styles.mobileMenu__item}>
+            <button type="button">Placówki Dyplomatyczne</button>
+          </li>
+          <li className={styles.mobileMenu__item}>
+            <button type="button">Gazeta</button>
+          </li>
+          <li className={styles.mobileMenu__item}>
+            <button type="button">Katalog Polskich Firm</button>
+          </li>
+          <li className={styles.mobileMenu__item}>
+            <button type="button">Kalendarz Wydarzeń</button>
+          </li>
+        </ul>
 
         {!user && (
-          <div className={styles.mobileMenu__wrapper}>
+          <div className={styles.mobileMenu__authButtons}>
             <LoginButton />
             <RegisterButton />
           </div>

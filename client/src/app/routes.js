@@ -9,6 +9,7 @@ export const routes = {
   addOffer: (c) => `/${c}/add-offer`,
   terms: () => "/terms",
   privacy: () => "/privacy",
+  copyrights: () => "/copyrights",
   forgotPassword: (c) => `/${c}/forgot-password`,
   resetPassword: (c, token) => `/${c}/reset-password/${token}`,
   about: (c) => `/${c}/about`,

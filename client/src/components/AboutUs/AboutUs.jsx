@@ -28,50 +28,66 @@ export const AboutUs = () => {
   }, [location]);
 
   return (
-    <div className={styles.aboutUs}>
+    <nav className={styles.aboutUs}>
       <h3 className={styles.aboutUs__title}>O nas:</h3>
-      <Link
-        to={`${routes.about(country)}#whoAreWe`}
-        className={styles.aboutUs__link}
-      >
-        Kim jesteśmy
-      </Link>
-      <Link
-        to={`${routes.about(country)}#ourMission`}
-        className={styles.aboutUs__link}
-      >
-        Nasza misja
-      </Link>
-      <Link
-        to={`${routes.about(country)}#whatWeOffer`}
-        className={styles.aboutUs__link}
-      >
-        Co oferujemy
-      </Link>
-      <Link
-        to={`${routes.about(country)}#forWhoItIs`}
-        className={styles.aboutUs__link}
-      >
-        Dla kogo jest portal
-      </Link>
-      <Link
-        to={`${routes.about(country)}#whyCreated`}
-        className={styles.aboutUs__link}
-      >
-        Dlaczego powstał portal
-      </Link>
-      <Link
-        to={`${routes.about(country)}#ourValues`}
-        className={styles.aboutUs__link}
-      >
-        Nasze wartości
-      </Link>
-      <Link
-        to={`${routes.about(country)}#vision`}
-        className={styles.aboutUs__link}
-      >
-        Wizja
-      </Link>
-    </div>
+      <ul className={styles.aboutUs__list}>
+        <li className={styles.aboutUs__item}>
+          <Link
+            to={`${routes.about(country)}#whoAreWe`}
+            className={styles.aboutUs__link}
+          >
+            Kim jesteśmy
+          </Link>
+        </li>
+        <li className={styles.aboutUs__item}>
+          <Link
+            to={`${routes.about(country)}#ourMission`}
+            className={styles.aboutUs__link}
+          >
+            Nasza misja
+          </Link>
+        </li>
+        <li className={styles.aboutUs__item}>
+          <Link
+            to={`${routes.about(country)}#whatWeOffer`}
+            className={styles.aboutUs__link}
+          >
+            Co oferujemy
+          </Link>
+        </li>
+        <li className={styles.aboutUs__item}>
+          <Link
+            to={`${routes.about(country)}#forWhoItIs`}
+            className={styles.aboutUs__link}
+          >
+            Dla kogo jest portal
+          </Link>
+        </li>
+        <li className={styles.aboutUs__item}>
+          <Link
+            to={`${routes.about(country)}#whyCreated`}
+            className={styles.aboutUs__link}
+          >
+            Dlaczego powstał portal
+          </Link>
+        </li>
+        <li className={styles.aboutUs__item}>
+          <Link
+            to={`${routes.about(country)}#ourValues`}
+            className={styles.aboutUs__link}
+          >
+            Nasze wartości
+          </Link>
+        </li>
+        <li className={styles.aboutUs__item}>
+          <Link
+            to={`${routes.about(country)}#vision`}
+            className={styles.aboutUs__link}
+          >
+            Wizja
+          </Link>
+        </li>
+      </ul>
+    </nav>
   );
 };

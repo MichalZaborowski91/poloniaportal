@@ -13,9 +13,9 @@
   box-sizing: border-box;
   display: flex;
   width: 100%;
-}
 
-.addOfferButton:focus,
-.addOfferButton:hover {
-  background-color: #f1efef;
+  &:focus,
+  &:hover {
+    background-color: #f1efef;
+  }
 }

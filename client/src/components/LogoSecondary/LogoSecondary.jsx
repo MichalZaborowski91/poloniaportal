@@ -8,16 +8,18 @@ import { routes } from "../../app/routes";
 export const LogoSecondary = () => {
   const country = useCountry();
   return (
-    <Link to={routes.home(country)} className={styles.logoSecondary}>
-      <img
-        src={logoPoloniaPortal}
-        alt="Polonia Portal Logo"
-        className={styles.logoSecondary__logo}
-      />
-      <p className={styles.logoSecondary__logoDescription}>
-        Łączymy Polaków na całym świecie{" "}
-        <Smile className={styles.logoSecondary__logoIcon} />
-      </p>
-    </Link>
+    <div className={styles.logoSecondary}>
+      <Link to={routes.home(country)} className={styles.logoSecondary__link}>
+        <img
+          src={logoPoloniaPortal}
+          alt="Polonia Portal Logo"
+          className={styles.logoSecondary__logo}
+        />
+        <p className={styles.logoSecondary__description}>
+          Łączymy Polaków na całym świecie{" "}
+          <Smile className={styles.logoSecondary__icon} />
+        </p>
+      </Link>
+    </div>
   );
 };

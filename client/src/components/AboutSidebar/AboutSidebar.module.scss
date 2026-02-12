@@ -1,16 +1,25 @@
 .aboutSidebar {
   display: flex;
   flex-direction: column;
+  background-color: #f1efef;
+  align-items: center;
+  border-radius: 4px;
+
+  &__list {
+    margin: 0;
+    list-style: none;
+    padding-left: 0;
+  }
 
   &__link {
     color: black;
     text-decoration: none;
-  }
 
-  &__link:focus,
-  &__link:hover {
-    color: #acb2b9;
-    text-decoration: underline;
-    scale: calc(1.03);
+    &:focus,
+    &:hover {
+      color: #acb2b9;
+      text-decoration: underline;
+      scale: calc(1.03);
+    }
   }
 }

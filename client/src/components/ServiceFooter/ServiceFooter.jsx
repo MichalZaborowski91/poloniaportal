@@ -7,26 +7,40 @@ export const ServiceFooter = () => {
   const country = useCountry();
 
   return (
-    <div className={styles.service}>
+    <nav className={styles.service}>
       <h3 className={styles.service__title}>Serwis:</h3>
-      <Link to={routes.about(country)} className={styles.service__link}>
-        Ogłoszenia
-      </Link>
-      <Link to={routes.about(country)} className={styles.service__link}>
-        Praca
-      </Link>
-      <Link to={routes.about(country)} className={styles.service__link}>
-        Mieszkanie
-      </Link>
-      <Link to={routes.about(country)} className={styles.service__link}>
-        Wydarzenia
-      </Link>
-      <Link to={routes.about(country)} className={styles.service__link}>
-        Firmy polonijne
-      </Link>
-      <Link to={routes.about(country)} className={styles.service__link}>
-        Forum
-      </Link>
-    </div>
+      <ul className={styles.service__list}>
+        <li className={styles.service__item}>
+          <Link to={routes.about(country)} className={styles.service__link}>
+            Ogłoszenia
+          </Link>
+        </li>
+        <li className={styles.service__item}>
+          <Link to={routes.about(country)} className={styles.service__link}>
+            Praca
+          </Link>
+        </li>
+        <li className={styles.service__item}>
+          <Link to={routes.about(country)} className={styles.service__link}>
+            Mieszkanie
+          </Link>
+        </li>
+        <li className={styles.service__item}>
+          <Link to={routes.about(country)} className={styles.service__link}>
+            Wydarzenia
+          </Link>
+        </li>
+        <li className={styles.service__item}>
+          <Link to={routes.about(country)} className={styles.service__link}>
+            Firmy polonijne
+          </Link>
+        </li>
+        <li className={styles.service__item}>
+          <Link to={routes.about(country)} className={styles.service__link}>
+            Forum
+          </Link>
+        </li>
+      </ul>
+    </nav>
   );
 };

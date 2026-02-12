@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+//VERIFY EMAIL
 export const sendVerifyEmail = async ({ to, verifyLink }) => {
   console.log("SEND VERIFY EMAIL CALLED");
   console.log("TO:", to);
@@ -20,6 +21,21 @@ export const sendVerifyEmail = async ({ to, verifyLink }) => {
         </a>
       </p>
       <p>Link jest ważny 24 godziny.</p>
+    `,
+  });
+};
+
+//FORGOT PASSWORD
+export const sendResetEmail = async ({ to, resetLink }) => {
+  return resend.emails.send({
+    from: process.env.EMAIL_FROM,
+    to,
+    subject: "Reset hasła",
+    html: `
+      <h2>Reset hasła</h2>
+      <p>Kliknij poniżej:</p>
+      <a href="${resetLink}">Resetuj hasło</a>
+      <p>Link jest ważny 1 godzinę</p>
     `,
   });
 };

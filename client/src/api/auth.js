@@ -82,18 +82,17 @@ export const deleteAccount = async () => {
   return res.json();
 };
 
-export const requestPasswordReset = async ({ email }) => {
+export const requestPasswordReset = async ({
+  email,
+  captchaToken,
+  country,
+}) => {
   const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, captchaToken, country }),
   });
-
-  //ALWAYS 200 OK FROM BACKEND (SECURITY)
-  if (!res.ok) {
-    throw new Error("Password reset request failed");
-  }
 
   return res.json();
 };
@@ -112,4 +111,15 @@ export const resetPassword = async ({ token, password }) => {
   }
 
   return res.json();
+};
+
+export const validateResetToken = async (token) => {
+  const res = await fetch(`${API_URL}/api/auth/reset-password/${token}`);
+
+  if (!res.ok) {
+    return false;
+  }
+
+  const data = await res.json();
+  return data.valid === true;
 };

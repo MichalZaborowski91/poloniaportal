@@ -7,6 +7,9 @@ import {
   verifyEmail,
   resendVerifyEmail,
   deleteAccount,
+  forgotPassword,
+  resetPassword,
+  validateResetToken,
 } from "../controllers/auth.controller.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
 import { loginLimiter } from "../middleware/rateLimit.js";
@@ -20,5 +23,8 @@ router.get("/me", requireAuth, me);
 router.post("/logout", logout);
 router.get("/verify-email/:token", verifyEmail);
 router.post("/resend-verify", requireAuth, resendVerifyEmail);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
+router.get("/reset-password/:token", validateResetToken);
 
 export default router;

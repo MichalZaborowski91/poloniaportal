@@ -52,7 +52,7 @@ export const SearchBar = () => {
         />
 
         <button className={styles.searchForm__submitButton} type="submit">
-          <SearchIcon className={styles.searchForm__icon} />
+          <SearchIcon className={styles.searchForm__buttonIcon} />
           Szukaj
         </button>
       </form>

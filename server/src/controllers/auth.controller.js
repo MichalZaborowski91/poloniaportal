@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { User } from "../models/User.js";
 import crypto from "crypto";
-import { sendVerifyEmail } from "../services/email.service.js";
+import { sendVerifyEmail, sendResetEmail } from "../services/email.service.js";
 import {
   getRegisterLock,
   incrementRegisterAttempts,
@@ -25,6 +25,13 @@ import {
 } from "../services/registerLock.service.js";
 import { verifyCaptcha } from "../services/captcha.service.js";
 import { getClientIp } from "../../utils/getClientIp.js";
+import {
+  getForgotLock,
+  incrementForgotAttempts,
+  applyForgotLock,
+  isEmailCooldownActive,
+  setEmailCooldown,
+} from "../services/forgotPasswordLock.service.js";
 
 const VERIFY_TOKEN_TTL = 24 * 60 * 60 * 1000;
 const RESEND_COOLDOWN = 15 * 60 * 1000;
@@ -482,5 +489,178 @@ export const deleteAccount = async (req, res) => {
   } catch (error) {
     console.error("DELETE ACCOUNT ERROR", error);
     res.status(500).json({ message: "Failed to delete account" });
+  }
+};
+
+//FORGOT PASSWORD FLOW
+export const forgotPassword = async (req, res) => {
+  try {
+    const ip = getClientIp(req);
+    const { email, captchaToken, country } = req.body;
+
+    //ALWAYS SUCCESS !
+    const successResponse = () => res.json({ success: true });
+
+    if (!email) {
+      return successResponse();
+    }
+
+    const key = `${ip}:${email.toLowerCase()}`;
+
+    //CAPTCHA ALWAYS REQUIRED
+    const captchaOk = await verifyCaptcha(captchaToken);
+    if (!captchaOk) {
+      return successResponse();
+    }
+
+    //ACTIVE LOCK
+    const locked = await getForgotLock(key);
+    if (locked) {
+      return successResponse();
+    }
+
+    //COUNT ATTEMPTS
+    const attempts = await incrementForgotAttempts(key);
+
+    if (attempts % 5 === 0) {
+      await applyForgotLock(key);
+    }
+
+    //FIND USER (NO INFO LEAK)
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+      isDeleted: false,
+    });
+
+    if (!user) {
+      return successResponse();
+    }
+
+    //EMAIL COOLDOWN CHECK (ANTI MAIL FLOOD)
+    const cooldownActive = await isEmailCooldownActive(user.email);
+    if (cooldownActive) {
+      return successResponse();
+    }
+
+    //GENERATE TOKEN
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(rawToken)
+      .digest("hex");
+
+    user.passwordResetToken = hashedToken;
+    user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000);
+
+    const baseOrigin = req.headers.origin || process.env.FRONTEND_URL;
+
+    await user.save();
+
+    const resetLink = country
+      ? `${baseOrigin}/${country}/reset-password/${rawToken}`
+      : `${baseOrigin}/reset-password/${rawToken}`;
+
+    await sendResetEmail({
+      to: user.email,
+      resetLink,
+    });
+
+    //SET EMAIL COOLDOWN (10 min)
+    await setEmailCooldown(user.email);
+
+    return successResponse();
+  } catch (err) {
+    console.error("FORGOT PASSWORD ERROR:", err);
+    return res.json({ success: true });
+  }
+};
+
+//RESET PASSWORD
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({
+        message: "Invalid request",
+      });
+    }
+
+    //HASH TOKEN
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    //FIND USER WITH VALID TOKEN
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: new Date() },
+      isDeleted: false,
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Link jest nieprawidłowy lub wygasł.",
+      });
+    }
+
+    //PASSWORD REUSE PROTECTION
+    const isSamePassword = await user.comparePassword(password);
+    if (isSamePassword) {
+      return res.status(400).json({
+        message: "Nowe hasło musi być inne niż poprzednie.",
+      });
+    }
+
+    //SET NEW PASSWORD
+    user.password = password;
+
+    user.passwordChangedAt = new Date();
+    //INVALIDATE TOKEN (ONE-TIME USE)
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    //OPTIONAL: RESET LOGIN PROTECTION
+    user.failedLoginAttempts = 0;
+    user.lockUntil = null;
+    user.captchaRequired = false;
+
+    await user.save();
+
+    return res.json({
+      success: true,
+    });
+  } catch (err) {
+    console.error("RESET PASSWORD ERROR:", err);
+    return res.status(500).json({
+      message: "Reset failed",
+    });
+  }
+};
+
+//CHECK IF RESET LINK EXPIRES
+export const validateResetToken = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: new Date() },
+      isDeleted: false,
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        valid: false,
+      });
+    }
+
+    return res.json({
+      valid: true,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      valid: false,
+    });
   }
 };

@@ -1,0 +1,96 @@
+.switcher {
+  &__title {
+    margin: 0;
+    color: #077ddd;
+    margin-bottom: 5px;
+  }
+
+  &__globeIcon {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    color: #fff;
+    transition:
+      color 200ms ease-in-out,
+      scale 200ms ease-in-out;
+    margin-left: 10px;
+
+    &:focus,
+    &:hover {
+      color: #acb2b9;
+      scale: calc(1.15);
+    }
+  }
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  &__modal {
+    background: #222831;
+    padding: 20px;
+    border-radius: 8px;
+    width: 280px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  &__closeContainer {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  &__closeIcon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: 200ms ease;
+    color: #fff;
+
+    &:focus,
+    &:hover {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+  }
+
+  &__mapContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+
+  &__list {
+    margin: 0;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #fff;
+    padding: 6px;
+    border-radius: 4px;
+    transition: 200ms ease;
+
+    &:focus,
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  &__flag {
+    width: 22px;
+    height: 14px;
+    border-radius: 1.5px;
+  }
+}

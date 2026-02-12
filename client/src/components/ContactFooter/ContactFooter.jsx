@@ -7,24 +7,39 @@ export const ContactFooter = () => {
   const country = useCountry();
 
   return (
-    <div className={styles.contact}>
+    <nav className={styles.contact}>
       <h3 className={styles.contact__title}>Kontakt:</h3>
-      <Link to={routes.about(country)} className={styles.contact__link}>
-        Kontakt
-      </Link>
-      <Link to={routes.about(country)} className={styles.contact__link}>
-        Zgłoś problem
-      </Link>
+      <ul className={styles.contact__list}>
+        <li className={styles.contact__item}>
+          <Link to={routes.about(country)} className={styles.contact__link}>
+            Kontakt
+          </Link>
+        </li>
+        <li className={styles.contact__item}>
+          <Link to={routes.about(country)} className={styles.contact__link}>
+            Zgłoś problem
+          </Link>
+        </li>
+      </ul>
+
       <h3 className={styles.contact__title}>Dla firm:</h3>
-      <Link to={routes.about(country)} className={styles.contact__link}>
-        Reklama w serwisie
-      </Link>
-      <Link to={routes.about(country)} className={styles.contact__link}>
-        Dodaj swoją firmę
-      </Link>
-      <Link to={routes.about(country)} className={styles.contact__link}>
-        Współpraca partnerska
-      </Link>
-    </div>
+      <ul className={styles.contact__list}>
+        <li className={styles.contact__item}>
+          <Link to={routes.about(country)} className={styles.contact__link}>
+            Reklama w serwisie
+          </Link>
+        </li>
+        <li className={styles.contact__item}>
+          <Link to={routes.about(country)} className={styles.contact__link}>
+            Dodaj swoją firmę
+          </Link>
+        </li>
+        <li className={styles.contact__item}>
+          <Link to={routes.about(country)} className={styles.contact__link}>
+            Współpraca partnerska
+          </Link>
+        </li>
+      </ul>
+    </nav>
   );
 };

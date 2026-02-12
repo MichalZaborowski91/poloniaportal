@@ -15,6 +15,7 @@ import { AccountSecurity } from "./pages/Account/AccountSecurity/AccountSecurity
 import { ListingsPage } from "./pages/Listings/Listings";
 import { Terms } from "./pages/Terms/Terms";
 import { Privacy } from "./pages/Privacy/Privacy";
+import { Copyrights } from "./pages/Copyrights/Copyrights";
 import { PublicOnlyRoute } from "./routes/PublicOnlyRoutes";
 import { ForgotPassword } from "./pages/ForgotPassword/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword/ResetPassword";
@@ -83,6 +84,7 @@ export const App = () => {
       </Route>
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/copyrights" element={<Copyrights />} />
     </Routes>
   );
 };

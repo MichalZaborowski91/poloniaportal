@@ -6,24 +6,26 @@
   cursor: pointer;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
   font-weight: 500;
-  transition: background-color 250ms ease-in-out;
   text-decoration: none;
   color: #1f2937;
   text-align: center;
-}
+  transition:
+    background-color 200ms ease,
+    transform 150ms ease;
 
-.loginButton:focus,
-.loginButton:hover {
-  background-color: #acb2b9;
-}
-.loginInFooter {
-  background-color: #acb2b9;
-  border: none;
-  box-shadow: none;
-  transition: transform 200ms ease-in-out;
-}
+  &:focus,
+  &:hover {
+    background-color: #acb2b9;
+  }
 
-.loginButton.loginInFooter:hover,
-.loginButton.loginInFooter:focus {
-  transform: scale(1.1);
+  &--footer {
+    background-color: #acb2b9;
+    border: none;
+    box-shadow: none;
+
+    &:focus,
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
 }

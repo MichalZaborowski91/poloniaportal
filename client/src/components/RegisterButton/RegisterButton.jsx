@@ -9,7 +9,7 @@ export const RegisterButton = ({ variant }) => {
     <Link
       to={routes.register(country)}
       className={`${styles.registerButton} ${
-        variant === "footer" ? styles.registerInFooter : ""
+        variant === "footer" ? styles["registerButton--footer"] : ""
       }`}
     >
       Rejestracja

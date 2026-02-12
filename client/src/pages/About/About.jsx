@@ -22,16 +22,16 @@ export const About = () => {
 
   return (
     <div className="container">
-      <div className={styles.aboutLayout}>
+      <div className={styles.about}>
         <AboutSidebar />
 
-        <div className={styles.aboutContent}>
+        <div className={styles.about__content}>
           <img
             src={airportPicture}
             alt="Polonia Portal Logo"
-            className={styles.aboutContent__picture}
+            className={styles.about__picture}
           />
-          <div className={styles.aboutContent__sections}>
+          <div className={styles.about__sections}>
             <section id="whoAreWe">
               <h4>Kim jesteśmy</h4>
               <p>
@@ -116,16 +116,16 @@ export const About = () => {
 
             {!user ? (
               <>
-                <h2 className={styles.aboutContent__becomeMember}>
+                <h2 className={styles.about__title}>
                   Dołącz do społeczności PoloniaPortal i bądź częścią globalnej
                   Polonii.
                 </h2>
-                <div className={styles.aboutContent__becomeButton}>
+                <div className={styles.about__registerButton}>
                   <RegisterButton />
                 </div>
               </>
             ) : (
-              <h2 className={styles["aboutContent__becomeMember--loggedIn"]}>
+              <h2 className={styles["about__becomeMember--guest"]}>
                 Dziękujemy, że razem z nami tworzysz społeczność Polonii na
                 całym świecie!
               </h2>

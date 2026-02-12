@@ -10,35 +10,29 @@ import { ServiceFooter } from "../ServiceFooter/ServiceFooter";
 import { ContactFooter } from "../ContactFooter/ContactFooter";
 import { MediaFooter } from "../MediaFooter/MediaFooter";
 import { useCountry } from "../../app/useCountry";
-import { COUNTRIES_PL } from "../../assets/countries/countriesPL";
+import { CountrySwitcher } from "../CountrySwitcher/CountrySwitcher";
+import { CurrentCountry } from "../CurrentCountry/CurrentCountry";
+import { routes } from "../../app/routes";
 
 export const Footer = () => {
   const location = useLocation();
   const country = useCountry();
-
-  const countryCode = COUNTRIES_PL[country];
 
   const isLoginPage = location.pathname.endsWith("/login");
   const isRegisterPage = location.pathname.endsWith("/register");
   const isForgotPassPage = location.pathname.endsWith("/forgot-password");
 
   const { user } = useAuth();
+
   return (
-    <div className={styles.footer}>
-      <div className={styles.footer__container}>
+    <footer className={styles.footer}>
+      <div className={styles.footer__backgroundContainer}>
         <div className="container">
-          <div className={styles.footer__wrapper}>
-            <div>
+          <div className={styles.footer__content}>
+            <div className={styles.footer__brand}>
               <LogoSecondary />
+              <CurrentCountry />
               <div className={styles.footer__authButtons}>
-                <p className={styles.footer__currentCountry}>
-                  {countryCode.name}
-                  <img
-                    src={`/flags/${countryCode.subdomain}.png`}
-                    alt={countryCode.name}
-                    className={styles.footer__flag}
-                  />
-                </p>
                 {!user && (
                   <>
                     {isLoginPage && <RegisterButton variant="footer" />}
@@ -57,27 +51,52 @@ export const Footer = () => {
             <AboutUs />
             <ServiceFooter />
             <ContactFooter />
-            <MediaFooter />
+            <div>
+              <MediaFooter />
+              <CountrySwitcher currentCountry={country} />
+            </div>
           </div>
         </div>
       </div>
-      <div className={styles.terms}>
-        <div className={styles.heart}>
+      <div className={styles.footer__legal}>
+        <div className={styles.footer__slogan}>
           <p>Stworzone z</p> <HeartIcon />
           <p>dla Polonii</p>
         </div>
-        <a href="/terms" target="_blank" rel="noopener noreferrer">
+        <a
+          href={routes.copyrights()}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.footer__copyright}
+        >
+          {" "}
           &#xa9; 2026 All Rights Reserved
         </a>
-        <div className={styles.terms__box}>
-          <a href="/terms" target="_blank" rel="noopener noreferrer">
-            Regulamin
-          </a>
-          <a href="/privacy" target="_blank" rel="noopener noreferrer">
-            Polityka Prywatności
-          </a>
-        </div>
+        <nav className={styles.footer__legalNav}>
+          <ul className={styles.footer__legalList}>
+            <li className={styles.footer__legalItem}>
+              <a
+                href={routes.terms()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.footer__legalLink}
+              >
+                Regulamin
+              </a>
+            </li>
+            <li className={styles.footer__legalItem}>
+              <a
+                href={routes.privacy()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.footer__legalLink}
+              >
+                Polityka Prywatności
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
-    </div>
+    </footer>
   );
 };

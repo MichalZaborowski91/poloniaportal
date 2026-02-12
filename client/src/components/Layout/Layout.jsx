@@ -8,6 +8,7 @@ import { LoginButton } from "../LoginButton/LoginButton";
 import { RegisterButton } from "../RegisterButton/RegisterButton";
 import { LogoSecondary } from "../LogoSecondary/LogoSecondary";
 import styles from "../Layout/Layout.module.scss";
+import { CurrentCountry } from "../CurrentCountry/CurrentCountry";
 
 export const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -64,8 +65,10 @@ export const Layout = () => {
       )}
       {showDesktopAuthLayout && (
         <div className={styles.authTopbar}>
-          <LogoSecondary />
-
+          <div>
+            <LogoSecondary />
+            <CurrentCountry />
+          </div>
           <div className={styles.authActions}>
             {isLoginPage && <RegisterButton />}
             {isRegisterPage && <LoginButton />}

@@ -16,7 +16,9 @@ export const HeartIcon = () => {
     const { initialScale, firstBeat, secondBeat, transition } = heartTransform;
     const heartIcon = heartRef.current;
 
-    if (!heartIcon) return;
+    if (!heartIcon) {
+      return;
+    }
 
     heartIcon.style.transform = `scale(${firstBeat})`;
     heartIcon.style.transition = transition;

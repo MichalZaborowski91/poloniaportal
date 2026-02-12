@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useRef } from "react";
 import { requestPasswordReset } from "../../api/auth";
 import styles from "../ForgotPassword/ForgotPassword.module.scss";
 import { routes } from "../../app/routes";
@@ -6,9 +6,8 @@ import { useCountry } from "../../app/useCountry";
 import { Link } from "react-router-dom";
 import Email from "../../assets/icons/mail.svg?react";
 import Send from "../../assets/icons/send.svg?react";
-import { useNavigate } from "react-router-dom";
-import CloseIcon from "../../assets/icons/x.svg?react";
-import CheckSquare from "../../assets/icons/check-square.svg?react";
+import { ResetPasswordSuccess } from "../../components/ResetPasswordSuccess/ResetPasswordSuccess";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -17,24 +16,34 @@ export const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
   const [emailError, setEmailError] = useState(false);
-  const [countdown, setCountdown] = useState(10);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
-  const navigate = useNavigate();
   const country = useCountry();
+  const captchaRef = useRef(null);
+
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const canSubmitForgotPassword = emailValid && !loading;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading) {
-      return;
-    }
+    if (loading) return;
+
     setError(null);
     setLoading(true);
 
     try {
-      await requestPasswordReset({ email });
+      if (!captchaToken) {
+        setError("Potwierdź captcha.");
+        setLoading(false);
+        return;
+      }
+
+      await requestPasswordReset({ email, captchaToken, country });
+
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
+
       setSuccess(true);
     } catch (error) {
       setError("Nie udało się wysłać linku resetującego.");
@@ -43,57 +52,15 @@ export const ForgotPassword = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    if (!success) {
-      return;
-    }
-
-    setCountdown(10);
-
-    const interval = setInterval(() => {
-      setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-
-    const timeout = setTimeout(() => {
-      navigate(routes.home(country), { replace: true });
-    }, 10000);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
-  }, [success, navigate, country]);
 
   return (
     <div className={styles.forgotPassword}>
-      <div className={styles.forgotPassword__content}>
+      <div className={styles.forgotPassword__container}>
         <div className={styles.authPage}>
           <div className={styles.authContent}>
-            <div className={styles.forgotPassword__container}>
+            <div className={styles.forgotPassword__content}>
               {success ? (
-                <div className={styles.success}>
-                  <div className={styles.success__head}>
-                    <h2 className={styles.success__title}>Link wysłany</h2>
-                    <CheckSquare className={styles.success__icon} />
-                  </div>
-
-                  <p className={styles.success__description} aria-live="polite">
-                    Jeśli konto istnieje, wysłaliśmy link do resetu hasła.
-                    <br />
-                    Sprawdź swoją skrzynkę email.
-                  </p>
-
-                  <button
-                    className={styles.success__button}
-                    disabled={countdown === 0}
-                    onClick={() =>
-                      navigate(routes.home(country), { replace: true })
-                    }
-                  >
-                    <CloseIcon />
-                    Zamknij {countdown}
-                  </button>
-                </div>
+                <ResetPasswordSuccess />
               ) : (
                 <>
                   <h2 className={styles.forgotPassword__title}>
@@ -132,6 +99,13 @@ export const ForgotPassword = () => {
                           }
                         }}
                         required
+                      />
+                    </div>
+                    <div className={styles.captchaWrapper}>
+                      <HCaptcha
+                        sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
+                        onVerify={(token) => setCaptchaToken(token)}
+                        ref={captchaRef}
                       />
                     </div>
                     <button

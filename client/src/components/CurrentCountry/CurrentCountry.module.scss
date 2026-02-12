@@ -1,0 +1,17 @@
+.currentCountry {
+  &__name {
+    color: #f1efef;
+    margin: 0;
+    margin-bottom: 10px;
+    font-weight: 700;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+  }
+  &__flag {
+    width: 22px;
+    height: 14px;
+    border-radius: 1.5px;
+  }
+}
