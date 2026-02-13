@@ -20,7 +20,8 @@ export const Layout = () => {
   const isAuthRoute =
     location.pathname.endsWith("/login") ||
     location.pathname.endsWith("/register") ||
-    location.pathname.endsWith("/forgot-password");
+    location.pathname.endsWith("/forgot-password") ||
+    location.pathname.includes("/reset-password");
 
   const showDesktopAuthLayout = isAuthRoute && isDesktop;
   const isLoginPage = location.pathname.endsWith("/login");
