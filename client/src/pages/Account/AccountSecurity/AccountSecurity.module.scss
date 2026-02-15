@@ -1,7 +1,112 @@
-.message {
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 6px;
-  background: #fff3cd;
-  color: #664d03;
+.accountSecurity {
+  &__message {
+    padding: 12px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    background: #fff3cd;
+    color: #664d03;
+    text-align: center;
+  }
+
+  &__title {
+    background-color: #f1efef;
+    border-radius: 4px;
+    margin-top: 0;
+    display: flex;
+    justify-content: center;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__tile {
+    flex: 0 0 calc((100% - 40px) / 3);
+    min-width: 260px;
+    min-height: 120px;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    transition: scale 200ms ease-in-out;
+    background-color: white;
+
+    &:hover {
+      scale: calc(1.02);
+    }
+  }
+
+  &__header {
+    margin: 0;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1efef;
+    height: 40px;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  &__button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    background-color: #f1efef;
+    border: 2px solid #1f2937;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    font-weight: 400;
+    text-decoration: none;
+    color: #1f2937;
+    text-align: center;
+    transition:
+      background-color 200ms ease,
+      transform 150ms ease;
+
+    &:hover {
+      background-color: #acb2b9;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .accountSecurity__grid {
+    justify-content: center;
+  }
+
+  .accountSecurity__tile {
+    flex: 0 0 calc((100% - 20px) / 2);
+  }
 }

@@ -146,23 +146,42 @@ export const register = async (req, res) => {
 
     //EMAIL EXISTS (COUNT ENTRIES)
     const existingUser = await User.findOne({ email });
+
     if (existingUser) {
-      const attempts = await incrementRegisterAttempts(ip);
+      //IF ACCOUNT EXISTS BUT SOFT-DELETED
+      if (existingUser.isDeleted) {
+        const now = new Date();
 
-      if (attempts % 5 === 0) {
-        const lockCount = await incrementRegisterLockCount(ip);
-        const level = lockCount - 1; // 1=>0, 2=>1, 3=>2, 4=>3
+        //IF IS IN 14 DAYS RECOVERY PERIOD - DON'T LET REGISTER
+        if (
+          existingUser.deletionScheduledFor &&
+          existingUser.deletionScheduledFor > now
+        ) {
+          return res.status(409).json({
+            errorCode: "ACCOUNT_SCHEDULED_FOR_DELETION",
+            restoreUntil: existingUser.deletionScheduledFor,
+          });
+        }
 
-        //SOFT LOCK
-        await applyRegisterLock(ip, level);
+        //IF PASSED 14 DAYS BUT CRON DIDN'T DELETE YET
+        //DELETE RECORD AND LET REGISTER
+        await User.deleteOne({ _id: existingUser._id });
+      } else {
+        //ACCOUNT EXISTS
+        const attempts = await incrementRegisterAttempts(ip);
 
-        //CAPTCHA AFTER SOFT LOCK OFF
-        await markCaptchaPending(ip);
+        if (attempts % 5 === 0) {
+          const lockCount = await incrementRegisterLockCount(ip);
+          const level = lockCount - 1;
+
+          await applyRegisterLock(ip, level);
+          await markCaptchaPending(ip);
+        }
+
+        return res.status(409).json({
+          errorCode: "USER_ALREADY_EXISTS",
+        });
       }
-
-      return res.status(409).json({
-        errorCode: "USER_ALREADY_EXISTS",
-      });
     }
 
     //NORMAL REGISTRATION
@@ -221,12 +240,28 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Email and password required" });
     }
     const user = await User.findOne({ email });
+    let accountRestored = false;
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
     if (user.isDeleted) {
-      return res.status(401).json({ message: "Account deleted" });
+      const now = new Date();
+
+      //IF IN 14 DAYS PERIOD - RESTORE
+      if (user.deletionScheduledFor && user.deletionScheduledFor > now) {
+        user.isDeleted = false;
+        user.deletedAt = null;
+        user.deletionScheduledFor = null;
+        accountRestored = true;
+
+        await user.save();
+      } else {
+        return res.status(403).json({
+          message: "Account permanently deleted",
+        });
+      }
     }
+
     //SOFT LOCK CHECK
     if (user.lockUntil && user.lockUntil > new Date()) {
       const remainingMs = user.lockUntil.getTime() - Date.now();
@@ -329,6 +364,7 @@ export const login = async (req, res) => {
       email: user.email,
       role: user.role,
       needsProfileOnboarding,
+      accountRestored,
     });
   } catch (error) {
     console.error("LOGIN ERROR", error);
@@ -457,27 +493,37 @@ export const resendVerifyEmail = async (req, res) => {
 //DELETE ACCOUNT
 export const deleteAccount = async (req, res) => {
   try {
+    const { password, captchaToken } = req.body;
+
     const user = await User.findById(req.user.id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    //SOFT DELETE
+    // PASSWORD CHECK
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    // CAPTCHA CHECK
+    const captchaOk = await verifyCaptcha(captchaToken);
+    if (!captchaOk) {
+      return res.status(400).json({ message: "Captcha failed" });
+    }
+
+    // SOFT DELETE (14 days)
+    const now = new Date();
+    const restoreUntil = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+
     user.isDeleted = true;
-    user.deletedAt = new Date();
-
-    //OPTIONAL - ANONYMIZATION
-    user.email = `deleted_${user._id}@deleted.local`;
-    user.profile = undefined;
-
-    //CLEAR VERIFY TOKENS
-    user.emailVerifyToken = undefined;
-    user.emailVerifyExpires = undefined;
+    user.deletedAt = now;
+    user.deletionScheduledFor = restoreUntil;
 
     await user.save();
 
-    //KILL SESSION
+    // LOGOUT
     res.clearCookie("auth_token", {
       httpOnly: true,
       sameSite: "lax",
@@ -485,7 +531,10 @@ export const deleteAccount = async (req, res) => {
       path: "/",
     });
 
-    res.json({ message: "Account deleted" });
+    res.json({
+      message: "Account scheduled for deletion",
+      restoreUntil,
+    });
   } catch (error) {
     console.error("DELETE ACCOUNT ERROR", error);
     res.status(500).json({ message: "Failed to delete account" });

@@ -12,6 +12,7 @@ import EyeOff from "../../assets/icons/eye-off.svg?react";
 import LogIn from "../../assets/icons/log-in.svg?react";
 import { Link } from "react-router-dom";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
+import toast from "react-hot-toast";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -79,6 +80,10 @@ export const Login = () => {
         rememberMe,
         captchaToken: requireCaptcha ? captchaToken : undefined,
       });
+
+      if (response.accountRestored) {
+        toast.success("Twoje konto zostało przywrócone. Witamy ponownie!");
+      }
       await refreshUser();
       if (response.needsProfileOnboarding) {
         navigate(routes.onboarding(country), { replace: true });
@@ -113,6 +118,11 @@ export const Login = () => {
         setError(
           "Zbyt wiele prób logowania. Odczekaj chwilę i spróbuj ponownie.",
         );
+      } else if (
+        error.status === 403 &&
+        error.data?.message === "Account permanently deleted"
+      ) {
+        setError("To konto zostało trwale usunięte.");
       } else {
         setError("Nieprawidłowy email lub hasło.");
       }

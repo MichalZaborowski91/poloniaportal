@@ -1,9 +1,7 @@
 import styles from "./MobileMenu.module.scss";
 import { AddOfferButton } from "../AddOfferButton/AddOfferButton";
-import { LoginButton } from "../LoginButton/LoginButton";
-import { RegisterButton } from "../RegisterButton/RegisterButton";
 
-export const MobileMenu = ({ isOpen, onClose, user }) => {
+export const MobileMenu = ({ isOpen, onClose }) => {
   const handleNavClick = (e) => {
     //CLOSE ONLY IF CLICK => BUTTON OR LINK
     const actionElement = e.target.closest("button, a");
@@ -36,18 +34,9 @@ export const MobileMenu = ({ isOpen, onClose, user }) => {
           </li>
         </ul>
 
-        {!user && (
-          <div className={styles.mobileMenu__authButtons}>
-            <LoginButton />
-            <RegisterButton />
-          </div>
-        )}
-
-        {user && (
-          <div className={styles.mobileMenu__addOffer}>
-            <AddOfferButton />
-          </div>
-        )}
+        <div className={styles.mobileMenu__addOffer}>
+          <AddOfferButton />
+        </div>
       </nav>
     </div>
   );

@@ -32,7 +32,7 @@ export const ResendVerifyEmailButton = () => {
       {user?.emailVerified === false ? (
         <>
           <button type="button" onClick={handleResendVerify}>
-            Resend verification email
+            Wyślij link weryfikacyjny
           </button>
         </>
       ) : (

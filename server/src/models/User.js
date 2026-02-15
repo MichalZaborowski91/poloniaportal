@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
       trim: true,
     },
@@ -66,6 +65,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    deletionScheduledFor: {
+      type: Date,
+      default: null,
+    },
     failedLoginAttempts: {
       type: Number,
       default: 0,
@@ -92,6 +95,11 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+//CRITICAL INDEXES
+userSchema.index({ email: 1 }, { unique: true });
+
+userSchema.index({ isDeleted: 1, deletionScheduledFor: 1 });
 
 userSchema.index(
   { "profile.displayNameNormalized": 1 },

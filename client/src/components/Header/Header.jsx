@@ -8,8 +8,7 @@ import { useCountry } from "../../app/useCountry";
 import { AddOfferButton } from "../AddOfferButton/AddOfferButton";
 import Menu from "../../assets/icons/menu.svg?react";
 import CloseIcon from "../../assets/icons/x.svg?react";
-import { LoginButton } from "../LoginButton/LoginButton";
-import { RegisterButton } from "../RegisterButton/RegisterButton";
+import { AccountMenu } from "../AccountMenu/AccountMenu";
 
 export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose }) => {
   const { user, loading } = useAuth();
@@ -45,11 +44,7 @@ export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose }) => {
           />
         </Link>
         <nav className={styles.header__navigation}>
-          <div
-            className={`${styles.header__addOffer} ${
-              user ? styles.header__addOfferUser : styles.header__addOfferGuest
-            }`}
-          >
+          <div className={styles.header__addOffer}>
             {!hideAddOffer && (
               <AddOfferButton
                 onClick={() => {
@@ -61,12 +56,7 @@ export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose }) => {
             )}
           </div>
           {user && <UserMenu onMenuClose={onMenuClose} />}
-          {!user && (
-            <div className={styles.header__authLinks}>
-              <LoginButton />
-              <RegisterButton />
-            </div>
-          )}
+          <AccountMenu />
 
           <div
             className={styles.mobileMenuIconContainer}

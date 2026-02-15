@@ -2,13 +2,17 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useCountry } from "../../../app/useCountry";
 import { routes } from "../../../app/routes";
 import { useAuth } from "../../../hooks/useAuth";
-import toast from "react-hot-toast";
-import { deleteAccount } from "../../../api/auth";
 import { VerifyEmailMessage } from "../../../components/VerifyEmailMessage/VerifyEmailMessage";
 import { ResendVerifyEmailButton } from "../../../components/ResendVerifyEmailButton/ResendVerifyEmailButton";
 import styles from "../AccountSecurity/AccountSecurity.module.scss";
+import { DeleteAccountSection } from "../../../components/DeleteAccountSection/DeleteAccountSection";
+import { useState } from "react";
+import UserDelete from "../../../assets/icons/user-x.svg?react";
+import Shield from "../../../assets/icons/shield.svg?react";
 
 export const AccountSecurity = () => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const navigate = useNavigate();
   const country = useCountry();
   const { refreshUser } = useAuth();
@@ -19,44 +23,91 @@ export const AccountSecurity = () => {
     location.state?.from?.pathname?.includes("/add-offer");
 
   //DELETE ACC
-  const handleDeleteAccount = async () => {
-    const confirmed = window.confirm(
-      "Czy na pewno chcesz usunąć konto? Tej operacji nie można cofnąć.",
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      await deleteAccount();
-      navigate(routes.home(country));
-      await refreshUser();
-      toast.success("Konto zostało usunięte.");
-    } catch (error) {
-      toast.error("Nie udalo sie usunac konta.");
-      console.error(error);
-    }
+  const handleDeleted = async () => {
+    navigate(routes.home(country));
+    await refreshUser();
   };
+
   return (
     <div>
       {cameFromAddOffer && (
-        <div className={styles.message}>
+        <div className={styles.accountSecurity__message}>
           Aby dodać ogłoszenie, musisz zweryfikować swój adres email.
         </div>
       )}
-      <h2>Security</h2>
-      <button
-        onClick={handleDeleteAccount}
-        style={{ color: "red" }}
-        type="button"
-      >
-        Usuń konto
-      </button>
-      <button>Zmien haslo</button>
-      <button>Wyloguj ze wszystkich</button>
-      <VerifyEmailMessage />
-      <ResendVerifyEmailButton />
+      <div className={styles.accountSecurity}>
+        <h2 className={styles.accountSecurity__title}>
+          <Shield />
+          Bezpieczeństwo
+        </h2>
+        <ul className={styles.accountSecurity__grid}>
+          <li className={styles.accountSecurity__tile}>
+            <h4 className={styles.accountSecurity__header}>
+              Weryfikacja email
+            </h4>
+            <div className={styles.accountSecurity__wrapper}>
+              <div className={styles.accountSecurity__content}>
+                <VerifyEmailMessage />
+                <ResendVerifyEmailButton />
+              </div>
+            </div>
+          </li>
+
+          <li className={styles.accountSecurity__tile}>
+            <h4 className={styles.accountSecurity__header}>Zmiana hasła</h4>
+            <div className={styles.accountSecurity__wrapper}>
+              <div className={styles.accountSecurity__content}>
+                <button className={styles.accountSecurity__button}>
+                  Zmień hasło
+                </button>
+              </div>
+            </div>
+          </li>
+          <li className={styles.accountSecurity__tile}>
+            <h4 className={styles.accountSecurity__header}>Zmiana email</h4>
+            <div className={styles.accountSecurity__wrapper}>
+              <div className={styles.accountSecurity__content}>
+                <button className={styles.accountSecurity__button}>
+                  Zmień email
+                </button>
+              </div>
+            </div>
+          </li>
+          <li className={styles.accountSecurity__tile}>
+            <h4 className={styles.accountSecurity__header}>
+              Wyloguj ze wszystkich urządzeń
+            </h4>
+            <div className={styles.accountSecurity__wrapper}>
+              <div className={styles.accountSecurity__content}>
+                <button className={styles.accountSecurity__button}>
+                  Wyloguj
+                </button>
+              </div>
+            </div>
+          </li>
+          <li className={styles.accountSecurity__tile}>
+            <h4 className={styles.accountSecurity__header}>Usuń konto</h4>
+            <div className={styles.accountSecurity__wrapper}>
+              <div className={styles.accountSecurity__content}>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(true)}
+                  className={styles.accountSecurity__button}
+                >
+                  <UserDelete />
+                  Usuń konto
+                </button>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      {showDeleteModal && (
+        <DeleteAccountSection
+          onDeleted={handleDeleted}
+          onClose={() => setShowDeleteModal(false)}
+        />
+      )}
     </div>
   );
 };

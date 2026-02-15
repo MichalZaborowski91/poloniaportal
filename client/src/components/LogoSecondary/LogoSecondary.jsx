@@ -1,5 +1,4 @@
 import logoPoloniaPortal from "../../assets/poloniaPortal.png";
-import Smile from "../../assets/icons/smile.svg?react";
 import styles from "../LogoSecondary/LogoSecondary.module.scss";
 import { Link } from "react-router-dom";
 import { useCountry } from "../../app/useCountry";
@@ -16,8 +15,7 @@ export const LogoSecondary = () => {
           className={styles.logoSecondary__logo}
         />
         <p className={styles.logoSecondary__description}>
-          Łączymy Polaków na całym świecie{" "}
-          <Smile className={styles.logoSecondary__icon} />
+          Łączymy Polaków na całym świecie
         </p>
       </Link>
     </div>

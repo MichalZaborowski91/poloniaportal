@@ -11,7 +11,7 @@ export const LISTING_TYPES = [
   "event",
 ];
 
-export const LISTING_STATUS = ["active", "expired", "deleted"];
+export const LISTING_STATUS = ["active", "inactive", "expired", "deleted"];
 
 export const LISTING_DURATIONS = [7, 31];
 
@@ -194,8 +194,9 @@ ListingSchema.pre("validate", function () {
   }
 });
 
-ListingSchema.index({ country: 1, type: 1 });
-ListingSchema.index({ expiresAt: 1 });
+ListingSchema.index({ country: 1, type: 1, status: 1, createdAt: -1 });
+ListingSchema.index({ user: 1, status: 1 });
+ListingSchema.index({ status: 1, expiresAt: 1 });
 ListingSchema.index({ "data.city": 1 });
 
 export default mongoose.model("Listing", ListingSchema);

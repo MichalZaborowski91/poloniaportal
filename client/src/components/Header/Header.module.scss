@@ -37,7 +37,7 @@
   }
 
   &__addOffer {
-    display: block;
+    display: none;
   }
 
   &__authLinks {
@@ -70,20 +70,6 @@
     &--visible {
       opacity: 1;
       transform: scale(1);
-    }
-  }
-}
-
-@media (max-width: 767px) {
-  .header {
-    &__addOfferGuest {
-      display: block;
-    }
-    &__addOfferUser {
-      display: none;
-    }
-    &__authLinks {
-      display: none;
     }
   }
 }

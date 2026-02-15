@@ -1,0 +1,44 @@
+.accountMenu {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &__trigger {
+    width: 60px;
+    height: 55px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    color: #1f2937;
+  }
+
+  &__text {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1f2937;
+  }
+
+  &__icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1000;
+  }
+}

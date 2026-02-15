@@ -49,3 +49,12 @@ Pictures:
 * keyboard.webp (Forgot Password page)
   Photo by Foysal Ahmed
   https://www.pexels.com/photo/black-computer-keyboard-with-orange-light-on-keys-5548045/
+
+* resetPassword.webp (Reset Password page)
+  Photo by Marcin Szmigiel
+  https://www.pexels.com/photo/pink-and-white-key-chain-67094/
+
+* woodLayout.webp (Account Layout page)
+  Photo by FWStudio
+  https://www.pexels.com/photo/white-green-and-orange-wooden-plank-139321/
+

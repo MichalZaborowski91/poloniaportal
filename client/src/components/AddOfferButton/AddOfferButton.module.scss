@@ -4,7 +4,7 @@
   padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
   font-weight: 400;
   transition: background-color 250ms ease-in-out;
   text-decoration: none;
@@ -16,6 +16,6 @@
 
   &:focus,
   &:hover {
-    background-color: #f1efef;
+    background-color: #acb2b9;
   }
 }

@@ -70,16 +70,21 @@ export const logout = async () => {
   }
 };
 
-export const deleteAccount = async () => {
+export const deleteAccount = async ({ password, captchaToken }) => {
   const res = await fetch(`${API_URL}/api/auth/delete-account`, {
     method: "DELETE",
+    headers: { "Content-Type": "application/json" },
     credentials: "include",
+    body: JSON.stringify({ password, captchaToken }),
   });
 
+  const data = await res.json();
+
   if (!res.ok) {
-    throw new Error("Delete account failed");
+    throw new Error(data.message || "Delete account failed");
   }
-  return res.json();
+
+  return data;
 };
 
 export const requestPasswordReset = async ({

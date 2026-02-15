@@ -95,8 +95,20 @@ export const Register = () => {
       } else if (error.status === 400) {
         setError("Wymagane pola: email i hasło.");
       } else if (error.status === 409) {
-        setError("Użytkownik już istnieje.");
-      } else {
+        const code = error.data?.errorCode;
+
+        if (code === "ACCOUNT_SCHEDULED_FOR_DELETION") {
+          setError(
+            "To konto zostało niedawno usunięte. Zaloguj się, aby je przywrócić.",
+          );
+          return;
+        }
+
+        if (code === "USER_ALREADY_EXISTS") {
+          setError("Użytkownik o tym adresie email już istnieje.");
+          return;
+        }
+
         setError("Rejestracja nie powiodła się.");
       }
     } finally {

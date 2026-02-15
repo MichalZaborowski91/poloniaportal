@@ -1,15 +1,57 @@
 .accountLayout {
-  display: flex;
-  gap: 24px;
+  background-image: url("../../../assets/woodLayout.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  &__overlay {
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 40px;
+    padding-top: 30px;
+    min-height: 100vh;
+    padding-bottom: 30px;
+  }
 
   &__aside {
-    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    background-color: #f1efef;
+    align-items: center;
+    border-radius: 4px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
   }
 
   &__navigation {
     display: flex;
     flex-direction: column;
     gap: 8px;
+  }
+
+  &__list {
+    margin: 0;
+    padding-left: 0;
+  }
+
+  &__item {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__link {
+    color: black;
+    text-decoration: none;
+
+    &:hover {
+      color: #acb2b9;
+      text-decoration: underline;
+      scale: calc(1.03);
+    }
   }
 
   &__main {
