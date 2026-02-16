@@ -792,3 +792,31 @@ export const changePassword = async (req, res) => {
     });
   }
 };
+
+//LOGOUT ALL DEVICES
+export const logoutAllDevices = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user || user.isDeleted) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    //INVALIDATE ALL TOKENS
+    user.passwordChangedAt = new Date();
+    await user.save();
+
+    //DELETE CURRENT COOKIE
+    res.clearCookie("auth_token");
+
+    return res.json({
+      success: true,
+      message: "Logged out from all devices",
+    });
+  } catch (err) {
+    console.error("LOGOUT ALL ERROR:", err);
+    return res.status(500).json({
+      message: "Logout failed",
+    });
+  }
+};

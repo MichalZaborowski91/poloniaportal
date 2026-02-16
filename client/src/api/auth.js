@@ -153,3 +153,18 @@ export const changePassword = async ({ currentPassword, newPassword }) => {
 
   return data;
 };
+
+export const logoutAllDevices = async () => {
+  const res = await fetch(`${API_URL}/api/auth/logout-all`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};

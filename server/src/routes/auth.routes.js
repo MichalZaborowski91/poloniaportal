@@ -11,6 +11,7 @@ import {
   resetPassword,
   validateResetToken,
   changePassword,
+  logoutAllDevices,
 } from "../controllers/auth.controller.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
 import { loginLimiter } from "../middleware/rateLimit.js";
@@ -28,5 +29,6 @@ router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 router.get("/reset-password/:token", validateResetToken);
 router.put("/change-password", requireAuth, changePassword);
+router.post("/logout-all", requireAuth, logoutAllDevices);
 
 export default router;

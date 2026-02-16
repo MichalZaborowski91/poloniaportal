@@ -1,5 +1,7 @@
 import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
+import Link from "../../assets/icons/link.svg?react";
+import styles from "../ResendVerifyEmailButton/ResendVerifyEmailButton.module.scss";
 
 export const ResendVerifyEmailButton = () => {
   const { user } = useAuth();
@@ -31,7 +33,12 @@ export const ResendVerifyEmailButton = () => {
     <div>
       {user?.emailVerified === false ? (
         <>
-          <button type="button" onClick={handleResendVerify}>
+          <button
+            type="button"
+            onClick={handleResendVerify}
+            className={styles.resendVerifyEmailButton}
+          >
+            <Link />
             Wyślij link weryfikacyjny
           </button>
         </>

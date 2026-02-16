@@ -1,0 +1,23 @@
+.resendVerifyEmailButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  background-color: #f1efef;
+  border: 2px solid #1f2937;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+  font-weight: 400;
+  text-decoration: none;
+  color: #1f2937;
+  text-align: center;
+  transition:
+    background-color 200ms ease,
+    transform 150ms ease;
+
+  &:hover {
+    background-color: #acb2b9;
+  }
+}

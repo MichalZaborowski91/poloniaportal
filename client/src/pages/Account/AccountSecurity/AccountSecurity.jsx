@@ -9,8 +9,12 @@ import { DeleteAccountSection } from "../../../components/DeleteAccountSection/D
 import { useState } from "react";
 import UserDelete from "../../../assets/icons/user-x.svg?react";
 import Shield from "../../../assets/icons/shield.svg?react";
+import Logout from "../../../assets/icons/log-out.svg?react";
+import AtSign from "../../../assets/icons/at-sign.svg?react";
 import { ChangePasswordModal } from "../../../components/ChangePasswordModal/ChangePasswordModal";
 import Key from "../../../assets/icons/key.svg?react";
+import { logoutAllDevices } from "../../../api/auth";
+import toast from "react-hot-toast";
 
 export const AccountSecurity = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -28,6 +32,22 @@ export const AccountSecurity = () => {
   const handleDeleted = async () => {
     navigate(routes.home(country));
     await refreshUser();
+  };
+
+  const handleLogoutAll = async () => {
+    try {
+      await logoutAllDevices();
+
+      toast.success("Wylogowano ze wszystkich urządzeń");
+
+      navigate(routes.home(country), { replace: true });
+
+      setTimeout(() => {
+        refreshUser();
+      }, 0);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -74,6 +94,7 @@ export const AccountSecurity = () => {
             <div className={styles.accountSecurity__wrapper}>
               <div className={styles.accountSecurity__content}>
                 <button className={styles.accountSecurity__button}>
+                  <AtSign />
                   Zmień email
                 </button>
               </div>
@@ -85,7 +106,11 @@ export const AccountSecurity = () => {
             </h4>
             <div className={styles.accountSecurity__wrapper}>
               <div className={styles.accountSecurity__content}>
-                <button className={styles.accountSecurity__button}>
+                <button
+                  className={styles.accountSecurity__button}
+                  onClick={handleLogoutAll}
+                >
+                  <Logout />
                   Wyloguj
                 </button>
               </div>
