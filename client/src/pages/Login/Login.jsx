@@ -32,6 +32,7 @@ export const Login = () => {
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
 
+  const passwordChanged = sessionStorage.getItem("passwordChanged") === "true";
   const from = location.state?.from?.pathname || routes.home(country);
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -87,9 +88,15 @@ export const Login = () => {
       await refreshUser();
       if (response.needsProfileOnboarding) {
         navigate(routes.onboarding(country), { replace: true });
-      } else {
-        navigate(from, { replace: true });
+        return;
       }
+
+      if (passwordChanged) {
+        sessionStorage.removeItem("passwordChanged");
+        navigate(routes.home(country), { replace: true });
+        return;
+      }
+      navigate(from, { replace: true });
     } catch (error) {
       if (error?.data?.requireCaptcha) {
         setRequireCaptcha(true);

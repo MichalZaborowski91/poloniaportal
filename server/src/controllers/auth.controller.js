@@ -713,3 +713,82 @@ export const validateResetToken = async (req, res) => {
     });
   }
 };
+
+//CHANGE PASSWORD (LOGGED USER)
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    //MISSING FIELDS
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        code: "MISSING_FIELDS",
+        message: "All fields are required",
+      });
+    }
+
+    //PASSWORD CONDITIONS
+    if (
+      newPassword.length < 8 ||
+      !/[A-Z]/.test(newPassword) ||
+      !/[a-z]/.test(newPassword) ||
+      !/[0-9]/.test(newPassword)
+    ) {
+      return res.status(400).json({
+        code: "PASSWORD_WEAK",
+        message: "Password weak",
+      });
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (!user || user.isDeleted) {
+      return res.status(404).json({
+        code: "USER_NOT_FOUND",
+        message: "User not found",
+      });
+    }
+
+    //CHECK CURRENT PASSWORD
+    const isMatch = await user.comparePassword(currentPassword);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        code: "INVALID_CURRENT_PASSWORD",
+        message: "Current password is incorrect",
+      });
+    }
+
+    //PREVENT REUSING SAME PASSWORD
+    const isSame = await user.comparePassword(newPassword);
+    if (isSame) {
+      return res.status(400).json({
+        code: "PASSWORD_SAME_AS_OLD",
+        message: "New password must be different",
+      });
+    }
+
+    //SET NEW PASSWORD
+    user.password = newPassword;
+    user.passwordChangedAt = new Date();
+
+    //RESET LOGIN PROTECTION
+    user.failedLoginAttempts = 0;
+    user.lockUntil = null;
+    user.captchaRequired = false;
+
+    await user.save();
+
+    return res.json({
+      success: true,
+      code: "PASSWORD_CHANGED",
+      message: "Password changed successfully",
+    });
+  } catch (err) {
+    console.error("CHANGE PASSWORD ERROR:", err);
+    return res.status(500).json({
+      code: "CHANGE_PASSWORD_FAILED",
+      message: "Failed to change password",
+    });
+  }
+};

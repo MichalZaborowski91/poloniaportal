@@ -128,3 +128,28 @@ export const validateResetToken = async (token) => {
   const data = await res.json();
   return data.valid === true;
 };
+
+export const changePassword = async ({ currentPassword, newPassword }) => {
+  const res = await fetch(`${API_URL}/api/auth/change-password`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+
+  let data = {};
+
+  try {
+    data = await res.json();
+  } catch {
+    //NO JSON – EXAMPLE SERVER ERROR
+  }
+
+  if (!res.ok) {
+    const error = new Error(data.message || "Change password failed");
+    error.code = data.code || "UNKNOWN_ERROR";
+    throw error;
+  }
+
+  return data;
+};
