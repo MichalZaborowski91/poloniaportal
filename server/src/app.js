@@ -8,11 +8,11 @@ import { deleteExpiredUsers } from "./jobs/deleteUsers.job.js";
 //import { loginLimiter } from "./middleware/rateLimit.js";
 
 const app = express();
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // FRONTEND
+    origin: "http://localhost:5173", // FRONTEND URL
     credentials: true, // COOKIES
   }),
 );
@@ -30,7 +30,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
 app.use("/api", listingRoutes);
-
+app.use(express.json({ limit: "1mb" }));
 //HEALTH CHECK
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "API is running" });

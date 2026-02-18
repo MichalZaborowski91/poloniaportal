@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { register } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { useCountry } from "../../app/useCountry";
@@ -10,7 +10,7 @@ import Eye from "../../assets/icons/eye.svg?react";
 import EyeOff from "../../assets/icons/eye-off.svg?react";
 import LogIn from "../../assets/icons/log-in.svg?react";
 import UserPlus from "../../assets/icons/user-plus.svg?react";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { Captcha } from "../../components/Captcha/Captcha";
 
 export const Register = () => {
   const [email, setEmail] = useState("");
@@ -36,6 +36,7 @@ export const Register = () => {
 
   const navigate = useNavigate();
   const country = useCountry();
+  const captchaRef = useRef(null);
 
   //VALIDATION
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -78,25 +79,28 @@ export const Register = () => {
 
       setRequireCaptcha(false);
       setCaptchaToken(null);
-
+      captchaRef.current?.resetCaptcha();
       setSuccessRegister(true);
     } catch (error) {
-      if (error.data?.requireCaptcha) {
+      const status = error?.status;
+      if (error?.data?.requireCaptcha) {
         setRequireCaptcha(true);
         setCaptchaToken(null);
+        captchaRef.current?.resetCaptcha();
         setError("Wymagana dodatkowa weryfikacja.");
         return;
       }
 
       setRequireCaptcha(false);
       setCaptchaToken(null);
+      captchaRef.current?.resetCaptcha();
 
-      if (error.status === 429) {
+      if (status === 429) {
         setError("Zbyt wiele prób. Spróbuj ponownie później.");
-      } else if (error.status === 400) {
+      } else if (status === 400) {
         setError("Wymagane pola: email i hasło.");
-      } else if (error.status === 409) {
-        const code = error.data?.errorCode;
+      } else if (status === 409) {
+        const code = error?.data?.errorCode;
 
         if (code === "ACCOUNT_SCHEDULED_FOR_DELETION") {
           setError(
@@ -410,13 +414,11 @@ export const Register = () => {
                     </label>
                   </div>
                   {requireCaptcha && (
-                    <div className={styles.captchaWrapper}>
-                      <HCaptcha
-                        sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
-                        onVerify={(token) => setCaptchaToken(token)}
-                        onExpire={() => setCaptchaToken(null)}
-                      />
-                    </div>
+                    <Captcha
+                      onVerify={setCaptchaToken}
+                      onExpire={() => setCaptchaToken(null)}
+                      ref={captchaRef}
+                    />
                   )}
                   <button
                     type="submit"

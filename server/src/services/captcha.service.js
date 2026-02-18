@@ -12,7 +12,6 @@ export const verifyCaptcha = async (token) => {
       body: new URLSearchParams({
         secret: process.env.HCAPTCHA_SECRET_KEY,
         response: token,
-        remoteip: ip,
       }),
     });
     if (!res.ok) return false;
@@ -20,6 +19,7 @@ export const verifyCaptcha = async (token) => {
 
     return data.success === true;
   } catch (err) {
+    console.error(err);
     return false;
   }
 };

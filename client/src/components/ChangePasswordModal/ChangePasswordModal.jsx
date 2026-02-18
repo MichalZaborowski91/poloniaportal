@@ -12,7 +12,7 @@ import { routes } from "../../app/routes";
 import { useCountry } from "../../app/useCountry";
 import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { Captcha } from "../Captcha/Captcha";
 
 export const ChangePasswordModal = ({ onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -33,9 +33,10 @@ export const ChangePasswordModal = ({ onClose }) => {
   const [captchaToken, setCaptchaToken] = useState(null);
 
   const passwordRef = useRef(null);
+  const captchaRef = useRef(null);
+  const { refreshUser } = useAuth();
   const navigate = useNavigate();
   const country = useCountry();
-  const { refreshUser } = useAuth();
 
   const clearServerErrors = () => {
     setError("");
@@ -72,7 +73,7 @@ export const ChangePasswordModal = ({ onClose }) => {
         newPassword,
         captchaToken,
       });
-
+      captchaRef.current?.resetCaptcha();
       setSuccess(true);
       setCaptchaToken(null);
       setTimeout(async () => {
@@ -91,57 +92,39 @@ export const ChangePasswordModal = ({ onClose }) => {
           replace: true,
         });
       }, 1500);
-    } catch (err) {
-      const code = err.code;
+    } catch (error) {
+      const code = error?.code;
 
       if (code === "INVALID_CURRENT_PASSWORD") {
         const msg = "Nieprawidłowe aktualne hasło";
         setError(msg);
         setPasswordError(msg);
         triggerShake();
-        return;
-      }
-
-      if (code === "PASSWORD_WEAK") {
+      } else if (code === "PASSWORD_WEAK") {
         setError("Hasło nie spełnia wymagań bezpieczeństwa");
-        return;
-      }
-
-      if (code === "PASSWORD_SAME_AS_OLD") {
+      } else if (code === "PASSWORD_SAME_AS_OLD") {
         setError("Nowe hasło musi być inne niż poprzednie");
         setSameAsOldError(true);
-        return;
-      }
-
-      if (code === "MISSING_FIELDS") {
+      } else if (code === "MISSING_FIELDS") {
         setError("Wszystkie pola są wymagane");
-        return;
-      }
-
-      if (code === "USER_NOT_FOUND") {
+      } else if (code === "USER_NOT_FOUND") {
         setError("Użytkownik nie istnieje");
-        return;
-      }
-
-      if (code === "CHANGE_PASSWORD_FAILED") {
+      } else if (code === "CHANGE_PASSWORD_FAILED") {
         setError("Nie udało się zmienić hasła. Spróbuj ponownie.");
-        return;
-      }
-
-      if (code === "CAPTCHA_INVALID") {
+      } else if (code === "CAPTCHA_INVALID") {
         setError("Weryfikacja captcha nie powiodła się. Spróbuj ponownie.");
-        setCaptchaToken(null);
-        return;
+      } else {
+        setError("Wystąpił błąd. Spróbuj ponownie.");
       }
-
-      // fallback
-      setError("Wystąpił błąd. Spróbuj ponownie.");
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
   };
 
   const handleClose = useCallback(() => {
+    captchaRef.current?.resetCaptcha();
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
@@ -412,13 +395,11 @@ export const ChangePasswordModal = ({ onClose }) => {
               </div>
             )}
 
-            <div className={styles.changePassword__captcha}>
-              <HCaptcha
-                sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
-                onVerify={(token) => setCaptchaToken(token)}
-                onExpire={() => setCaptchaToken(null)}
-              />
-            </div>
+            <Captcha
+              onVerify={setCaptchaToken}
+              onExpire={() => setCaptchaToken(null)}
+              ref={captchaRef}
+            />
 
             <div className={styles.changePassword__actions}>
               <button

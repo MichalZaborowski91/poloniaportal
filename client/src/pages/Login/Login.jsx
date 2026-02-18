@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { login } from "../../api/auth";
 import { useAuth } from "../../hooks/useAuth";
@@ -11,7 +11,7 @@ import Eye from "../../assets/icons/eye.svg?react";
 import EyeOff from "../../assets/icons/eye-off.svg?react";
 import LogIn from "../../assets/icons/log-in.svg?react";
 import { Link } from "react-router-dom";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { Captcha } from "../../components/Captcha/Captcha";
 import toast from "react-hot-toast";
 
 export const Login = () => {
@@ -31,6 +31,7 @@ export const Login = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
+  const captchaRef = useRef(null);
 
   const passwordChanged = sessionStorage.getItem("passwordChanged") === "true";
   const from = location.state?.from?.pathname || routes.home(country);
@@ -81,7 +82,9 @@ export const Login = () => {
         rememberMe,
         captchaToken: requireCaptcha ? captchaToken : undefined,
       });
-
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
+      setRequireCaptcha(false);
       if (response.accountRestored) {
         toast.success("Twoje konto zostało przywrócone. Witamy ponownie!");
       }
@@ -98,16 +101,19 @@ export const Login = () => {
       }
       navigate(from, { replace: true });
     } catch (error) {
+      const status = error?.status;
       if (error?.data?.requireCaptcha) {
         setRequireCaptcha(true);
+        captchaRef.current?.resetCaptcha();
         setCaptchaToken(null);
         setError("Wymagana dodatkowa weryfikacja.");
         return;
       }
       setRequireCaptcha(false);
+      captchaRef.current?.resetCaptcha();
       setCaptchaToken(null);
       setLoginError(true);
-      if (error.status === 423) {
+      if (status === 423) {
         const remaining = error?.data?.lockRemaining;
 
         if (remaining) {
@@ -121,13 +127,13 @@ export const Login = () => {
             "Konto zostało tymczasowo zablokowane. Spróbuj ponownie później.",
           );
         }
-      } else if (error.status === 429) {
+      } else if (status === 429) {
         setError(
           "Zbyt wiele prób logowania. Odczekaj chwilę i spróbuj ponownie.",
         );
       } else if (
-        error.status === 403 &&
-        error.data?.message === "Account permanently deleted"
+        status === 403 &&
+        error?.data?.message === "Account permanently deleted"
       ) {
         setError("To konto zostało trwale usunięte.");
       } else {
@@ -210,13 +216,11 @@ export const Login = () => {
                   </label>
                 </div>
                 {requireCaptcha && (
-                  <div className={styles.captchaWrapper}>
-                    <HCaptcha
-                      sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
-                      onVerify={(token) => setCaptchaToken(token)}
-                      onExpire={() => setCaptchaToken(null)}
-                    />
-                  </div>
+                  <Captcha
+                    onVerify={setCaptchaToken}
+                    onExpire={() => setCaptchaToken(null)}
+                    ref={captchaRef}
+                  />
                 )}
                 <button
                   type="submit"

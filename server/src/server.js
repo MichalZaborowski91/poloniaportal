@@ -11,5 +11,12 @@ const startServer = async () => {
     console.log(`Server running on port ${PORT}`);
   });
 };
+//IP TEST FOR RATE LIMITS
+//app.get("/ip-test", (req, res) => {
+//res.json({
+// ip: req.ip,
+// forwarded: req.headers["x-forwarded-for"],
+// });
+//});
 
 startServer();

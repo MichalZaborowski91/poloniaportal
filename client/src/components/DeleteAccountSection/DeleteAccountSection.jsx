@@ -9,7 +9,7 @@ import Cancel from "../../assets/icons/x.svg?react";
 import ArrowRightCircle from "../../assets/icons/arrow-right-circle.svg?react";
 import CheckCircle from "../../assets/icons/check-circle.svg?react";
 import UserDelete from "../../assets/icons/user-x.svg?react";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { Captcha } from "../Captcha/Captcha";
 
 export const DeleteAccountSection = ({ onDeleted, onClose }) => {
   const [password, setPassword] = useState("");
@@ -22,6 +22,7 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
   const [shake, setShake] = useState(false);
 
   const passwordRef = useRef(null);
+  const captchaRef = useRef(null);
 
   const handleDelete = async () => {
     setPasswordError("");
@@ -31,11 +32,18 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
       return;
     }
 
+    if (!captchaToken) {
+      toast.error("Potwierdź captcha");
+      return;
+    }
+
     try {
       setLoading(true);
 
       await deleteAccount({ password, captchaToken });
 
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
       toast.success("Konto zostało usunięte.");
 
       if (onDeleted) {
@@ -44,25 +52,32 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
 
       onClose();
     } catch (error) {
-      if (error.code === "INVALID_PASSWORD") {
+      const code = error?.code;
+      if (code === "INVALID_PASSWORD") {
         setPasswordError("Niewłaściwe hasło");
         triggerShake();
+        captchaRef.current?.resetCaptcha();
+        setCaptchaToken(null);
         return;
       }
 
-      if (error.code === "CAPTCHA_INVALID") {
+      if (code === "CAPTCHA_INVALID") {
+        captchaRef.current?.resetCaptcha();
         setCaptchaToken(null);
         toast.error("Weryfikacja captcha nie powiodła się");
         return;
       }
 
       toast.error(error.message || "Nie udało się usunąć konta");
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
   };
 
   const handleClose = useCallback(() => {
+    captchaRef.current?.resetCaptcha();
     setPassword("");
     setStep("info");
     setCaptchaToken(null);
@@ -196,13 +211,12 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
                 {showPassword ? <Eye /> : <EyeOff />}
               </button>
             </div>
-            <div className={styles.deleteAccountSection__captcha}>
-              <HCaptcha
-                sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
-                onVerify={(token) => setCaptchaToken(token)}
-                onExpire={() => setCaptchaToken(null)}
-              />
-            </div>
+            <Captcha
+              onVerify={setCaptchaToken}
+              onExpire={() => setCaptchaToken(null)}
+              ref={captchaRef}
+            />
+
             <div className={styles.deleteAccountSection__actions}>
               <button
                 className={styles.deleteAccountSection__button}

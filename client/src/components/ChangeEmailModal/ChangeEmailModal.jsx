@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { requestEmailChange } from "../../api/auth";
+import { useCountry } from "../../app/useCountry";
+import { Captcha } from "../Captcha/Captcha";
+import { useAuth } from "../../hooks/useAuth";
 import styles from "../ChangeEmailModal/ChangeEmailModal.module.scss";
 import Lock from "../../assets/icons/lock.svg?react";
 import Eye from "../../assets/icons/eye.svg?react";
@@ -8,8 +11,6 @@ import AtSign from "../../assets/icons/at-sign.svg?react";
 import CheckCircle from "../../assets/icons/check-circle.svg?react";
 import Cancel from "../../assets/icons/x.svg?react";
 import toast from "react-hot-toast";
-import { useCountry } from "../../app/useCountry";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export const ChangeEmailModal = ({ onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -26,7 +27,9 @@ export const ChangeEmailModal = ({ onClose }) => {
   const [emailMatchOk, setEmailMatchOk] = useState(false);
   const [sameAsCurrentError, setSameAsCurrentError] = useState(false);
 
+  const { refreshUser } = useAuth();
   const passwordRef = useRef(null);
+  const captchaRef = useRef(null);
   const country = useCountry();
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail);
@@ -76,36 +79,30 @@ export const ChangeEmailModal = ({ onClose }) => {
         country,
         captchaToken,
       });
-
+      await refreshUser();
+      captchaRef.current?.resetCaptcha();
       setSuccess(true);
       toast.success("Sprawdź skrzynkę email, aby potwierdzić zmianę");
       setCaptchaToken(null);
-    } catch (err) {
-      const code = err.code;
+    } catch (error) {
+      const code = error?.code;
 
       if (code === "INVALID_PASSWORD") {
         setError("Nieprawidłowe hasło");
         setPasswordError("Nieprawidłowe hasło");
         triggerShake();
-        return;
-      }
-
-      if (code === "EMAIL_IN_USE") {
+      } else if (code === "EMAIL_IN_USE") {
         setError("Ten email jest już zajęty");
-        return;
-      }
-
-      if (code === "EMAIL_SAME_AS_CURRENT") {
+      } else if (code === "EMAIL_SAME_AS_CURRENT") {
         setError("Nowy email jest taki sam jak obecny");
         setSameAsCurrentError(true);
-        return;
-      }
-
-      if (code === "CAPTCHA_INVALID") {
+      } else if (code === "CAPTCHA_INVALID") {
         setError("Weryfikacja captcha nie powiodła się. Spróbuj ponownie.");
-        setCaptchaToken(null);
-        return;
+      } else {
+        setError("Wystąpił błąd. Spróbuj ponownie.");
       }
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -119,6 +116,7 @@ export const ChangeEmailModal = ({ onClose }) => {
     !loading;
 
   const handleClose = () => {
+    captchaRef.current?.resetCaptcha();
     setCurrentPassword("");
     setNewEmail("");
     setConfirmEmail("");
@@ -147,6 +145,7 @@ export const ChangeEmailModal = ({ onClose }) => {
 
     return () => clearTimeout(timeout);
   }, [newEmail, confirmEmail]);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
@@ -274,13 +273,11 @@ export const ChangeEmailModal = ({ onClose }) => {
                 required
               />
             </div>
-            <div className={styles.changeEmail__captcha}>
-              <HCaptcha
-                sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
-                onVerify={(token) => setCaptchaToken(token)}
-                onExpire={() => setCaptchaToken(null)}
-              />
-            </div>
+            <Captcha
+              onVerify={setCaptchaToken}
+              onExpire={() => setCaptchaToken(null)}
+              ref={captchaRef}
+            />
             <div className={styles.changeEmail__actions}>
               <button
                 type="submit"

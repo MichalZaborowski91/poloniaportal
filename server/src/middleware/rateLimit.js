@@ -106,3 +106,37 @@ export const registerLimiter = async (req, res, next) => {
     next(); //FAIL-OPEN
   }
 };
+
+//FORGOT PASSWORD LIMITERS
+const forgotIpBurst = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, "1 m"), //5 REQ/MIN
+});
+
+const forgotIpLong = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, "15 m"), //10 REQ/15MIN
+});
+
+//FORGOT PASSWORD LIMITER
+export const forgotLimiter = async (req, res, next) => {
+  try {
+    const ip = req.ip || "unknown-ip";
+
+    //IP BURST
+    if (!(await forgotIpBurst.limit(`forgot:ip:burst:${ip}`)).success) {
+      //IMPORTANT: ALWAYS SUCCESS, NO INFO LEAK
+      return res.json({ success: true });
+    }
+
+    //IP LONG
+    if (!(await forgotIpLong.limit(`forgot:ip:long:${ip}`)).success) {
+      return res.json({ success: true });
+    }
+
+    next();
+  } catch (err) {
+    console.error("Forgot rate limit error:", err);
+    next(); //FAIL-OPEN
+  }
+};

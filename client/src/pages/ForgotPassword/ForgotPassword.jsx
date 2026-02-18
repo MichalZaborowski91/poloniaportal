@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import Email from "../../assets/icons/mail.svg?react";
 import Send from "../../assets/icons/send.svg?react";
 import { ResetPasswordSuccess } from "../../components/ResetPasswordSuccess/ResetPasswordSuccess";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { Captcha } from "../../components/Captcha/Captcha";
 
 export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -103,13 +103,11 @@ export const ForgotPassword = () => {
                         required
                       />
                     </div>
-                    <div className={styles.captchaWrapper}>
-                      <HCaptcha
-                        sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
-                        onVerify={(token) => setCaptchaToken(token)}
-                        ref={captchaRef}
-                      />
-                    </div>
+                    <Captcha
+                      onVerify={setCaptchaToken}
+                      onExpire={() => setCaptchaToken(null)}
+                      ref={captchaRef}
+                    />
                     <button
                       type="submit"
                       disabled={!canSubmitForgotPassword}
