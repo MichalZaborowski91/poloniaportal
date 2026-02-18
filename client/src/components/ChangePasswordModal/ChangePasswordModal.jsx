@@ -12,6 +12,7 @@ import { routes } from "../../app/routes";
 import { useCountry } from "../../app/useCountry";
 import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export const ChangePasswordModal = ({ onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -29,6 +30,7 @@ export const ChangePasswordModal = ({ onClose }) => {
   const [shake, setShake] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [sameAsOldError, setSameAsOldError] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const passwordRef = useRef(null);
   const navigate = useNavigate();
@@ -57,15 +59,22 @@ export const ChangePasswordModal = ({ onClose }) => {
       return setError("Nowe hasła nie są takie same");
     }
 
+    if (!captchaToken) {
+      setError("Potwierdź, że nie jesteś robotem");
+      return;
+    }
+
     try {
       setLoading(true);
 
       await changePassword({
         currentPassword: currentPassword.trim(),
         newPassword,
+        captchaToken,
       });
 
       setSuccess(true);
+      setCaptchaToken(null);
       setTimeout(async () => {
         try {
           await logout();
@@ -116,6 +125,12 @@ export const ChangePasswordModal = ({ onClose }) => {
 
       if (code === "CHANGE_PASSWORD_FAILED") {
         setError("Nie udało się zmienić hasła. Spróbuj ponownie.");
+        return;
+      }
+
+      if (code === "CAPTCHA_INVALID") {
+        setError("Weryfikacja captcha nie powiodła się. Spróbuj ponownie.");
+        setCaptchaToken(null);
         return;
       }
 
@@ -397,6 +412,14 @@ export const ChangePasswordModal = ({ onClose }) => {
               </div>
             )}
 
+            <div className={styles.changePassword__captcha}>
+              <HCaptcha
+                sitekey={import.meta.env.VITE_HCAPTCHA_SITE_KEY}
+                onVerify={(token) => setCaptchaToken(token)}
+                onExpire={() => setCaptchaToken(null)}
+              />
+            </div>
+
             <div className={styles.changePassword__actions}>
               <button
                 type="submit"
@@ -405,6 +428,7 @@ export const ChangePasswordModal = ({ onClose }) => {
                   !passwordValid ||
                   !currentPassword ||
                   newPassword !== confirmPassword ||
+                  !captchaToken ||
                   loading
                 }
               >

@@ -44,12 +44,19 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
 
       onClose();
     } catch (error) {
-      if (error.message?.toLowerCase().includes("password")) {
+      if (error.code === "INVALID_PASSWORD") {
         setPasswordError("Niewłaściwe hasło");
         triggerShake();
-      } else {
-        toast.error(error.message || "Nie udało się usunąć konta");
+        return;
       }
+
+      if (error.code === "CAPTCHA_INVALID") {
+        setCaptchaToken(null);
+        toast.error("Weryfikacja captcha nie powiodła się");
+        return;
+      }
+
+      toast.error(error.message || "Nie udało się usunąć konta");
     } finally {
       setLoading(false);
     }

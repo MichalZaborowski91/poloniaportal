@@ -81,7 +81,9 @@ export const deleteAccount = async ({ password, captchaToken }) => {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || "Delete account failed");
+    const error = new Error(data.message || "Delete account failed");
+    error.code = data.code || "UNKNOWN_ERROR";
+    throw error;
   }
 
   return data;
@@ -129,12 +131,16 @@ export const validateResetToken = async (token) => {
   return data.valid === true;
 };
 
-export const changePassword = async ({ currentPassword, newPassword }) => {
+export const changePassword = async ({
+  currentPassword,
+  newPassword,
+  captchaToken,
+}) => {
   const res = await fetch(`${API_URL}/api/auth/change-password`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ currentPassword, newPassword }),
+    body: JSON.stringify({ currentPassword, newPassword, captchaToken }),
   });
 
   let data = {};
@@ -164,6 +170,50 @@ export const logoutAllDevices = async () => {
 
   if (!res.ok) {
     throw new Error(data.message);
+  }
+
+  return data;
+};
+
+export const requestEmailChange = async ({
+  currentPassword,
+  newEmail,
+  captchaToken,
+  country,
+}) => {
+  const res = await fetch(`${API_URL}/api/auth/change-email`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ currentPassword, newEmail, country, captchaToken }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    const error = new Error(data.message);
+    error.code = data.code;
+    throw error;
+  }
+
+  return data;
+};
+
+export const confirmEmailChange = async (token) => {
+  const res = await fetch(
+    `${API_URL}/api/auth/confirm-email-change?token=${token}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    const error = new Error(data.message || "Error");
+    error.code = data.code;
+    throw error;
   }
 
   return data;

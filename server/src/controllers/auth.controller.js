@@ -1,7 +1,11 @@
 import jwt from "jsonwebtoken";
 import { User } from "../models/User.js";
 import crypto from "crypto";
-import { sendVerifyEmail, sendResetEmail } from "../services/email.service.js";
+import {
+  sendVerifyEmail,
+  sendResetEmail,
+  sendEmailChangeVerification,
+} from "../services/email.service.js";
 import {
   getRegisterLock,
   incrementRegisterAttempts,
@@ -78,8 +82,8 @@ export const register = async (req, res) => {
     if (isBot) {
       const botCaptchaPending = await isBotCaptchaPending(ip);
       if (botCaptchaPending) {
-        const captchaOk = await verifyCaptcha(captchaToken, ip);
-        if (!captchaOk) {
+        const isCaptchaValid = await verifyCaptcha(captchaToken, ip);
+        if (!isCaptchaValid) {
           //FAIL → HARD BLOCK (24H)
           await applyBotHardBlock(ip);
           return res.status(429).json({ locked: true });
@@ -119,9 +123,9 @@ export const register = async (req, res) => {
     //CAPTCHA AFTER LOCK
     const userCaptchaPending = await isCaptchaPending(ip);
     if (userCaptchaPending) {
-      const captchaOk = await verifyCaptcha(captchaToken, ip);
+      const isCaptchaValid = await verifyCaptcha(captchaToken, ip);
 
-      if (!captchaOk) {
+      if (!isCaptchaValid) {
         return res.status(429).json({ requireCaptcha: true });
       }
 
@@ -279,9 +283,9 @@ export const login = async (req, res) => {
         });
       }
 
-      const captchaOk = await verifyCaptcha(captchaToken);
+      const isCaptchaValid = await verifyCaptcha(captchaToken);
 
-      if (!captchaOk) {
+      if (!isCaptchaValid) {
         return res.status(403).json({
           requireCaptcha: true,
         });
@@ -495,25 +499,41 @@ export const deleteAccount = async (req, res) => {
   try {
     const { password, captchaToken } = req.body;
 
+    if (!password || !captchaToken) {
+      return res.status(400).json({
+        code: "MISSING_FIELDS",
+        message: "Password and captcha required",
+      });
+    }
+
+    //CAPTCHA VERIFY
+    const isCaptchaValid = await verifyCaptcha(captchaToken);
+    if (!isCaptchaValid) {
+      return res.status(400).json({
+        code: "CAPTCHA_INVALID",
+        message: "Captcha failed",
+      });
+    }
+
     const user = await User.findById(req.user.id);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        code: "USER_NOT_FOUND",
+        message: "User not found",
+      });
     }
 
-    // PASSWORD CHECK
+    //PASSWORD CHECK
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid password" });
+      return res.status(401).json({
+        code: "INVALID_PASSWORD",
+        message: "Invalid password",
+      });
     }
 
-    // CAPTCHA CHECK
-    const captchaOk = await verifyCaptcha(captchaToken);
-    if (!captchaOk) {
-      return res.status(400).json({ message: "Captcha failed" });
-    }
-
-    // SOFT DELETE (14 days)
+    //SOFT DELETE (14 days)
     const now = new Date();
     const restoreUntil = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
 
@@ -523,7 +543,7 @@ export const deleteAccount = async (req, res) => {
 
     await user.save();
 
-    // LOGOUT
+    //LOGOUT
     res.clearCookie("auth_token", {
       httpOnly: true,
       sameSite: "lax",
@@ -556,9 +576,14 @@ export const forgotPassword = async (req, res) => {
 
     const key = `${ip}:${email.toLowerCase()}`;
 
+    // IF NO CAPTCHA TOKEN → EXIT EARLY
+    if (!captchaToken) {
+      return successResponse();
+    }
+
     //CAPTCHA ALWAYS REQUIRED
-    const captchaOk = await verifyCaptcha(captchaToken);
-    if (!captchaOk) {
+    const isCaptchaValid = await verifyCaptcha(captchaToken);
+    if (!isCaptchaValid) {
       return successResponse();
     }
 
@@ -717,10 +742,20 @@ export const validateResetToken = async (req, res) => {
 //CHANGE PASSWORD (LOGGED USER)
 export const changePassword = async (req, res) => {
   try {
-    const { currentPassword, newPassword } = req.body;
+    const { currentPassword, newPassword, captchaToken } = req.body;
+
+    //VERIFY CAPTCHA
+    const isCaptchaValid = await verifyCaptcha(captchaToken);
+
+    if (!isCaptchaValid) {
+      return res.status(400).json({
+        code: "CAPTCHA_INVALID",
+        message: "Captcha verification failed",
+      });
+    }
 
     //MISSING FIELDS
-    if (!currentPassword || !newPassword) {
+    if (!currentPassword || !newPassword || !captchaToken) {
       return res.status(400).json({
         code: "MISSING_FIELDS",
         message: "All fields are required",
@@ -819,4 +854,133 @@ export const logoutAllDevices = async (req, res) => {
       message: "Logout failed",
     });
   }
+};
+
+//EMAIL CHANGE
+export const requestEmailChange = async (req, res) => {
+  try {
+    const { currentPassword, newEmail, country, captchaToken } = req.body;
+
+    const captchaValid = await verifyCaptcha(captchaToken);
+
+    if (!captchaValid) {
+      return res.status(400).json({
+        code: "CAPTCHA_INVALID",
+      });
+    }
+
+    if (!currentPassword || !newEmail) {
+      return res.status(400).json({
+        code: "MISSING_FIELDS",
+        message: "All fields required",
+      });
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        code: "USER_NOT_FOUND",
+        message: "User not found",
+      });
+    }
+
+    //PASSWORD CHECK
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({
+        code: "INVALID_PASSWORD",
+      });
+    }
+
+    //EMAIL TAKEN ?
+    const emailNormalized = newEmail.toLowerCase().trim();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailNormalized)) {
+      return res.status(400).json({
+        code: "INVALID_EMAIL",
+      });
+    }
+
+    if (emailNormalized === user.email) {
+      return res.status(400).json({
+        code: "EMAIL_SAME_AS_CURRENT",
+      });
+    }
+
+    const exists = await User.findOne({ email: emailNormalized });
+
+    if (exists) {
+      return res.status(400).json({
+        code: "EMAIL_IN_USE",
+      });
+    }
+
+    //GENERATE TOKEN
+    const token = crypto.randomBytes(32).toString("hex");
+
+    user.emailChangeToken = token;
+    user.emailChangeExpires = Date.now() + 1000 * 60 * 60; //1h
+    user.emailChangeNewEmail = emailNormalized;
+
+    await user.save();
+
+    const changeLink = `${process.env.FRONTEND_URL}/${country}/confirm-email-change?token=${token}`;
+
+    await sendEmailChangeVerification({
+      to: emailNormalized,
+      changeLink,
+    });
+
+    return res.json({
+      success: true,
+      code: "EMAIL_CHANGE_SENT",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      code: "EMAIL_CHANGE_FAILED",
+    });
+  }
+};
+
+export const confirmEmailChange = async (req, res) => {
+  const { token } = req.query;
+
+  const user = await User.findOne({
+    emailChangeToken: token,
+    emailChangeExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({
+      code: "INVALID_OR_EXPIRED_TOKEN",
+    });
+  }
+  if (!user.emailChangeNewEmail) {
+    return res.status(400).json({
+      code: "NO_EMAIL_CHANGE_PENDING",
+    });
+  }
+  //CHANGE EMAIL
+  user.email = user.emailChangeNewEmail;
+
+  //NEW EMAIL VERIFIED
+  user.emailVerified = true;
+
+  //LOGOUT ALL DEVICES
+  user.passwordChangedAt = new Date();
+
+  //CLEAR DATA
+  user.emailChangeToken = null;
+  user.emailChangeExpires = null;
+  user.emailChangeNewEmail = null;
+
+  //CLEAR OLD VERIFY TOKENS
+  user.emailVerifyToken = null;
+  user.emailVerifyExpires = null;
+
+  await user.save();
+
+  res.json({ success: true });
 };

@@ -12,9 +12,10 @@ export const verifyCaptcha = async (token) => {
       body: new URLSearchParams({
         secret: process.env.HCAPTCHA_SECRET_KEY,
         response: token,
+        remoteip: ip,
       }),
     });
-
+    if (!res.ok) return false;
     const data = await res.json();
 
     return data.success === true;

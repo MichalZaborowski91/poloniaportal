@@ -64,6 +64,7 @@ export const Register = () => {
     setLoading(true);
     if (requireCaptcha && !captchaToken) {
       setError("Wymagana dodatkowa weryfikacja.");
+      setLoading(false);
       return;
     }
     try {

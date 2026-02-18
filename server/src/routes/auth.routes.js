@@ -12,13 +12,15 @@ import {
   validateResetToken,
   changePassword,
   logoutAllDevices,
+  confirmEmailChange,
+  requestEmailChange,
 } from "../controllers/auth.controller.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
-import { loginLimiter } from "../middleware/rateLimit.js";
+import { loginLimiter, registerLimiter } from "../middleware/rateLimit.js";
 
 const router = express.Router();
 
-router.post("/register", register);
+router.post("/register", registerLimiter, register);
 router.delete("/delete-account", requireAuth, deleteAccount);
 router.post("/login", loginLimiter, login);
 router.get("/me", requireAuth, me);
@@ -30,5 +32,7 @@ router.post("/reset-password", resetPassword);
 router.get("/reset-password/:token", validateResetToken);
 router.put("/change-password", requireAuth, changePassword);
 router.post("/logout-all", requireAuth, logoutAllDevices);
+router.put("/change-email", requireAuth, requestEmailChange);
+router.get("/confirm-email-change", confirmEmailChange);
 
 export default router;

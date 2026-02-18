@@ -20,6 +20,7 @@ import { PublicOnlyRoute } from "./routes/PublicOnlyRoutes";
 import { ForgotPassword } from "./pages/ForgotPassword/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword/ResetPassword";
 import { About } from "./pages/About/About";
+import { ConfirmEmailChange } from "./pages/ConfirmEmailChange/ConfirmEmailChange";
 
 export const App = () => {
   return (
@@ -35,6 +36,7 @@ export const App = () => {
         <Route path="register" element={<Register />} />
         <Route path="about" element={<About />} />
         <Route path="reset-password/:token" element={<ResetPassword />} />
+        <Route path="confirm-email-change" element={<ConfirmEmailChange />} />
         <Route
           path="forgot-password"
           element={

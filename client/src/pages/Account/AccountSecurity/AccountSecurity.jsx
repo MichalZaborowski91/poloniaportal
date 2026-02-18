@@ -15,18 +15,23 @@ import { ChangePasswordModal } from "../../../components/ChangePasswordModal/Cha
 import Key from "../../../assets/icons/key.svg?react";
 import { logoutAllDevices } from "../../../api/auth";
 import toast from "react-hot-toast";
+import { ChangeEmailModal } from "../../../components/ChangeEmailModal/ChangeEmailModal";
 
 export const AccountSecurity = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showChangeEmail, setShowChangeEmail] = useState(false);
 
   const navigate = useNavigate();
   const country = useCountry();
-  const { refreshUser } = useAuth();
+  const { user, refreshUser } = useAuth();
   const location = useLocation();
 
   const cameFromAddOffer =
     location.state?.from?.pathname?.includes("/add-offer");
+
+  const emailChangePending =
+    user?.emailChangeExpires && new Date(user.emailChangeExpires) > new Date();
 
   //DELETE ACC
   const handleDeleted = async () => {
@@ -93,7 +98,17 @@ export const AccountSecurity = () => {
             <h4 className={styles.accountSecurity__header}>Zmiana email</h4>
             <div className={styles.accountSecurity__wrapper}>
               <div className={styles.accountSecurity__content}>
-                <button className={styles.accountSecurity__button}>
+                {emailChangePending && (
+                  <div className={styles.accountSecurity__info}>
+                    Wysłano prośbę o zmianę email na:
+                    <strong>{user.emailChangeNewEmail}</strong>
+                  </div>
+                )}
+                <button
+                  disabled={emailChangePending}
+                  className={styles.accountSecurity__button}
+                  onClick={() => setShowChangeEmail(true)}
+                >
                   <AtSign />
                   Zmień email
                 </button>
@@ -142,6 +157,10 @@ export const AccountSecurity = () => {
 
       {showChangePassword && (
         <ChangePasswordModal onClose={() => setShowChangePassword(false)} />
+      )}
+
+      {showChangeEmail && (
+        <ChangeEmailModal onClose={() => setShowChangeEmail(false)} />
       )}
     </div>
   );

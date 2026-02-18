@@ -23,7 +23,7 @@ export const ForgotPassword = () => {
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const canSubmitForgotPassword = emailValid && !loading;
+  const canSubmitForgotPassword = emailValid && !loading && !!captchaToken;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,6 +46,8 @@ export const ForgotPassword = () => {
 
       setSuccess(true);
     } catch (error) {
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
       setError("Nie udało się wysłać linku resetującego.");
       console.error(error);
     } finally {

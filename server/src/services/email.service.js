@@ -3,10 +3,6 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 //VERIFY EMAIL
 export const sendVerifyEmail = async ({ to, verifyLink }) => {
-  console.log("SEND VERIFY EMAIL CALLED");
-  console.log("TO:", to);
-  console.log("VERIFY LINK:", verifyLink);
-  console.log("RESEND KEY EXISTS:", !!process.env.RESEND_API_KEY);
   return resend.emails.send({
     from: process.env.EMAIL_FROM,
     to,
@@ -36,6 +32,27 @@ export const sendResetEmail = async ({ to, resetLink }) => {
       <p>Kliknij poniżej:</p>
       <a href="${resetLink}">Resetuj hasło</a>
       <p>Link jest ważny 1 godzinę</p>
+    `,
+  });
+};
+
+//CHANGE EMAIL
+export const sendEmailChangeVerification = async ({ to, changeLink }) => {
+  return resend.emails.send({
+    from: process.env.EMAIL_FROM,
+    to,
+    subject: "Potwierdź zmianę adresu email",
+    html: `
+      <h2>Zmiana adresu email</h2>
+      <p>Otrzymaliśmy prośbę o zmianę adresu email dla Twojego konta.</p>
+      <p>Kliknij poniżej, aby potwierdzić zmianę:</p>
+      <p>
+        <a href="${changeLink}">
+          Potwierdź zmianę email
+        </a>
+      </p>
+      <p>Jeśli to nie Ty, zignoruj tę wiadomość.</p>
+      <p>Link jest ważny 1 godzinę.</p>
     `,
   });
 };

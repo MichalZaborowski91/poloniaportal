@@ -31,6 +31,18 @@ const userSchema = new mongoose.Schema(
     emailVerifyExpires: {
       type: Date,
     },
+    emailChangeToken: {
+      type: String,
+      default: null,
+    },
+    emailChangeExpires: {
+      type: Date,
+      default: null,
+    },
+    emailChangeNewEmail: {
+      type: String,
+      default: null,
+    },
     verifyOrigin: {
       type: String,
     },
