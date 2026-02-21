@@ -120,6 +120,14 @@
       width: 100%;
       height: 100%;
     }
+
+    &--success {
+      color: #148a18;
+    }
+
+    &--error {
+      color: #dc2626;
+    }
   }
 
   &__input {
@@ -182,34 +190,6 @@
     }
   }
 
-  &__strength {
-    width: 100%;
-    height: 6px;
-    background-color: rgba(0, 0, 0, 0.15);
-    border-radius: 4px;
-    margin-top: 6px;
-    overflow: hidden;
-  }
-
-  &__strengthBar {
-    height: 100%;
-    transition:
-      width 0.3s ease,
-      background-color 0.3s ease;
-
-    &--weak {
-      background-color: #e70518;
-    }
-
-    &--medium {
-      background-color: #f5c542;
-    }
-
-    &--strong {
-      background-color: #148a18;
-    }
-  }
-
   &__passwordError {
     text-align: center;
     color: #e70518;
@@ -218,49 +198,6 @@
     font-weight: 500;
     margin-bottom: 0;
     text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.9);
-  }
-
-  &__passwordRulesHead {
-    text-align: center;
-    margin-top: 10px;
-    margin-bottom: 0;
-    color: #16191d;
-    font-size: 16px;
-    text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
-  }
-
-  &__passwordRulesList {
-    padding-left: 0;
-    margin-top: 8px;
-    font-size: 13px;
-    animation: fadeIn 250ms ease-out;
-    margin-left: 45px;
-  }
-
-  &__passwordRulesItem {
-    list-style: none;
-
-    &--ok {
-      color: #148a18;
-      font-weight: 600;
-      text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.9);
-
-      &::before {
-        content: "✔ ";
-        color: #148a18;
-      }
-    }
-
-    &--bad {
-      color: #e70518;
-      font-weight: 600;
-      text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.9);
-
-      &::before {
-        content: "• ";
-        color: #e70518;
-      }
-    }
   }
 
   &__successContainer {
@@ -297,22 +234,4 @@
   100% {
     transform: translateX(0);
   }
-}
-
-.iconSuccess {
-  color: #148a18;
-}
-
-.inputError {
-  border: 1px solid #e70518 !important;
-  box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.25);
-}
-
-.inputSuccess {
-  border: 2px #148a18 !important;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-}
-
-.iconError {
-  color: #e70518;
 }

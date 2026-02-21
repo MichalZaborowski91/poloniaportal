@@ -44,16 +44,16 @@
     display: flex;
     gap: 12px;
   }
-}
 
-.mobileMenuIconContainer {
-  position: relative;
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-  display: block;
+  &__mobileMenuContainer {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: block;
+  }
 
-  &__menuIcon {
+  &__mobileMenuIcon {
     position: absolute;
     inset: 0;
     color: #1f2937;
@@ -79,11 +79,13 @@
     &__addOffer {
       display: block;
     }
+
     &__authLinks {
       display: flex;
     }
-  }
-  .mobileMenuIconContainer {
-    display: none;
+
+    &__mobileMenuContainer {
+      display: none;
+    }
   }
 }

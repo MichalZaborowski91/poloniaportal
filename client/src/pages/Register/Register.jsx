@@ -144,8 +144,8 @@ export const Register = () => {
                 {successRegister ? "Sukces" : "Rejestracja"}
               </h2>
               {successRegister ? (
-                <div className={styles.successBox}>
-                  <p className={styles.successText}>
+                <div className={styles.register__successContainer}>
+                  <p className={styles.register__successText}>
                     Gratulacje! Rejestracja powiodła się.
                     <br />
                     Sprawdź email w celu weryfikacji konta.
@@ -155,14 +155,14 @@ export const Register = () => {
                     className={styles.register__submitButton}
                     onClick={() => navigate(routes.login(country))}
                   >
-                    <LogIn className={styles.buttonIcon} />
+                    <LogIn className={styles.register__submitButtonIcon} />
                     Przejdź do logowania
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className={styles.register__form}>
                   {error && <p className={styles.register__error}>{error}</p>}
-                  <div className={styles.fieldCompany}>
+                  <div className={styles.register__fieldCompany}>
                     <label htmlFor="company">Company</label>
                     <input
                       type="text"
@@ -174,15 +174,17 @@ export const Register = () => {
                       tabIndex="-1"
                     />
                   </div>
-                  <div className={styles.inputWrapper}>
+                  <div className={styles.register__wrapper}>
                     <Email
-                      className={`${styles.inputIcon} ${
-                        emailValidOk ? styles.iconSuccess : ""
+                      className={`${styles.register__inputIcon} ${
+                        emailValidOk
+                          ? styles[`register__inputIcon-success`]
+                          : ""
                       }`}
                     />
                     <input
                       className={`${styles.register__input} ${
-                        emailError ? styles.inputError : ""
+                        emailError ? styles[`register__input--error`] : ""
                       }`}
                       type="email"
                       placeholder="Email"
@@ -207,20 +209,20 @@ export const Register = () => {
                       required
                     />
                   </div>
-                  <div className={styles.inputWrapper}>
+                  <div className={styles.register__wrapper}>
                     <Lock
-                      className={`${styles.inputIcon} ${
+                      className={`${styles.register__inputIcon} ${
                         passwordMismatch
                           ? ""
                           : passwordMatchOk
-                            ? styles.iconSuccess
+                            ? styles[`register__inputIcon-success`]
                             : ""
                       }`}
                     />
 
                     <input
                       className={`${styles.register__input} ${
-                        passwordMismatch ? styles.inputError : ""
+                        passwordMismatch ? styles[`register__input--error`] : ""
                       }`}
                       type={showPassword ? "text" : "password"}
                       placeholder="Hasło"
@@ -233,7 +235,7 @@ export const Register = () => {
                     />
                     <button
                       type="button"
-                      className={styles.inputAction}
+                      className={styles.register__inputAction}
                       onClick={() => setShowPassword((prev) => !prev)}
                       aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
                     >
@@ -241,19 +243,19 @@ export const Register = () => {
                     </button>
                   </div>
 
-                  <div className={styles.inputWrapper}>
+                  <div className={styles.register__wrapper}>
                     <Lock
-                      className={`${styles.inputIcon} ${
+                      className={`${styles.register__inputIcon} ${
                         passwordMismatch
                           ? ""
                           : passwordMatchOk
-                            ? styles.iconSuccess
+                            ? styles[`register__inputIcon-success`]
                             : ""
                       }`}
                     />
                     <input
                       className={`${styles.register__input} ${
-                        passwordMismatch ? styles.inputError : ""
+                        passwordMismatch ? styles[`register__input--error`] : ""
                       }`}
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Potwierdź hasło"
@@ -267,7 +269,7 @@ export const Register = () => {
 
                     <button
                       type="button"
-                      className={styles.inputAction}
+                      className={styles.register__inputAction}
                       onClick={() => setShowConfirmPassword((prev) => !prev)}
                       aria-label={
                         showConfirmPassword ? "Ukryj hasło" : "Pokaż hasło"
@@ -284,8 +286,8 @@ export const Register = () => {
                     checks={passwordChecks}
                   />
 
-                  <div className={styles.termsWrapper}>
-                    <label className={styles.termsLabel}>
+                  <div className={styles.register__termsWrapper}>
+                    <label className={styles.register__termsLabel}>
                       <input
                         type="checkbox"
                         checked={termsAccepted}

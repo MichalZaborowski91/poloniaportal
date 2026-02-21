@@ -222,11 +222,11 @@ export const ChangeEmailModal = ({ onClose }) => {
               <AtSign
                 className={`${styles.changeEmail__icon} ${
                   sameAsCurrentError
-                    ? styles.iconError
+                    ? styles[`changeEmail__icon--error`]
                     : emailMismatch
                       ? ""
                       : emailMatchOk
-                        ? styles.iconSuccess
+                        ? styles[`changeEmail__icon--success`]
                         : ""
                 }`}
               />
@@ -250,11 +250,11 @@ export const ChangeEmailModal = ({ onClose }) => {
               <AtSign
                 className={`${styles.changeEmail__icon} ${
                   sameAsCurrentError
-                    ? styles.iconError
+                    ? styles[`changeEmail__icon--error`]
                     : emailMismatch
                       ? ""
                       : emailMatchOk
-                        ? styles.iconSuccess
+                        ? styles[`changeEmail__icon--success`]
                         : ""
                 }`}
               />

@@ -59,23 +59,23 @@ export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose }) => {
           <AccountMenu />
 
           <div
-            className={styles.mobileMenuIconContainer}
+            className={styles.header__mobileMenuContainer}
             onClick={onMenuToggle}
             aria-label="Toggle menu"
             role="button"
           >
             <Menu
-              className={`${styles.mobileMenuIconContainer__menuIcon} ${
+              className={`${styles.header__mobileMenuIcon} ${
                 isMenuOpen
-                  ? styles["mobileMenuIconContainer__menuIcon--hidden"]
-                  : styles["mobileMenuIconContainer__menuIcon--visible"]
+                  ? styles["header__mobileMenuIcon--hidden"]
+                  : styles["header__mobileMenuIcon--visible"]
               }`}
             />
             <CloseIcon
-              className={`${styles.mobileMenuIconContainer__menuIcon} ${
+              className={`${styles.header__mobileMenuIcon} ${
                 isMenuOpen
-                  ? styles["mobileMenuIconContainer__menuIcon--visible"]
-                  : styles["mobileMenuIconContainer__menuIcon--hidden"]
+                  ? styles["header__mobileMenuIcon--visible"]
+                  : styles["header__mobileMenuIcon--hidden"]
               }`}
             />
           </div>

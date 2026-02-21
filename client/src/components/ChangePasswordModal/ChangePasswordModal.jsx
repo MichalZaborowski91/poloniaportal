@@ -221,11 +221,11 @@ export const ChangePasswordModal = ({ onClose }) => {
               <Lock
                 className={`${styles.changePassword__icon} ${
                   sameAsOldError
-                    ? styles.iconError
+                    ? styles[`changePassword__icon--error`]
                     : passwordMismatch
                       ? ""
                       : passwordMatchOk
-                        ? styles.iconSuccess
+                        ? styles[`changePassword__icon--success`]
                         : ""
                 }`}
               />
@@ -258,11 +258,11 @@ export const ChangePasswordModal = ({ onClose }) => {
               <Lock
                 className={`${styles.changePassword__icon} ${
                   sameAsOldError
-                    ? styles.iconError
+                    ? styles[`changePassword__icon--error`]
                     : passwordMismatch
                       ? ""
                       : passwordMatchOk
-                        ? styles.iconSuccess
+                        ? styles[`changePassword__icon--success`]
                         : ""
                 }`}
               />

@@ -153,14 +153,16 @@ export const Login = () => {
               <h2 className={styles.login__title}>Login</h2>
               <form onSubmit={handleSubmit} className={styles.login__form}>
                 {error && <p className={styles.login__error}>{error}</p>}
-                <div className={styles.inputWrapper}>
-                  <Email className={styles.inputIcon} />
+                <div className={styles.login__wrapper}>
+                  <Email className={styles.login__icon} />
                   <input
                     type="email"
                     placeholder="Email"
                     value={email}
-                    className={`${styles.register__input} ${
-                      emailError || loginError ? styles.inputError : ""
+                    className={`${styles.login__input} ${
+                      emailError || loginError
+                        ? styles[`login__input--error`]
+                        : ""
                     }`}
                     onChange={(e) => {
                       const value = e.target.value.replace(/\s/g, "");
@@ -181,14 +183,14 @@ export const Login = () => {
                     required
                   />
                 </div>
-                <div className={styles.inputWrapper}>
-                  <Lock className={styles.inputIcon} />
+                <div className={styles.login__wrapper}>
+                  <Lock className={styles.login__icon} />
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="Hasło"
                     value={password}
-                    className={`${styles.register__input} ${
-                      loginError ? styles.inputError : ""
+                    className={`${styles.login__input} ${
+                      loginError ? styles[`login__input--error`] : ""
                     }`}
                     onChange={(e) => {
                       setPassword(e.target.value);
@@ -198,15 +200,15 @@ export const Login = () => {
                   />
                   <button
                     type="button"
-                    className={styles.inputAction}
+                    className={styles.login__inputAction}
                     onClick={() => setShowPassword((prev) => !prev)}
                     aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
                   >
                     {showPassword ? <Eye /> : <EyeOff />}
                   </button>
                 </div>
-                <div className={styles.rememberMe}>
-                  <label className={styles.rememberMe__label}>
+                <div className={styles.login__rememberMeContainer}>
+                  <label className={styles.login__label}>
                     <input
                       type="checkbox"
                       checked={rememberMe}
@@ -230,7 +232,7 @@ export const Login = () => {
                   <LogIn />
                   {loading ? "Loguję..." : "Login"}
                 </button>
-                <p className={styles.forgotPassword}>
+                <p className={styles.login__forgotPasswordButton}>
                   <Link to={routes.forgotPassword(country)}>
                     Nie pamiętasz hasła?
                   </Link>

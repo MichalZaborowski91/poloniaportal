@@ -99,6 +99,16 @@
       background-color: #acb2b9;
     }
   }
+
+  &__info {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
 }
 
 @media (max-width: 900px) {
@@ -109,14 +119,4 @@
   .accountSecurity__tile {
     flex: 0 0 calc((100% - 20px) / 2);
   }
-}
-
-.accountSecurity__info {
-  background: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeeba;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 14px;
-  margin-bottom: 10px;
 }

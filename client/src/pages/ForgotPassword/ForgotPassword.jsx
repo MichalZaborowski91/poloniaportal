@@ -76,14 +76,16 @@ export const ForgotPassword = () => {
                     <p className={styles.forgotPassword__error}>{error}</p>
                   )}
                   <form onSubmit={handleSubmit}>
-                    <div className={styles.inputWrapper}>
-                      <Email className={styles.inputIcon} />
+                    <div className={styles.forgotPassword__wrapper}>
+                      <Email className={styles.forgotPassword__icon} />
                       <input
                         type="email"
                         placeholder="Email"
                         value={email}
-                        className={`${styles.register__input} ${
-                          emailError ? styles.inputError : ""
+                        className={`${styles.forgotPassword__input} ${
+                          emailError
+                            ? styles[`forgotPassword__input--error`]
+                            : ""
                         }`}
                         onChange={(e) => {
                           const value = e.target.value.replace(/\s/g, "");
@@ -116,7 +118,7 @@ export const ForgotPassword = () => {
                       <Send />
                       {loading ? "Wysyłanie..." : "Kontynuuj"}
                     </button>
-                    <p className={styles.backToLogin}>
+                    <p className={styles.forgotPassword__backToLogin}>
                       <Link to={routes.login(country)}>
                         Powrót do logowania
                       </Link>

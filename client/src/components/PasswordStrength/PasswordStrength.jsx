@@ -1,4 +1,4 @@
-import styles from "../PasswordStrength/PasswordStrength.module.scss";
+import styles from "./PasswordStrength.module.scss";
 
 export const PasswordStrength = ({ touched, strength, mismatch, checks }) => {
   if (!touched) {
