@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { updateMyProfile } from "../../api/user";
-import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import { routes } from "../../app/routes";
 import { useAuth } from "../../hooks/useAuth";
 import { useCountry } from "../../app/useCountry";
 import { AvatarUpload } from "../AvatarUpload/AvatarUpload";
+import toast from "react-hot-toast";
 
 export const AccountInfoForm = () => {
   const [displayName, setDisplayName] = useState("");

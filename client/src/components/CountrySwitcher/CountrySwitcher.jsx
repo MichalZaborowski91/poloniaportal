@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { COUNTRIES_PL } from "../../assets/countries/countriesPL";
+import { WorldMap } from "../WorldMap/WorldMap";
 import styles from "./CountrySwitcher.module.scss";
 import Globe from "../../assets/icons/globe.svg?react";
 import Close from "../../assets/icons/x.svg?react";
-import { COUNTRIES_PL } from "../../assets/countries/countriesPL";
-import { WorldMap } from "../WorldMap/WorldMap";
 
 export const CountrySwitcher = ({ currentCountry }) => {
   const [openModal, setOpenModal] = useState(false);

@@ -1,7 +1,7 @@
-import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
-import Link from "../../assets/icons/link.svg?react";
+import toast from "react-hot-toast";
 import styles from "../ResendVerifyEmailButton/ResendVerifyEmailButton.module.scss";
+import Link from "../../assets/icons/link.svg?react";
 
 export const ResendVerifyEmailButton = () => {
   const { user } = useAuth();

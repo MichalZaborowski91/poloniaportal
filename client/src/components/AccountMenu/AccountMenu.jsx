@@ -1,9 +1,9 @@
-import UserIcon from "../../assets/icons/user.svg?react";
 import { useState, useRef, useEffect } from "react";
-import styles from "../AccountMenu/AccountMenu.module.scss";
 import { useAuth } from "../../hooks/useAuth";
 import { LoginButton } from "../LoginButton/LoginButton";
 import { RegisterButton } from "../RegisterButton/RegisterButton";
+import styles from "../AccountMenu/AccountMenu.module.scss";
+import UserIcon from "../../assets/icons/user.svg?react";
 
 export const AccountMenu = () => {
   const [isAccountOpen, setIsAccountOpen] = useState(false);

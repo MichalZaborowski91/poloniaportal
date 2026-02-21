@@ -1,8 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { routes } from "../../app/routes";
 import { useCountry } from "../../app/useCountry";
-import styles from "../AboutUs/AboutUs.module.scss";
 import { useEffect } from "react";
+import styles from "../AboutUs/AboutUs.module.scss";
 
 export const AboutUs = () => {
   const country = useCountry();

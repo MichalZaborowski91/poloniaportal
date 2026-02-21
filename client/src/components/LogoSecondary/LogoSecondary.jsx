@@ -1,8 +1,8 @@
-import logoPoloniaPortal from "../../assets/poloniaPortal.png";
-import styles from "../LogoSecondary/LogoSecondary.module.scss";
 import { Link } from "react-router-dom";
 import { useCountry } from "../../app/useCountry";
 import { routes } from "../../app/routes";
+import logoPoloniaPortal from "../../assets/poloniaPortal.png";
+import styles from "../LogoSecondary/LogoSecondary.module.scss";
 
 export const LogoSecondary = () => {
   const country = useCountry();

@@ -1,5 +1,5 @@
-import styles from "./MobileMenu.module.scss";
 import { AddOfferButton } from "../AddOfferButton/AddOfferButton";
+import styles from "./MobileMenu.module.scss";
 
 export const MobileMenu = ({ isOpen, onClose }) => {
   const handleNavClick = (e) => {

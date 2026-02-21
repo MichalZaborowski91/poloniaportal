@@ -1,5 +1,13 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { changePassword, logout } from "../../api/auth";
+import { useNavigate } from "react-router-dom";
+import { routes } from "../../app/routes";
+import { useCountry } from "../../app/useCountry";
+import { useAuth } from "../../hooks/useAuth";
+import { Captcha } from "../Captcha/Captcha";
+import { PasswordStrength } from "../PasswordStrength/PasswordStrength";
+import { usePasswordUI } from "../../hooks/usePasswordUI";
+import toast from "react-hot-toast";
 import styles from "../ChangePasswordModal/ChangePasswordModal.module.scss";
 import Lock from "../../assets/icons/lock.svg?react";
 import Eye from "../../assets/icons/eye.svg?react";
@@ -7,12 +15,6 @@ import EyeOff from "../../assets/icons/eye-off.svg?react";
 import CheckCircle from "../../assets/icons/check-circle.svg?react";
 import Cancel from "../../assets/icons/x.svg?react";
 import Key from "../../assets/icons/key.svg?react";
-import { useNavigate } from "react-router-dom";
-import { routes } from "../../app/routes";
-import { useCountry } from "../../app/useCountry";
-import toast from "react-hot-toast";
-import { useAuth } from "../../hooks/useAuth";
-import { Captcha } from "../Captcha/Captcha";
 
 export const ChangePasswordModal = ({ onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -25,10 +27,7 @@ export const ChangePasswordModal = ({ onClose }) => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
-  const [passwordMismatch, setPasswordMismatch] = useState(false);
-  const [passwordMatchOk, setPasswordMatchOk] = useState(false);
   const [shake, setShake] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
   const [sameAsOldError, setSameAsOldError] = useState(false);
   const [captchaToken, setCaptchaToken] = useState(null);
 
@@ -41,7 +40,18 @@ export const ChangePasswordModal = ({ onClose }) => {
   const clearServerErrors = () => {
     setError("");
     setSameAsOldError(false);
+    setPasswordError("");
   };
+
+  const {
+    touched: passwordTouched,
+    mismatch: passwordMismatch,
+    matchOk: passwordMatchOk,
+    checks: passwordChecks,
+    strength: passwordStrength,
+    valid: passwordValid,
+    match: passwordsMatch,
+  } = usePasswordUI(newPassword, confirmPassword);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,14 +62,12 @@ export const ChangePasswordModal = ({ onClose }) => {
       setPasswordError("Wymagane hasło");
       return;
     }
-
     if (!passwordValid) {
       return setError("Hasło nie spełnia wymagań bezpieczeństwa");
     }
-    if (newPassword !== confirmPassword) {
+    if (!passwordsMatch) {
       return setError("Nowe hasła nie są takie same");
     }
-
     if (!captchaToken) {
       setError("Potwierdź, że nie jesteś robotem");
       return;
@@ -73,6 +81,7 @@ export const ChangePasswordModal = ({ onClose }) => {
         newPassword,
         captchaToken,
       });
+
       captchaRef.current?.resetCaptcha();
       setSuccess(true);
       setCaptchaToken(null);
@@ -129,10 +138,10 @@ export const ChangePasswordModal = ({ onClose }) => {
     setNewPassword("");
     setConfirmPassword("");
     setError("");
+    setCaptchaToken(null);
+    setSameAsOldError(false);
+    setPasswordError("");
     setSuccess(false);
-    setPasswordMismatch(false);
-    setPasswordMatchOk(false);
-    setPasswordTouched(false);
     onClose();
   }, [onClose]);
 
@@ -163,47 +172,6 @@ export const ChangePasswordModal = ({ onClose }) => {
       document.body.style.overflow = originalOverflow;
     };
   }, []);
-
-  useEffect(() => {
-    if (!confirmPassword) {
-      setPasswordMismatch(false);
-      setPasswordMatchOk(false);
-      return;
-    }
-
-    const timeout = setTimeout(() => {
-      if (newPassword === confirmPassword) {
-        setPasswordMismatch(false);
-        setPasswordMatchOk(true);
-      } else {
-        setPasswordMismatch(true);
-        setPasswordMatchOk(false);
-      }
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [newPassword, confirmPassword]);
-
-  const passwordChecks = {
-    length: newPassword.length >= 8,
-    uppercase: /[A-Z]/.test(newPassword),
-    lowercase: /[a-z]/.test(newPassword),
-    number: /[0-9]/.test(newPassword),
-  };
-
-  const getPasswordStrength = (newPassword) => {
-    let score = 0;
-
-    if (newPassword.length >= 8) score += 1;
-    if (newPassword.length >= 12) score += 1;
-    if (/[A-Z]/.test(newPassword)) score += 1;
-    if (/[a-z]/.test(newPassword)) score += 1;
-    if (/[0-9]/.test(newPassword)) score += 1;
-
-    return score; //0–5
-  };
-  const passwordValid = Object.values(passwordChecks).every(Boolean);
-  const passwordStrength = getPasswordStrength(newPassword);
 
   return (
     <div className={styles.changePassword__overlay}>
@@ -237,7 +205,6 @@ export const ChangePasswordModal = ({ onClose }) => {
                 onChange={(e) => {
                   setCurrentPassword(e.target.value);
                   clearServerErrors();
-                  if (passwordError) setPasswordError("");
                 }}
                 required
               />
@@ -274,9 +241,6 @@ export const ChangePasswordModal = ({ onClose }) => {
                   const value = e.target.value.replace(/\s/g, ""); //SPACE DELETE !
                   setNewPassword(value);
                   clearServerErrors();
-                  if (!passwordTouched && value.length > 0) {
-                    setPasswordTouched(true);
-                  }
                 }}
                 required
               />
@@ -327,73 +291,12 @@ export const ChangePasswordModal = ({ onClose }) => {
               </button>
             </div>
 
-            {passwordTouched && (
-              <div>
-                <div className={styles.changePassword__strength}>
-                  <div
-                    className={`${styles.changePassword__strengthBar} ${
-                      passwordStrength <= 2
-                        ? styles["changePassword__strengthBar--weak"]
-                        : passwordStrength <= 4
-                          ? styles["changePassword__strengthBar--medium"]
-                          : styles["changePassword__strengthBar--strong"]
-                    }`}
-                    style={{ width: `${(passwordStrength / 5) * 100}%` }}
-                  />
-                </div>
-
-                <p
-                  className={
-                    passwordMismatch
-                      ? styles.changePassword__passwordError
-                      : styles.changePassword__passwordRulesHead
-                  }
-                >
-                  {passwordMismatch
-                    ? "Hasła muszą być takie same."
-                    : "Hasło musi zawierać przynajmniej:"}
-                </p>
-
-                <ul className={styles.changePassword__passwordRulesList}>
-                  <li
-                    className={`${styles.changePassword__passwordRulesItem} ${
-                      passwordChecks.length
-                        ? styles["changePassword__passwordRulesItem--ok"]
-                        : styles["changePassword__passwordRulesItem--bad"]
-                    }`}
-                  >
-                    8 znaków
-                  </li>
-                  <li
-                    className={`${styles.changePassword__passwordRulesItem} ${
-                      passwordChecks.uppercase
-                        ? styles["changePassword__passwordRulesItem--ok"]
-                        : styles["changePassword__passwordRulesItem--bad"]
-                    }`}
-                  >
-                    Jedną dużą literę
-                  </li>
-                  <li
-                    className={`${styles.changePassword__passwordRulesItem} ${
-                      passwordChecks.lowercase
-                        ? styles["changePassword__passwordRulesItem--ok"]
-                        : styles["changePassword__passwordRulesItem--bad"]
-                    }`}
-                  >
-                    Jedną małą literę
-                  </li>
-                  <li
-                    className={`${styles.changePassword__passwordRulesItem} ${
-                      passwordChecks.number
-                        ? styles["changePassword__passwordRulesItem--ok"]
-                        : styles["changePassword__passwordRulesItem--bad"]
-                    }`}
-                  >
-                    Jedną cyfrę
-                  </li>
-                </ul>
-              </div>
-            )}
+            <PasswordStrength
+              touched={passwordTouched}
+              strength={passwordStrength}
+              mismatch={passwordMismatch}
+              checks={passwordChecks}
+            />
 
             <Captcha
               onVerify={setCaptchaToken}
@@ -408,7 +311,7 @@ export const ChangePasswordModal = ({ onClose }) => {
                 disabled={
                   !passwordValid ||
                   !currentPassword ||
-                  newPassword !== confirmPassword ||
+                  !passwordsMatch ||
                   !captchaToken ||
                   loading
                 }

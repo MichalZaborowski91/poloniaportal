@@ -1,6 +1,5 @@
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import styles from "../Footer/Footer.module.scss";
 import { HeartIcon } from "../HeartIcon/HeartIcon";
 import { LogoSecondary } from "../LogoSecondary/LogoSecondary";
 import { RegisterButton } from "../RegisterButton/RegisterButton";
@@ -13,6 +12,7 @@ import { useCountry } from "../../app/useCountry";
 import { CountrySwitcher } from "../CountrySwitcher/CountrySwitcher";
 import { CurrentCountry } from "../CurrentCountry/CurrentCountry";
 import { routes } from "../../app/routes";
+import styles from "../Footer/Footer.module.scss";
 
 export const Footer = () => {
   const location = useLocation();

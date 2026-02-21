@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import { deleteAccount } from "../../api/auth";
+import { Captcha } from "../Captcha/Captcha";
 import toast from "react-hot-toast";
 import styles from "../DeleteAccountSection/DeleteAccountSection.module.scss";
-import { deleteAccount } from "../../api/auth";
 import Lock from "../../assets/icons/lock.svg?react";
 import Eye from "../../assets/icons/eye.svg?react";
 import EyeOff from "../../assets/icons/eye-off.svg?react";
@@ -9,7 +10,6 @@ import Cancel from "../../assets/icons/x.svg?react";
 import ArrowRightCircle from "../../assets/icons/arrow-right-circle.svg?react";
 import CheckCircle from "../../assets/icons/check-circle.svg?react";
 import UserDelete from "../../assets/icons/user-x.svg?react";
-import { Captcha } from "../Captcha/Captcha";
 
 export const DeleteAccountSection = ({ onDeleted, onClose }) => {
   const [password, setPassword] = useState("");

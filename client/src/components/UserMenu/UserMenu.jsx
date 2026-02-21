@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import defaultAvatar from "../../assets/avatar/avt.jpg";
-import styles from "./UserMenu.module.scss";
 import { useCountry } from "../../app/useCountry";
 import { routes } from "../../app/routes";
 import { LogOutButton } from "../LogOutButton/LogOutButton";
+import styles from "./UserMenu.module.scss";
+import defaultAvatar from "../../assets/avatar/avt.jpg";
 
 export const UserMenu = ({ onMenuClose }) => {
   const [open, setOpen] = useState(false);

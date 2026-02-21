@@ -7,8 +7,8 @@ import { Footer } from "../Footer/Footer";
 import { LoginButton } from "../LoginButton/LoginButton";
 import { RegisterButton } from "../RegisterButton/RegisterButton";
 import { LogoSecondary } from "../LogoSecondary/LogoSecondary";
-import styles from "../Layout/Layout.module.scss";
 import { CurrentCountry } from "../CurrentCountry/CurrentCountry";
+import styles from "../Layout/Layout.module.scss";
 
 export const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

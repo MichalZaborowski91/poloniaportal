@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import styles from "../About/About.module.scss";
-import { AboutSidebar } from "../../components/AboutSidebar/AboutSidebar";
-import airportPicture from "../../assets/about/airport.webp";
 import { RegisterButton } from "../../components/RegisterButton/RegisterButton";
 import { useAuth } from "../../hooks/useAuth";
+import { AboutSidebar } from "../../components/AboutSidebar/AboutSidebar";
+import styles from "../About/About.module.scss";
+import airportPicture from "../../assets/about/airport.webp";
 
 export const About = () => {
   const location = useLocation();

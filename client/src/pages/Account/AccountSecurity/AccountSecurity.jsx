@@ -4,18 +4,18 @@ import { routes } from "../../../app/routes";
 import { useAuth } from "../../../hooks/useAuth";
 import { VerifyEmailMessage } from "../../../components/VerifyEmailMessage/VerifyEmailMessage";
 import { ResendVerifyEmailButton } from "../../../components/ResendVerifyEmailButton/ResendVerifyEmailButton";
-import styles from "../AccountSecurity/AccountSecurity.module.scss";
+import { ChangeEmailModal } from "../../../components/ChangeEmailModal/ChangeEmailModal";
 import { DeleteAccountSection } from "../../../components/DeleteAccountSection/DeleteAccountSection";
 import { useState } from "react";
+import { logoutAllDevices } from "../../../api/auth";
+import { ChangePasswordModal } from "../../../components/ChangePasswordModal/ChangePasswordModal";
+import styles from "../AccountSecurity/AccountSecurity.module.scss";
+import toast from "react-hot-toast";
 import UserDelete from "../../../assets/icons/user-x.svg?react";
 import Shield from "../../../assets/icons/shield.svg?react";
 import Logout from "../../../assets/icons/log-out.svg?react";
 import AtSign from "../../../assets/icons/at-sign.svg?react";
-import { ChangePasswordModal } from "../../../components/ChangePasswordModal/ChangePasswordModal";
 import Key from "../../../assets/icons/key.svg?react";
-import { logoutAllDevices } from "../../../api/auth";
-import toast from "react-hot-toast";
-import { ChangeEmailModal } from "../../../components/ChangeEmailModal/ChangeEmailModal";
 
 export const AccountSecurity = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);

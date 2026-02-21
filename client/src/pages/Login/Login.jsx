@@ -4,15 +4,15 @@ import { login } from "../../api/auth";
 import { useAuth } from "../../hooks/useAuth";
 import { useCountry } from "../../app/useCountry";
 import { routes } from "../../app/routes";
+import { Link } from "react-router-dom";
+import { Captcha } from "../../components/Captcha/Captcha";
+import toast from "react-hot-toast";
 import styles from "../Login/Login.module.scss";
 import Email from "../../assets/icons/mail.svg?react";
 import Lock from "../../assets/icons/lock.svg?react";
 import Eye from "../../assets/icons/eye.svg?react";
 import EyeOff from "../../assets/icons/eye-off.svg?react";
 import LogIn from "../../assets/icons/log-in.svg?react";
-import { Link } from "react-router-dom";
-import { Captcha } from "../../components/Captcha/Captcha";
-import toast from "react-hot-toast";
 
 export const Login = () => {
   const [email, setEmail] = useState("");

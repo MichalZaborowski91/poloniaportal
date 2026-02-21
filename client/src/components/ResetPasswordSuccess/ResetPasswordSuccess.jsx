@@ -1,10 +1,10 @@
 import { routes } from "../../app/routes";
-import styles from "../ResetPasswordSuccess/ResetPasswordSuccess.module.scss";
-import CloseIcon from "../../assets/icons/x.svg?react";
-import CheckSquare from "../../assets/icons/check-square.svg?react";
 import { useNavigate } from "react-router-dom";
 import { useCountry } from "../../app/useCountry";
 import { useEffect, useState } from "react";
+import styles from "../ResetPasswordSuccess/ResetPasswordSuccess.module.scss";
+import CloseIcon from "../../assets/icons/x.svg?react";
+import CheckSquare from "../../assets/icons/check-square.svg?react";
 
 export const ResetPasswordSuccess = () => {
   const [countdown, setCountdown] = useState(10);

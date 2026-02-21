@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import { logout } from "../../api/auth";
 import { routes } from "../../app/routes";
 import { useCountry } from "../../app/useCountry";
 import { useAuth } from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 import styles from "../LogOutButton/LogOutButton.module.scss";
 
 export const LogOutButton = () => {

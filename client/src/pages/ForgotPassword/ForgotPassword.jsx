@@ -1,13 +1,13 @@
 import { useState, useRef } from "react";
 import { requestPasswordReset } from "../../api/auth";
-import styles from "../ForgotPassword/ForgotPassword.module.scss";
 import { routes } from "../../app/routes";
 import { useCountry } from "../../app/useCountry";
 import { Link } from "react-router-dom";
-import Email from "../../assets/icons/mail.svg?react";
-import Send from "../../assets/icons/send.svg?react";
 import { ResetPasswordSuccess } from "../../components/ResetPasswordSuccess/ResetPasswordSuccess";
 import { Captcha } from "../../components/Captcha/Captcha";
+import styles from "../ForgotPassword/ForgotPassword.module.scss";
+import Email from "../../assets/icons/mail.svg?react";
+import Send from "../../assets/icons/send.svg?react";
 
 export const ForgotPassword = () => {
   const [email, setEmail] = useState("");

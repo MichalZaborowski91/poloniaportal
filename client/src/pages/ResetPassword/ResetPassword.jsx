@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { resetPassword, validateResetToken } from "../../api/auth";
 import { routes } from "../../app/routes";
 import { useCountry } from "../../app/useCountry";
+import { PasswordStrength } from "../../components/PasswordStrength/PasswordStrength";
+import { usePasswordUI } from "../../hooks/usePasswordUI";
 import CheckSquare from "../../assets/icons/check-square.svg?react";
 import Lock from "../../assets/icons/lock.svg?react";
 import Close from "../../assets/icons/x.svg?react";
@@ -18,28 +20,26 @@ export const ResetPassword = () => {
   const [error, setError] = useState(null);
   const [successResetPassword, setSuccessResetPassword] = useState(false);
   const [tokenValid, setTokenValid] = useState(null);
-  const [passwordMismatch, setPasswordMismatch] = useState(false);
-  const [passwordMatchOk, setPasswordMatchOk] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
   const [dots, setDots] = useState("");
 
   const { token } = useParams();
   const navigate = useNavigate();
   const country = useCountry();
 
-  const passwordChecks = {
-    length: password.length >= 8,
-    uppercase: /[A-Z]/.test(password),
-    lowercase: /[a-z]/.test(password),
-    number: /[0-9]/.test(password),
-  };
+  const {
+    touched: passwordTouched,
+    mismatch: passwordMismatch,
+    matchOk: passwordMatchOk,
+    checks: passwordChecks,
+    strength: passwordStrength,
+    valid: passwordValid,
+    match: passwordsMatch,
+  } = usePasswordUI(password, confirmPassword);
 
-  const passwordValid = Object.values(passwordChecks).every(Boolean);
-  const passwordsMatch = password === confirmPassword;
-
-  const canSubmitResetPassword = passwordValid && passwordsMatch && !loading;
+  const canSubmitResetPassword =
+    passwordValid && passwordsMatch && confirmPassword.length > 0 && !loading;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,26 +75,6 @@ export const ResetPassword = () => {
   }, [token]);
 
   useEffect(() => {
-    if (!confirmPassword) {
-      setPasswordMismatch(false);
-      setPasswordMatchOk(false);
-      return;
-    }
-
-    const timeout = setTimeout(() => {
-      if (password === confirmPassword) {
-        setPasswordMismatch(false);
-        setPasswordMatchOk(true);
-      } else {
-        setPasswordMismatch(true);
-        setPasswordMatchOk(false);
-      }
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [password, confirmPassword]);
-
-  useEffect(() => {
     if (!successResetPassword) {
       return;
     }
@@ -105,20 +85,6 @@ export const ResetPassword = () => {
 
     return () => clearInterval(interval);
   }, [successResetPassword]);
-
-  const getPasswordStrength = (password) => {
-    let score = 0;
-
-    if (password.length >= 8) score += 1;
-    if (password.length >= 12) score += 1;
-    if (/[A-Z]/.test(password)) score += 1;
-    if (/[a-z]/.test(password)) score += 1;
-    if (/[0-9]/.test(password)) score += 1;
-
-    return score; //0–5
-  };
-
-  const passwordStrength = getPasswordStrength(password);
 
   if (tokenValid === null) {
     return (
@@ -222,10 +188,6 @@ export const ResetPassword = () => {
                       onChange={(e) => {
                         const value = e.target.value.replace(/\s/g, ""); //SPACE DELETE !
                         setPassword(value);
-
-                        if (!passwordTouched && value.length > 0) {
-                          setPasswordTouched(true);
-                        }
                       }}
                       required
                     />
@@ -276,74 +238,13 @@ export const ResetPassword = () => {
                       {showConfirmPassword ? <Eye /> : <EyeOff />}
                     </button>
                   </div>
-                  {passwordTouched && (
-                    <div>
-                      <div className={styles.resetPassword__strength}>
-                        <div
-                          className={`${styles.resetPassword__strengthBar} ${
-                            passwordStrength <= 2
-                              ? styles["resetPassword__strengthBar--weak"]
-                              : passwordStrength <= 4
-                                ? styles["resetPassword__strengthBar--medium"]
-                                : styles["resetPassword__strengthBar--strong"]
-                          }`}
-                          style={{ width: `${(passwordStrength / 5) * 100}%` }}
-                        />
-                      </div>
-                      {passwordTouched && (
-                        <p
-                          className={
-                            passwordMismatch
-                              ? styles.resetPassword__passwordError
-                              : styles.resetPassword__passwordRulesHead
-                          }
-                        >
-                          {passwordMismatch
-                            ? "Hasła muszą być takie same."
-                            : "Hasło musi zawierać przynajmniej:"}
-                        </p>
-                      )}
 
-                      <ul className={styles.resetPassword__passwordRulesList}>
-                        <li
-                          className={`${styles.resetPassword__passwordRulesItem} ${
-                            passwordChecks.length
-                              ? styles["resetPassword__passwordRulesItem--ok"]
-                              : styles["resetPassword__passwordRulesItem--bad"]
-                          }`}
-                        >
-                          8 znaków
-                        </li>
-                        <li
-                          className={`${styles.resetPassword__passwordRulesItem} ${
-                            passwordChecks.uppercase
-                              ? styles["resetPassword__passwordRulesItem--ok"]
-                              : styles["resetPassword__passwordRulesItem--bad"]
-                          }`}
-                        >
-                          Jedną dużą literę
-                        </li>
-                        <li
-                          className={`${styles.resetPassword__passwordRulesItem} ${
-                            passwordChecks.lowercase
-                              ? styles["resetPassword__passwordRulesItem--ok"]
-                              : styles["resetPassword__passwordRulesItem--bad"]
-                          }`}
-                        >
-                          Jedną małą literę
-                        </li>
-                        <li
-                          className={`${styles.resetPassword__passwordRulesItem} ${
-                            passwordChecks.number
-                              ? styles["resetPassword__passwordRulesItem--ok"]
-                              : styles["resetPassword__passwordRulesItem--bad"]
-                          }`}
-                        >
-                          Jedną cyfrę
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+                  <PasswordStrength
+                    touched={passwordTouched}
+                    strength={passwordStrength}
+                    mismatch={passwordMismatch}
+                    checks={passwordChecks}
+                  />
 
                   <button
                     type="submit"

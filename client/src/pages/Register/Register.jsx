@@ -3,6 +3,9 @@ import { register } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { useCountry } from "../../app/useCountry";
 import { routes } from "../../app/routes";
+import { Captcha } from "../../components/Captcha/Captcha";
+import { PasswordStrength } from "../../components/PasswordStrength/PasswordStrength";
+import { usePasswordUI } from "../../hooks/usePasswordUI";
 import styles from "../Register/Register.module.scss";
 import Email from "../../assets/icons/mail.svg?react";
 import Lock from "../../assets/icons/lock.svg?react";
@@ -10,7 +13,6 @@ import Eye from "../../assets/icons/eye.svg?react";
 import EyeOff from "../../assets/icons/eye-off.svg?react";
 import LogIn from "../../assets/icons/log-in.svg?react";
 import UserPlus from "../../assets/icons/user-plus.svg?react";
-import { Captcha } from "../../components/Captcha/Captcha";
 
 export const Register = () => {
   const [email, setEmail] = useState("");
@@ -21,9 +23,6 @@ export const Register = () => {
   const [successRegister, setSuccessRegister] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordMismatch, setPasswordMismatch] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
-  const [passwordMatchOk, setPasswordMatchOk] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
   const [emailValidOk, setEmailValidOk] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -41,15 +40,15 @@ export const Register = () => {
   //VALIDATION
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const passwordChecks = {
-    length: password.length >= 8,
-    uppercase: /[A-Z]/.test(password),
-    lowercase: /[a-z]/.test(password),
-    number: /[0-9]/.test(password),
-  };
-
-  const passwordValid = Object.values(passwordChecks).every(Boolean);
-  const passwordsMatch = password === confirmPassword;
+  const {
+    touched: passwordTouched,
+    mismatch: passwordMismatch,
+    matchOk: passwordMatchOk,
+    checks: passwordChecks,
+    strength: passwordStrength,
+    valid: passwordValid,
+    match: passwordsMatch,
+  } = usePasswordUI(password, confirmPassword);
 
   const canSubmitRegister =
     emailValid &&
@@ -133,40 +132,6 @@ export const Register = () => {
 
     return () => clearTimeout(timeout);
   }, [email, emailTouched, emailValid]);
-
-  useEffect(() => {
-    if (!confirmPassword) {
-      setPasswordMismatch(false);
-      setPasswordMatchOk(false);
-      return;
-    }
-
-    const timeout = setTimeout(() => {
-      if (password === confirmPassword) {
-        setPasswordMismatch(false);
-        setPasswordMatchOk(true);
-      } else {
-        setPasswordMismatch(true);
-        setPasswordMatchOk(false);
-      }
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [password, confirmPassword]);
-
-  const getPasswordStrength = (password) => {
-    let score = 0;
-
-    if (password.length >= 8) score += 1;
-    if (password.length >= 12) score += 1;
-    if (/[A-Z]/.test(password)) score += 1;
-    if (/[a-z]/.test(password)) score += 1;
-    if (/[0-9]/.test(password)) score += 1;
-
-    return score; //0–5
-  };
-
-  const passwordStrength = getPasswordStrength(password);
 
   //REGISTER FORM
   return (
@@ -263,10 +228,6 @@ export const Register = () => {
                       onChange={(e) => {
                         const value = e.target.value.replace(/\s/g, ""); //SPACE DELETE !
                         setPassword(value);
-
-                        if (!passwordTouched && value.length > 0) {
-                          setPasswordTouched(true);
-                        }
                       }}
                       required
                     />
@@ -316,74 +277,12 @@ export const Register = () => {
                     </button>
                   </div>
 
-                  {passwordTouched && (
-                    <div>
-                      <div className={styles.strengthWrapper}>
-                        <div
-                          className={`${styles.strengthBar} ${
-                            passwordStrength <= 2
-                              ? styles.strengthWeak
-                              : passwordStrength <= 4
-                                ? styles.strengthMedium
-                                : styles.strengthStrong
-                          }`}
-                          style={{ width: `${(passwordStrength / 5) * 100}%` }}
-                        />
-                      </div>
-                      {passwordTouched && (
-                        <p
-                          className={
-                            passwordMismatch
-                              ? styles.errorText
-                              : styles.passwordRulesHead
-                          }
-                        >
-                          {passwordMismatch
-                            ? "Hasła muszą być takie same."
-                            : "Hasło musi zawierać przynajmniej:"}
-                        </p>
-                      )}
-
-                      <ul className={styles.passwordRules}>
-                        <li
-                          className={
-                            passwordChecks.length
-                              ? styles.ruleOk
-                              : styles.ruleBad
-                          }
-                        >
-                          8 znaków
-                        </li>
-                        <li
-                          className={
-                            passwordChecks.uppercase
-                              ? styles.ruleOk
-                              : styles.ruleBad
-                          }
-                        >
-                          Jedną dużą literę
-                        </li>
-                        <li
-                          className={
-                            passwordChecks.lowercase
-                              ? styles.ruleOk
-                              : styles.ruleBad
-                          }
-                        >
-                          Jedną małą literę
-                        </li>
-                        <li
-                          className={
-                            passwordChecks.number
-                              ? styles.ruleOk
-                              : styles.ruleBad
-                          }
-                        >
-                          Jedną cyfrę
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+                  <PasswordStrength
+                    touched={passwordTouched}
+                    strength={passwordStrength}
+                    mismatch={passwordMismatch}
+                    checks={passwordChecks}
+                  />
 
                   <div className={styles.termsWrapper}>
                     <label className={styles.termsLabel}>
