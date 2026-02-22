@@ -12,6 +12,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
 }
 
 body {
@@ -27,12 +28,12 @@ body {
 
 .container {
   width: 100%;
-  padding-inline: 20px;
+  padding-inline: 15px;
 }
 
 @media (min-width: $bp-tablet) {
   .container {
-    padding-inline: 40px;
+    padding-inline: 20px;
   }
 }
 

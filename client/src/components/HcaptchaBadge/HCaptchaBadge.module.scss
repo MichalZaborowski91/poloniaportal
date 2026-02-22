@@ -1,0 +1,84 @@
+.hcaptchaBadge {
+  position: absolute;
+  right: -170px; /* 240 - 70 = 170 */
+  bottom: 140px;
+  z-index: 9999;
+  transition: right 0.25s ease;
+
+  &:hover {
+    right: 0;
+  }
+
+  &__container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    width: 240px;
+    height: 70px;
+    background-color: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px 0 0 4px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
+    transition: transform 0.25s ease;
+  }
+
+  &__icon {
+    min-width: 70px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    line-height: 0.9;
+  }
+
+  &__title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.9);
+    margin: 0;
+    cursor: default;
+  }
+
+  &__list {
+    display: flex;
+    align-items: center;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  &__item {
+    list-style: none;
+
+    &:not(:last-child)::after {
+      content: "•";
+      margin: 0 2px;
+      color: black;
+    }
+  }
+
+  &__item a {
+    font-size: 11px;
+    color: black;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

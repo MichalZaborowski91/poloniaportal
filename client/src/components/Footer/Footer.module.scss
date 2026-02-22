@@ -1,7 +1,9 @@
+@use "../../styles/breakpoints.scss" as bp;
+
 .footer {
   width: 100%;
-  height: 300px;
-  padding: 15px;
+  height: auto;
+  padding-top: 15px;
   padding-bottom: 35px;
 
   &__backgroundContainer {
@@ -11,17 +13,19 @@
       inset 0 -20px 40px rgba(0, 0, 0, 0.45),
       2px 2px 8px rgba(0, 0, 0, 0.8);
     height: 100%;
-    border-radius: 4px;
     padding-top: 20px;
+    padding-bottom: 20px;
   }
 
   &__content {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
+    align-items: center;
   }
 
   &__authButtons {
-    width: 200px;
+    width: 240px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -30,7 +34,7 @@
 
   &__legal {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-around;
     align-items: center;
     margin-top: 5px;
@@ -74,8 +78,41 @@
   }
 }
 
-@media (max-width: 700px) {
-  .footer__legal {
-    flex-direction: column;
+@media (min-width: bp.$bp-tablet) {
+  .footer {
+    &__legal {
+      flex-direction: row;
+    }
+
+    &__content {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+
+    &__authButtons {
+      width: 190px;
+    }
+  }
+}
+
+@media (min-width: bp.$bp-desktop) {
+  .footer {
+    padding: 15px;
+
+    &__legal {
+      flex-direction: row;
+    }
+
+    &__backgroundContainer {
+      border-radius: 4px;
+    }
+
+    &__content {
+      flex-direction: row;
+    }
+
+    &__authButtons {
+      width: 240px;
+    }
   }
 }

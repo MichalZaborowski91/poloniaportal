@@ -1,8 +1,15 @@
+@use "../../styles/breakpoints.scss" as bp;
+
 .switcher {
   &__title {
     margin: 0;
     color: #077ddd;
     margin-bottom: 5px;
+  }
+
+  &__iconContainer {
+    display: flex;
+    justify-content: center;
   }
 
   &__globeIcon {
@@ -13,7 +20,6 @@
     transition:
       color 200ms ease-in-out,
       scale 200ms ease-in-out;
-    margin-left: 10px;
 
     &:focus,
     &:hover {
@@ -92,5 +98,23 @@
     width: 22px;
     height: 14px;
     border-radius: 1.5px;
+  }
+}
+
+@media (min-width: bp.$bp-tablet) {
+  .switcher {
+    width: 120px;
+    &__iconContainer {
+      align-items: center;
+    }
+  }
+}
+
+@media (min-width: bp.$bp-desktop) {
+  .switcher {
+    &__iconContainer {
+      margin-left: 10px;
+      justify-content: flex-start;
+    }
   }
 }

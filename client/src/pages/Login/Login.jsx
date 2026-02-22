@@ -13,6 +13,7 @@ import Lock from "../../assets/icons/lock.svg?react";
 import Eye from "../../assets/icons/eye.svg?react";
 import EyeOff from "../../assets/icons/eye-off.svg?react";
 import LogIn from "../../assets/icons/log-in.svg?react";
+import { HcaptchaBadge } from "../../components/HcaptchaBadge/HcaptchaBadge";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -239,6 +240,7 @@ export const Login = () => {
                 </p>
               </form>
             </div>
+            <HcaptchaBadge />
           </div>
         </div>
       </div>

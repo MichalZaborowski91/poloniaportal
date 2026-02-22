@@ -8,6 +8,7 @@ import { Captcha } from "../../components/Captcha/Captcha";
 import styles from "../ForgotPassword/ForgotPassword.module.scss";
 import Email from "../../assets/icons/mail.svg?react";
 import Send from "../../assets/icons/send.svg?react";
+import { HcaptchaBadge } from "../../components/HcaptchaBadge/HcaptchaBadge";
 
 export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -127,6 +128,7 @@ export const ForgotPassword = () => {
                 </>
               )}
             </div>
+            <HcaptchaBadge />
           </div>
         </div>
       </div>

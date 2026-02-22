@@ -1,4 +1,10 @@
+@use "../../styles/breakpoints.scss" as bp;
+
 .currentCountry {
+  width: 240px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   &__name {
     color: #f1efef;
     margin: 0;
@@ -13,5 +19,17 @@
     width: 22px;
     height: 14px;
     border-radius: 1.5px;
+  }
+}
+
+@media (min-width: bp.$bp-tablet) {
+  .currentCountry {
+    width: 190px;
+  }
+}
+
+@media (min-width: bp.$bp-desktop) {
+  .currentCountry {
+    width: 240px;
   }
 }

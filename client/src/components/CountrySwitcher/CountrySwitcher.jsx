@@ -45,8 +45,8 @@ export const CountrySwitcher = ({ currentCountry }) => {
 
   return (
     <div className={styles.switcher}>
-      <div>
-        <h3 className={styles.switcher__title}>Przełącz się do:</h3>
+      <h3 className={styles.switcher__title}>Przełącz się do:</h3>
+      <div className={styles.switcher__iconContainer}>
         <Globe
           className={styles.switcher__globeIcon}
           onClick={handleOpenModal}

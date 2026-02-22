@@ -1,3 +1,5 @@
+@use "../../styles/breakpoints.scss" as bp;
+
 .media {
   display: flex;
   flex-direction: column;
@@ -14,10 +16,16 @@
     gap: 15px;
     margin: 0;
     padding-left: 0;
+    justify-content: center;
   }
 
   &__item {
     list-style: none;
+    margin-left: 0;
+  }
+
+  &__item a {
+    margin-left: 0;
   }
 
   &__link {
@@ -47,6 +55,33 @@
     &--instagram:focus,
     &--instagram:hover {
       color: #e1306c;
+    }
+  }
+}
+
+@media (min-width: bp.$bp-tablet) {
+  .media {
+    width: 120px;
+    &__list {
+      flex-direction: column;
+    }
+
+    &__list {
+      align-items: center;
+    }
+  }
+}
+
+@media (min-width: bp.$bp-desktop) {
+  .media {
+    width: 200px;
+    &__list {
+      flex-direction: row;
+    }
+
+    &__list {
+      margin-left: 10px;
+      justify-content: flex-start;
     }
   }
 }

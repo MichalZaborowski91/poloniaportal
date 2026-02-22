@@ -13,6 +13,7 @@ import Eye from "../../assets/icons/eye.svg?react";
 import EyeOff from "../../assets/icons/eye-off.svg?react";
 import LogIn from "../../assets/icons/log-in.svg?react";
 import UserPlus from "../../assets/icons/user-plus.svg?react";
+import { HcaptchaBadge } from "../../components/HcaptchaBadge/HcaptchaBadge";
 
 export const Register = () => {
   const [email, setEmail] = useState("");
@@ -332,6 +333,7 @@ export const Register = () => {
                 </form>
               )}
             </div>
+            <HcaptchaBadge />
           </div>
         </div>
       </div>
