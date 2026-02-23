@@ -19,6 +19,12 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    plan: {
+      type: String,
+      enum: ["free", "pro"],
+      default: "free",
+      index: true,
+    },
     emailVerified: {
       type: Boolean,
       default: false,
@@ -55,11 +61,6 @@ const userSchema = new mongoose.Schema(
         type: String,
         default: null,
       },
-      accountType: {
-        type: String,
-        enum: ["individual", "business"],
-      },
-      companyName: { type: String },
     },
     profileCompleted: {
       type: Boolean,

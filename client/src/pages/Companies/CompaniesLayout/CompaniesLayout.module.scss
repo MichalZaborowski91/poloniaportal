@@ -1,4 +1,4 @@
-.accountLayout {
+.companiesLayout {
   background-image: url("../../../assets/windowBackground.jpg");
   background-repeat: no-repeat;
   background-size: cover;
@@ -59,16 +59,16 @@
 }
 
 @media (max-width: 768px) {
-  .accountLayout__content {
+  .companiesLayout__content {
     grid-template-columns: 1fr;
     gap: 20px;
   }
 
-  .accountLayout__aside {
+  .companiesLayout__aside {
     width: 100%;
   }
 
-  .accountLayout__main {
+  .companiesLayout__main {
     width: 100%;
   }
 }

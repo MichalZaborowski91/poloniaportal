@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import listingRoutes from "./routes/listing.routes.js";
 import { deleteExpiredUsers } from "./jobs/deleteUsers.job.js";
+import companyRoutes from "./routes/company.routes.js";
 //import { loginLimiter } from "./middleware/rateLimit.js";
 
 const app = express();
@@ -28,6 +29,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/companies", companyRoutes);
 
 app.use("/api", listingRoutes);
 app.use(express.json({ limit: "1mb" }));

@@ -21,6 +21,9 @@ import { ForgotPassword } from "./pages/ForgotPassword/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword/ResetPassword";
 import { About } from "./pages/About/About";
 import { ConfirmEmailChange } from "./pages/ConfirmEmailChange/ConfirmEmailChange";
+import { CompaniesLayout } from "./pages/Companies/CompaniesLayout/CompaniesLayout";
+import { CompaniesList } from "./pages/Companies/CompaniesList/CompaniesList";
+import { AddCompany } from "./pages/Companies/AddCompany/AddCompany";
 
 export const App = () => {
   return (
@@ -72,6 +75,17 @@ export const App = () => {
         >
           <Route index element={<AccountProfile />} />
           <Route path="security" element={<AccountSecurity />} />
+        </Route>
+        <Route
+          path="companies"
+          element={
+            <ProtectedRoute>
+              <CompaniesLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<CompaniesList />} />
+          <Route path="add" element={<AddCompany />} />
         </Route>
         <Route
           path="add-offer"

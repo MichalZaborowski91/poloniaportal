@@ -29,6 +29,8 @@ export const AccountSecurity = () => {
 
   const cameFromAddOffer =
     location.state?.from?.pathname?.includes("/add-offer");
+  const cameFromAddCompany =
+    location.state?.from?.pathname?.includes("/companies/add");
 
   const emailChangePending =
     user?.emailChangeExpires && new Date(user.emailChangeExpires) > new Date();
@@ -57,6 +59,11 @@ export const AccountSecurity = () => {
 
   return (
     <div>
+      {cameFromAddCompany && (
+        <div className={styles.accountSecurity__message}>
+          Aby dodać firmę, musisz zweryfikować swój adres email.
+        </div>
+      )}
       {cameFromAddOffer && (
         <div className={styles.accountSecurity__message}>
           Aby dodać ogłoszenie, musisz zweryfikować swój adres email.
