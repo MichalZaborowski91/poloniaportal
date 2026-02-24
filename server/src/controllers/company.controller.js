@@ -14,6 +14,13 @@ export const createCompany = async (req, res) => {
       });
     }
 
+    if (!user.profileCompleted) {
+      return res.status(403).json({
+        code: "PROFILE_NOT_COMPLETED",
+        message: "Complete your profile before creating a company",
+      });
+    }
+
     const companyCount = await Company.countDocuments({
       ownerId: user._id,
     });
@@ -28,6 +35,14 @@ export const createCompany = async (req, res) => {
     const { name, description, phone, email, website, country, city } =
       req.body;
 
+    const maxDescriptionLength = user.plan === "free" ? 300 : 1000;
+
+    if (description && description.length > maxDescriptionLength) {
+      return res.status(400).json({
+        message: `Description limit is ${maxDescriptionLength} characters for your plan`,
+      });
+    }
+
     if (!name) {
       return res.status(400).json({
         message: "Company name is required",
@@ -37,18 +52,23 @@ export const createCompany = async (req, res) => {
     const slug =
       slugify(name, { lower: true, strict: true }) + "-" + Date.now();
 
-    const company = await Company.create({
+    const companyData = {
       ownerId: user._id,
-      name,
+      name: name.trim(),
       slug,
       description,
       phone,
       email,
-      website,
       country,
       city,
-      plan: "free",
-    });
+      plan: user.plan,
+    };
+
+    if (user.plan !== "free") {
+      companyData.website = website;
+    }
+
+    const company = await Company.create(companyData);
 
     res.status(201).json(company);
   } catch (err) {
@@ -100,6 +120,31 @@ export const deleteCompany = async (req, res) => {
     console.error("DELETE COMPANY ERROR", err);
     res.status(500).json({
       message: "Delete company failed",
+    });
+  }
+};
+
+// PUBLIC COMPANY PROFILE
+export const getCompanyBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const company = await Company.findOne({ slug }).populate(
+      "ownerId",
+      "profile.displayName profile.displayNameNormalized profile.avatar",
+    );
+
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found",
+      });
+    }
+
+    res.json(company);
+  } catch (err) {
+    console.error("GET COMPANY BY SLUG ERROR", err);
+    res.status(500).json({
+      message: "Failed to fetch company",
     });
   }
 };

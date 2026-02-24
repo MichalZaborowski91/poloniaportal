@@ -19,12 +19,15 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+
     plan: {
       type: String,
-      enum: ["free", "pro"],
+      enum: ["free", "plus", "business"],
       default: "free",
       index: true,
     },
+    planExpiresAt: Date,
+
     emailVerified: {
       type: Boolean,
       default: false,
@@ -59,7 +62,7 @@ const userSchema = new mongoose.Schema(
       lastName: { type: String },
       avatar: {
         type: String,
-        default: null,
+        default: "/avatar/avt.jpg",
       },
     },
     profileCompleted: {

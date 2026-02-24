@@ -24,6 +24,8 @@ export const AddCompany = () => {
   const country = useCountry();
   const { user } = useAuth();
 
+  const maxDescription = user.plan === "free" ? 300 : 1000;
+
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -45,6 +47,14 @@ export const AddCompany = () => {
       if (status === 403 && code === "EMAIL_NOT_VERIFIED") {
         navigate(routes.security(country), {
           state: { from: location },
+          replace: true,
+        });
+        return;
+      }
+      if (status === 403 && code === "PROFILE_NOT_COMPLETED") {
+        navigate(routes.account(country), {
+          state: { from: location },
+          replace: true,
         });
         return;
       }
@@ -55,6 +65,28 @@ export const AddCompany = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    if (!user.emailVerified) {
+      navigate(routes.security(country), {
+        state: { from: location },
+        replace: true,
+      });
+      return;
+    }
+
+    if (!user.profileCompleted) {
+      navigate(routes.account(country), {
+        state: { from: location },
+        replace: true,
+      });
+      return;
+    }
+  }, [user, navigate, country, location]);
 
   useEffect(() => {
     const check = async () => {
@@ -70,6 +102,12 @@ export const AddCompany = () => {
 
     check();
   }, []);
+
+  if (!user) return null;
+
+  if (!user.emailVerified || !user.profileCompleted) {
+    return null;
+  }
 
   if (loading) {
     return <p>Ładowanie...</p>;
@@ -107,7 +145,8 @@ export const AddCompany = () => {
 
         <textarea
           name="description"
-          placeholder="Opis firmy"
+          maxLength={maxDescription}
+          placeholder={`Opis firmy: max ${maxDescription} znaków`}
           value={form.description}
           onChange={handleChange}
         />
@@ -146,7 +185,20 @@ export const AddCompany = () => {
           value={form.city}
           onChange={handleChange}
         />
+        {user.plan !== "free" && (
+          <>
+            <input
+              name="website"
+              placeholder="Strona internetowa"
+              value={form.website}
+              onChange={handleChange}
+            />
 
+            <input name="facebook" placeholder="Facebook" />
+            <input name="instagram" placeholder="Instagram" />
+            <input name="linkedin" placeholder="LinkedIn" />
+          </>
+        )}
         <button type="submit">Zapisz</button>
       </form>
     </div>

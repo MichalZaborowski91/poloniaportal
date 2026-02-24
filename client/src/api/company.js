@@ -48,3 +48,13 @@ export const deleteCompany = async (id) => {
 
   return json;
 };
+
+export const getCompanyBySlug = async (slug) => {
+  const res = await fetch(`${API_URL}/api/companies/${slug}`);
+
+  if (!res.ok) {
+    throw new Error("Company not found");
+  }
+
+  return res.json();
+};

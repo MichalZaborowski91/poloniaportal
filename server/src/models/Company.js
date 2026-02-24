@@ -24,11 +24,12 @@ const companySchema = new mongoose.Schema(
     description: {
       type: String,
       default: "",
+      maxlength: 1000,
     },
 
     logo: {
       type: String,
-      default: null,
+      default: "/companyLogoPlaceholder/companyLogoPlaceholder.webp",
     },
 
     phone: String,
@@ -41,7 +42,7 @@ const companySchema = new mongoose.Schema(
     //PLAN FOR FUTURE
     plan: {
       type: String,
-      enum: ["free", "pro"],
+      enum: ["free", "plus", "business"],
       default: "free",
     },
 
@@ -51,7 +52,22 @@ const companySchema = new mongoose.Schema(
     },
 
     featuredUntil: Date,
+
+    showOnHomepage: Boolean,
+
+    gallery: [String],
+    socialLinks: {
+      facebook: String,
+      instagram: String,
+      linkedin: String,
+    },
+    openingHours: Object,
+    location: {
+      lat: Number,
+      lng: Number,
+    },
   },
+
   { timestamps: true },
 );
 

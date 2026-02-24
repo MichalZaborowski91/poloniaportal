@@ -24,6 +24,7 @@ import { ConfirmEmailChange } from "./pages/ConfirmEmailChange/ConfirmEmailChang
 import { CompaniesLayout } from "./pages/Companies/CompaniesLayout/CompaniesLayout";
 import { CompaniesList } from "./pages/Companies/CompaniesList/CompaniesList";
 import { AddCompany } from "./pages/Companies/AddCompany/AddCompany";
+import { PublicCompany } from "./pages/Companies/PublicCompany/PublicCompany";
 
 export const App = () => {
   return (
@@ -35,6 +36,7 @@ export const App = () => {
       <Route path="/:country" element={<Layout />}>
         <Route index element={<Hero />} />
         <Route path="listings" element={<ListingsPage />} />
+        <Route path="company/:slug" element={<PublicCompany />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="about" element={<About />} />
