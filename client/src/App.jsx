@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "./components/Layout/Layout";
 import { Login } from "./pages/Login/Login";
 import { Register } from "./pages/Register/Register";
-import { Profile } from "./pages/Profile/Profile";
 import { Onboarding } from "./pages/Onboarding/Onboarding";
 import { AddOffer } from "./pages/AddOffer/AddOffer";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
@@ -25,6 +24,8 @@ import { CompaniesLayout } from "./pages/Companies/CompaniesLayout/CompaniesLayo
 import { CompaniesList } from "./pages/Companies/CompaniesList/CompaniesList";
 import { AddCompany } from "./pages/Companies/AddCompany/AddCompany";
 import { PublicCompany } from "./pages/Companies/PublicCompany/PublicCompany";
+import { PublicUser } from "./pages/PublicUser/PublicUser";
+import { EditCompany } from "./pages/Companies/EditCompany/EditCompany";
 
 export const App = () => {
   return (
@@ -37,6 +38,7 @@ export const App = () => {
         <Route index element={<Hero />} />
         <Route path="listings" element={<ListingsPage />} />
         <Route path="company/:slug" element={<PublicCompany />} />
+        <Route path="user/:displayName" element={<PublicUser />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="about" element={<About />} />
@@ -50,15 +52,6 @@ export const App = () => {
             </PublicOnlyRoute>
           }
         />
-        <Route
-          path="profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-
         <Route
           path="onboarding"
           element={
@@ -88,6 +81,7 @@ export const App = () => {
         >
           <Route index element={<CompaniesList />} />
           <Route path="add" element={<AddCompany />} />
+          <Route path="edit/:id" element={<EditCompany />} />
         </Route>
         <Route
           path="add-offer"

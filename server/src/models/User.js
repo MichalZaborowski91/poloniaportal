@@ -60,11 +60,40 @@ const userSchema = new mongoose.Schema(
       displayNameNormalized: { type: String },
       firstName: { type: String },
       lastName: { type: String },
+      city: { type: String },
+
+      bio: {
+        type: String,
+        maxlength: 300,
+        default: "",
+      },
+
       avatar: {
         type: String,
         default: "/avatar/avt.jpg",
       },
+
+      publicVisibility: {
+        showFullName: { type: Boolean, default: false },
+        showCity: { type: Boolean, default: false },
+        showBio: { type: Boolean, default: false },
+        showEmail: { type: Boolean, default: false },
+      },
     },
+
+    country: {
+      type: String,
+      default: "pl",
+      index: true,
+    },
+
+    accountType: {
+      type: String,
+      enum: ["private", "business"],
+      default: "private",
+      index: true,
+    },
+
     profileCompleted: {
       type: Boolean,
       default: false,

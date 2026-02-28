@@ -1,12 +1,23 @@
 import { useRef, useState } from "react";
 import { deleteAvatar, uploadAvatar } from "../../api/user";
 import { useAuth } from "../../hooks/useAuth";
-import defaultAvatar from "../../assets/avatar/avt.jpg";
+import styles from "../AvatarUpload/AvatarUpload.module.scss";
+import Loader from "../../assets/icons/loader.svg?react";
+import Image from "../../assets/icons/image.svg?react";
+import Delete from "../../assets/icons/delete.svg?react";
+import toast from "react-hot-toast";
+
+const DEFAULT_AVATAR = "/avatar/avt.jpg";
 
 export const AvatarUpload = () => {
   const { user, refreshUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
+
+  const avatarSrc = user?.profile?.avatar || DEFAULT_AVATAR;
+
+  const hasCustomAvatar =
+    user?.profile?.avatar && user.profile.avatar !== DEFAULT_AVATAR;
 
   const openFilePicker = () => {
     fileInputRef.current?.click();
@@ -23,7 +34,7 @@ export const AvatarUpload = () => {
       await uploadAvatar(file);
       await refreshUser();
     } catch (error) {
-      alert("Upload failed");
+      toast.error("Błąd ładowania avatara.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -32,16 +43,12 @@ export const AvatarUpload = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Remove avatar?")) {
-      return;
-    }
-
     setLoading(true);
     try {
       await deleteAvatar();
       await refreshUser();
     } catch (error) {
-      alert("Delete failed");
+      toast.error("Usunięcie nie powiodło się.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -49,13 +56,14 @@ export const AvatarUpload = () => {
   };
 
   return (
-    <div>
+    <div className={styles.avatar}>
       <img
-        src={user?.profile?.avatar || defaultAvatar}
+        src={avatarSrc}
         alt="avatar"
-        width={96}
-        height={96}
-        style={{ borderRadius: "50%", border: "2px solid black" }}
+        className={styles.avatar__image}
+        onError={(e) => {
+          e.currentTarget.src = DEFAULT_AVATAR;
+        }}
       />
 
       <input
@@ -65,15 +73,32 @@ export const AvatarUpload = () => {
         style={{ display: "none" }}
         onChange={handleChange}
       />
-
-      <button type="button" onClick={openFilePicker} disabled={loading}>
-        {loading ? "Uploading..." : "Change avatar"}
-      </button>
-      {user?.profile?.avatar && (
-        <button type="button" onClick={handleDelete} disabled={loading}>
-          Remove avatar
+      <div className={styles.avatar__buttonContainer}>
+        <button
+          type="button"
+          onClick={openFilePicker}
+          disabled={loading}
+          className={styles.avatar__button}
+        >
+          {loading ? <Loader /> : <Image />}
+          {loading
+            ? "Ładowanie..."
+            : hasCustomAvatar
+              ? "Zmień avatar"
+              : "Dodaj avatar"}
         </button>
-      )}
+        {hasCustomAvatar && (
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={loading}
+            className={styles.avatar__button}
+          >
+            <Delete />
+            Usuń avatar
+          </button>
+        )}
+      </div>
     </div>
   );
 };

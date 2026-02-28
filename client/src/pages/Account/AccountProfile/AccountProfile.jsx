@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { AccountInfoForm } from "../../../components/AccountInfoForm/AccountInfoForm";
-import { VerifyEmailMessage } from "../../../components/VerifyEmailMessage/VerifyEmailMessage";
 import styles from "../AccountProfile/AccountProfile.module.scss";
+import User from "../../../assets/icons/user.svg?react";
 
 export const AccountProfile = () => {
   const location = useLocation();
@@ -23,8 +23,10 @@ export const AccountProfile = () => {
           Aby dodać firmę, profil musi zostać dokończony.
         </div>
       )}
-      <h2>Profile</h2>
-      <VerifyEmailMessage />
+      <h2 className={styles.accountProfile__title}>
+        <User />
+        Profil
+      </h2>
       <AccountInfoForm />
     </div>
   );

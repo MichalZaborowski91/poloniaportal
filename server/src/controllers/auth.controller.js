@@ -44,7 +44,8 @@ const RESEND_COOLDOWN = 15 * 60 * 1000;
 export const register = async (req, res) => {
   try {
     const ip = getClientIp(req);
-    const { email, password, company, captchaToken, timeStamp } = req.body;
+    const { email, password, company, country, captchaToken, timeStamp } =
+      req.body;
 
     //BOT FLOW
     //BOT VALIDATION
@@ -201,6 +202,7 @@ export const register = async (req, res) => {
     const user = await User.create({
       email,
       password,
+      country: country || "pl",
       emailVerified: false,
       emailVerifyToken: hashedToken,
       emailVerifyExpires: new Date(Date.now() + VERIFY_TOKEN_TTL),

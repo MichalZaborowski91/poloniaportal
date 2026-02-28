@@ -1,9 +1,16 @@
 .logoutButton {
-  background: none;
+  background-color: #f1efef;
   border: 2px solid #1f2937;
   text-align: center;
   cursor: pointer;
   color: #1f2937;
   font-weight: 500;
   border-radius: 4px;
+  transition:
+    background-color 200ms ease,
+    transform 150ms ease;
+
+  &:hover {
+    background-color: #acb2b9;
+  }
 }

@@ -32,6 +32,7 @@ export const register = async ({
   email,
   password,
   company,
+  country,
   captchaToken,
   timeStamp,
 }) => {
@@ -43,6 +44,7 @@ export const register = async ({
       email,
       password,
       company,
+      country,
       captchaToken,
       timeStamp,
     }),

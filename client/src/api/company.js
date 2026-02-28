@@ -58,3 +58,22 @@ export const getCompanyBySlug = async (slug) => {
 
   return res.json();
 };
+
+export const updateCompany = async (id, data) => {
+  const res = await fetch(`${API_URL}/api/companies/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(data),
+  });
+
+  const json = await res.json();
+
+  if (!res.ok) {
+    const error = new Error(json.message || "Update failed");
+    error.status = res.status;
+    throw error;
+  }
+
+  return json;
+};

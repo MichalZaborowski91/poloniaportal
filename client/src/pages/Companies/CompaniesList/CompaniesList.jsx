@@ -61,7 +61,13 @@ export const CompaniesList = () => {
             >
               Podgląd
             </button>
-            <button>Edytuj</button>
+            <button
+              onClick={() =>
+                navigate(`${routes.editCompany(country, company._id)}`)
+              }
+            >
+              Edytuj
+            </button>
 
             <button
               onClick={() =>

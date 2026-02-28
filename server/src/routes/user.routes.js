@@ -2,6 +2,7 @@ import express from "express";
 import { requireAuth } from "../middleware/auth.middleware.js";
 import {
   deleteMyAvatar,
+  getUserPublicProfile,
   updateMyProfile,
   uploadMyAvatar,
 } from "../controllers/user.controller.js";
@@ -18,5 +19,6 @@ router.patch(
   uploadMyAvatar,
 );
 router.delete("/avatar", requireAuth, deleteMyAvatar);
+router.get("/:displayName", getUserPublicProfile);
 
 export default router;

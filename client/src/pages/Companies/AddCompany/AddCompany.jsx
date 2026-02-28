@@ -5,6 +5,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { routes } from "../../../app/routes";
 import { useCountry } from "../../../app/useCountry";
 import { useAuth } from "../../../hooks/useAuth";
+import styles from "../AddCompany/AddCompany.module.scss";
+import Add from "../../../assets/icons/plus.svg?react";
 
 export const AddCompany = () => {
   const [hasCompany, setHasCompany] = useState(false);
@@ -132,7 +134,10 @@ export const AddCompany = () => {
 
   return (
     <div>
-      <h2>Dodaj firmę</h2>
+      <h2 className={styles.title}>
+        <Add />
+        Dodaj firmę
+      </h2>
 
       <form onSubmit={handleSubmit}>
         <input

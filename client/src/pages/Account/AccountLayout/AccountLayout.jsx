@@ -2,8 +2,12 @@ import { NavLink, Outlet } from "react-router-dom";
 import styles from "../AccountLayout/AccountLayout.module.scss";
 import User from "../../../assets/icons/user.svg?react";
 import Shield from "../../../assets/icons/shield.svg?react";
+import { useCountry } from "../../../app/useCountry";
+import { routes } from "../../../app/routes";
 
 export const AccountLayout = () => {
+  const country = useCountry();
+
   return (
     <div className={styles.accountLayout}>
       <div className={styles.accountLayout__overlay}>
@@ -15,17 +19,28 @@ export const AccountLayout = () => {
                 <ul className={styles.accountLayout__list}>
                   <li className={styles.accountLayout__item}>
                     <User />
-                    <NavLink to="" className={styles.accountLayout__link}>
+                    <NavLink
+                      to={routes.account(country)}
+                      className={styles.accountLayout__link}
+                    >
                       Profil
                     </NavLink>
                   </li>
                   <li className={styles.accountLayout__item}>
                     <Shield />
                     <NavLink
-                      to="security"
+                      to={routes.security(country)}
                       className={styles.accountLayout__link}
                     >
                       Bezpieczeństwo
+                    </NavLink>
+                  </li>
+                  <li className={styles.accountLayout__item}>
+                    <NavLink
+                      to={routes.companies(country)}
+                      className={styles.accountLayout__link}
+                    >
+                      Moje firmy
                     </NavLink>
                   </li>
                 </ul>

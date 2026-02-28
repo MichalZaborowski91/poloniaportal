@@ -148,3 +148,53 @@ export const getCompanyBySlug = async (req, res) => {
     });
   }
 };
+
+//UPDATE MY COMPANY
+export const updateCompany = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const companyId = req.params.id;
+
+    const company = await Company.findOne({
+      _id: companyId,
+      ownerId: userId,
+    });
+
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found",
+      });
+    }
+
+    const { name, description, phone, email, website, country, city } =
+      req.body;
+
+    const maxDescriptionLength = req.user.plan === "free" ? 300 : 1000;
+
+    if (description && description.length > maxDescriptionLength) {
+      return res.status(400).json({
+        message: `Description limit is ${maxDescriptionLength} characters`,
+      });
+    }
+
+    company.name = name || company.name;
+    company.description = description;
+    company.phone = phone;
+    company.email = email;
+    company.country = country;
+    company.city = city;
+
+    if (req.user.plan !== "free") {
+      company.website = website;
+    }
+
+    await company.save();
+
+    res.json(company);
+  } catch (err) {
+    console.error("UPDATE COMPANY ERROR", err);
+    res.status(500).json({
+      message: "Update company failed",
+    });
+  }
+};

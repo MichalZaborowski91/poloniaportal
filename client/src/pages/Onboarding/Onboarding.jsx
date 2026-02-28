@@ -6,10 +6,7 @@ export const Onboarding = () => {
   return (
     <div className={styles.onboarding}>
       <h2>Complete your profile</h2>
-      <div className={styles.onboarding__components}>
-        <VerifyEmailMessage />
-      </div>
-      <AccountInfoForm />
+      <AccountInfoForm mode="onboarding" />
     </div>
   );
 };

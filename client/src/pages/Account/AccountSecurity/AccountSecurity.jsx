@@ -81,7 +81,7 @@ export const AccountSecurity = () => {
             </h4>
             <div className={styles.accountSecurity__wrapper}>
               <div className={styles.accountSecurity__content}>
-                <VerifyEmailMessage />
+                <VerifyEmailMessage showWhenVerified={true} />
                 <ResendVerifyEmailButton />
               </div>
             </div>

@@ -5,6 +5,7 @@ import {
   getMyCompanies,
   deleteCompany,
   getCompanyBySlug,
+  updateCompany,
 } from "../controllers/company.controller.js";
 
 const router = express.Router();
@@ -12,6 +13,7 @@ const router = express.Router();
 router.post("/", requireAuth, createCompany);
 router.get("/my", requireAuth, getMyCompanies);
 router.delete("/:id", requireAuth, deleteCompany);
+router.put("/:id", requireAuth, updateCompany);
 router.get("/:slug", getCompanyBySlug);
 
 export default router;

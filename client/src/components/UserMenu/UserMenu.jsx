@@ -79,11 +79,12 @@ export const UserMenu = ({ onMenuClose }) => {
           >
             Konto
           </Link>
-          <Link to={routes.companies(country)} onClick={() => setOpen(false)}>
+          <Link
+            to={routes.companies(country)}
+            onClick={() => setOpen(false)}
+            className={styles.menu__account}
+          >
             Moje firmy
-          </Link>
-          <Link to={routes.onboarding(country)} onClick={() => setOpen(false)}>
-            Dashboard
           </Link>
           <LogOutButton />
         </div>

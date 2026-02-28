@@ -42,3 +42,13 @@ export const deleteAvatar = async () => {
   }
   return res.json();
 };
+
+export const getUserPublicProfile = async (displayName) => {
+  const res = await fetch(`${API_URL}/api/users/${displayName}`);
+
+  if (!res.ok) {
+    throw new Error("User not found");
+  }
+
+  return res.json();
+};

@@ -39,16 +39,20 @@ const companySchema = new mongoose.Schema(
     country: String,
     city: String,
 
-    //PLAN FOR FUTURE
-    plan: {
-      type: String,
-      enum: ["free", "plus", "business"],
-      default: "free",
-    },
-
     isFeatured: {
       type: Boolean,
       default: false,
+    },
+
+    category: {
+      type: String,
+      required: true,
+      index: true,
+    },
+
+    viewsTotal: {
+      type: Number,
+      default: 0,
     },
 
     featuredUntil: Date,

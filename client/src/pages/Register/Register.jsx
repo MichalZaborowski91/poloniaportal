@@ -73,6 +73,7 @@ export const Register = () => {
         email,
         password,
         company,
+        country,
         timeStamp,
         captchaToken,
       });
