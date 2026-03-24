@@ -36,53 +36,67 @@ export const CompaniesList = () => {
 
   if (loading) return <p>Ładowanie...</p>;
 
-  if (companies.length === 0) {
-    return (
-      <div className={styles.empty}>
-        <h3>Nie masz jeszcze żadnej firmy</h3>
-        <p>Dodaj firmę, aby móc publikować ją w katalogu.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className={styles.grid}>
-      {companies.map((company) => (
-        <div key={company._id} className={styles.card}>
-          <img src={company.logo} alt={company.name} className={styles.logo} />
+    <div>
+      <h2 className={styles.header}>Lista moich firm</h2>
 
-          <h3 className={styles.name}>{company.name}</h3>
-
-          <div className={styles.actions}>
-            <button
-              onClick={() =>
-                navigate(routes.companySlug(country, company.slug))
-              }
-            >
-              Podgląd
-            </button>
-            <button
-              onClick={() =>
-                navigate(`${routes.editCompany(country, company._id)}`)
-              }
-            >
-              Edytuj
-            </button>
-
-            <button
-              onClick={() =>
-                setDeleteModal({
-                  id: company._id,
-                  name: company.name,
-                })
-              }
-              className={styles.delete}
-            >
-              Usuń
-            </button>
-          </div>
+      {companies.length === 0 ? (
+        <div className={styles.empty}>
+          <h3>Nie masz jeszcze żadnej firmy</h3>
+          <p>Dodaj firmę, aby móc publikować ją w katalogu.</p>
         </div>
-      ))}
+      ) : (
+        <div className={styles.grid}>
+          {companies.map((company) => (
+            <div key={company._id} className={styles.card}>
+              <img
+                src={
+                  company.logo ||
+                  "/companyLogoPlaceholder/companyLogoPlaceholder.webp"
+                }
+                alt={company.name}
+                className={styles.logo}
+                onError={(e) => {
+                  e.target.src =
+                    "/companyLogoPlaceholder/companyLogoPlaceholder.webp";
+                }}
+              />
+
+              <h3 className={styles.name}>{company.name}</h3>
+
+              <div className={styles.actions}>
+                <button
+                  onClick={() =>
+                    navigate(routes.companySlug(country, company.slug))
+                  }
+                >
+                  Podgląd
+                </button>
+                <button
+                  onClick={() =>
+                    navigate(routes.editCompany(country, company._id))
+                  }
+                >
+                  Edytuj
+                </button>
+
+                <button
+                  onClick={() =>
+                    setDeleteModal({
+                      id: company._id,
+                      name: company.name,
+                    })
+                  }
+                  className={styles.delete}
+                >
+                  Usuń
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {deleteModal && (
         <DeleteCompanyModal
           companyId={deleteModal.id}

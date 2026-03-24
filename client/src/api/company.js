@@ -77,3 +77,22 @@ export const updateCompany = async (id, data) => {
 
   return json;
 };
+
+export const uploadCompanyLogo = async (id, file) => {
+  const formData = new FormData();
+  formData.append("logo", file);
+
+  const res = await fetch(`${API_URL}/api/companies/${id}/logo`, {
+    method: "PATCH",
+    credentials: "include",
+    body: formData,
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Upload failed");
+  }
+
+  return data;
+};

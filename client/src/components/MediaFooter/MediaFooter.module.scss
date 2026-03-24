@@ -37,22 +37,18 @@
     display: inline-flex;
     margin-left: 10px;
 
-    &:focus,
     &:hover {
       scale: calc(1.15);
     }
 
-    &--facebook:focus,
     &--facebook:hover {
       color: #0866ff;
     }
 
-    &--linkedin:focus,
     &--linkedin:hover {
       color: #0a66c2;
     }
 
-    &--instagram:focus,
     &--instagram:hover {
       color: #e1306c;
     }

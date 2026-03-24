@@ -1,5 +1,5 @@
 import { useCountry } from "../../app/useCountry";
-import { COUNTRIES_PL } from "../../assets/countries/countriesPL.js";
+import { COUNTRIES_PL } from "../../app/countriesPL";
 import { HERO_BY_COUNTRY } from "../../assets/countries/heroes.js";
 import { SearchBar } from "../SearchBar/SearchBar.jsx";
 import styles from "./Hero.module.scss";

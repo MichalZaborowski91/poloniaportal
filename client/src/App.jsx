@@ -26,6 +26,7 @@ import { AddCompany } from "./pages/Companies/AddCompany/AddCompany";
 import { PublicCompany } from "./pages/Companies/PublicCompany/PublicCompany";
 import { PublicUser } from "./pages/PublicUser/PublicUser";
 import { EditCompany } from "./pages/Companies/EditCompany/EditCompany";
+import { Pricing } from "./pages/Pricing/Pricing";
 
 export const App = () => {
   return (
@@ -44,6 +45,7 @@ export const App = () => {
         <Route path="about" element={<About />} />
         <Route path="reset-password/:token" element={<ResetPassword />} />
         <Route path="confirm-email-change" element={<ConfirmEmailChange />} />
+        <Route path="pricing" element={<Pricing />} />
         <Route
           path="forgot-password"
           element={

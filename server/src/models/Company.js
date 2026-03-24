@@ -32,6 +32,20 @@ const companySchema = new mongoose.Schema(
       default: "/companyLogoPlaceholder/companyLogoPlaceholder.webp",
     },
 
+    openingHours: {
+      monday: String,
+      tuesday: String,
+      wednesday: String,
+      thursday: String,
+      friday: String,
+      saturday: String,
+      sunday: String,
+    },
+
+    features: [String],
+
+    whatsapp: String,
+
     phone: String,
     email: String,
     website: String,
@@ -64,8 +78,12 @@ const companySchema = new mongoose.Schema(
       facebook: String,
       instagram: String,
       linkedin: String,
+      youtube: String,
+      tiktok: String,
+      google: String,
+      x: String,
     },
-    openingHours: Object,
+
     location: {
       lat: Number,
       lng: Number,

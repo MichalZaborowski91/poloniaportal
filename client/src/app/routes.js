@@ -17,4 +17,5 @@ export const routes = {
   companySlug: (c, slug) => `/${c}/company/${slug}`,
   userPublic: (c, displayName) => `/${c}/user/${displayName}`,
   editCompany: (c, id) => `/${c}/companies/edit/${id}`,
+  pricing: (c) => `/${c}/pricing`,
 };

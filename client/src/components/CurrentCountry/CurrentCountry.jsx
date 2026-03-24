@@ -1,5 +1,5 @@
+import { COUNTRIES_PL } from "../../app/countriesPL";
 import { useCountry } from "../../app/useCountry";
-import { COUNTRIES_PL } from "../../assets/countries/countriesPL";
 import styles from "../CurrentCountry/CurrentCountry.module.scss";
 
 export const CurrentCountry = () => {
@@ -12,7 +12,7 @@ export const CurrentCountry = () => {
       <p className={styles.currentCountry__name}>
         {countryCode.name}
         <img
-          src={`/flags/${countryCode.subdomain}.png`}
+          src={countryCode.flag}
           alt={countryCode.name}
           className={styles.currentCountry__flag}
         />
