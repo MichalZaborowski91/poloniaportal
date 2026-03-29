@@ -1,33 +1,38 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { UserMenu } from "../UserMenu/UserMenu";
 import { AccountMenu } from "../AccountMenu/AccountMenu";
 import { routes } from "../../app/routes";
 import { useCountry } from "../../app/useCountry";
-import { AddOfferButton } from "../AddOfferButton/AddOfferButton";
+
 import styles from "./Header.module.scss";
 import logo from "../../assets/logo/PoloniaPortalLogo.png";
 import Menu from "../../assets/icons/menu.svg?react";
 import CloseIcon from "../../assets/icons/x.svg?react";
+import { AddButton } from "../AddButton/AddButton";
+import { CountryDropdown } from "../CountryDropdown/CountryDropdown";
+import { ListingsDropdown } from "../ListingsDropdown/ListingsDropdown";
+import { GAZETA_LINKS } from "../../app/newspaperLinks";
 
-export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose }) => {
+export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose, scrolled }) => {
   const { user, loading } = useAuth();
   const country = useCountry();
-  const location = useLocation();
+  //const location = useLocation();
 
-  const hideAddOffer =
-    location.pathname.endsWith("/forgot-password") ||
-    location.pathname.endsWith("/reset-password") ||
-    location.pathname.endsWith("/login") ||
-    location.pathname.endsWith("/register");
+  //const hideAddOffer =
+  //location.pathname.endsWith("/forgot-password") ||
+  //location.pathname.endsWith("/reset-password") ||
+  // location.pathname.endsWith("/login") ||
+  //location.pathname.endsWith("/register");
 
   if (loading) {
     return null;
   }
 
   return (
-    <div className="container">
-      <header className={styles.header}>
+    <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
+      <div className={`container ${styles.inner}`}>
         <Link
           to={routes.home(country)}
           className={styles.header__link}
@@ -43,20 +48,44 @@ export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose }) => {
             className={styles.header__logo}
           />
         </Link>
-        <nav className={styles.header__navigation}>
+        <nav className={styles.nav}>
+          <NavLink
+            to={`/${country}/companies`}
+            className={({ isActive }) => (isActive ? styles.active : "")}
+          >
+            Firmy
+          </NavLink>
+
+          <NavLink
+            to={`/${country}/events`}
+            className={({ isActive }) => (isActive ? styles.active : "")}
+          >
+            Wydarzenia
+          </NavLink>
+          <a
+            href={GAZETA_LINKS[country]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.navExternal}
+          >
+            Gazeta
+          </a>
+          <NavLink
+            to={`/${country}/forum`}
+            className={({ isActive }) => (isActive ? styles.active : "")}
+          >
+            Forum
+          </NavLink>
+          <ListingsDropdown />
+        </nav>
+
+        <div className={styles.header__navigation}>
+          <CountryDropdown />
           <div className={styles.header__addOffer}>
-            {!hideAddOffer && (
-              <AddOfferButton
-                onClick={() => {
-                  if (isMenuOpen) {
-                    onMenuClose();
-                  }
-                }}
-              />
-            )}
+            <AddButton scrolled={scrolled} />
           </div>
-          {user && <UserMenu onMenuClose={onMenuClose} />}
-          <AccountMenu />
+          {user && <UserMenu onMenuClose={onMenuClose} scrolled={scrolled} />}
+          <AccountMenu scrolled={scrolled} />
 
           <div
             className={styles.header__mobileMenuContainer}
@@ -79,8 +108,8 @@ export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose }) => {
               }`}
             />
           </div>
-        </nav>
-      </header>
-    </div>
+        </div>
+      </div>
+    </header>
   );
 };

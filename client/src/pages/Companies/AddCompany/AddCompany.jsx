@@ -10,6 +10,7 @@ import { useCountry } from "../../../app/useCountry";
 import { useAuth } from "../../../hooks/useAuth";
 import { CompanyForm } from "../../../components/CompanyForm/CompanyForm";
 import toast from "react-hot-toast";
+import styles from "../AddCompany/AddCompany.module.scss";
 
 const PLAN_LIMITS = {
   free: 1,
@@ -52,7 +53,7 @@ export const AddCompany = () => {
         await uploadCompanyLogo(company._id, logoFile);
       }
 
-      navigate(routes.companies(country));
+      navigate(routes.accountCompanies(country));
     } catch (error) {
       const status = error?.status;
       const code = error?.code;
@@ -66,7 +67,9 @@ export const AddCompany = () => {
     }
   };
 
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
 
   if (loading) {
     return <p>Ładowanie...</p>;
@@ -77,7 +80,8 @@ export const AddCompany = () => {
 
     return (
       <div>
-        <h2>Limit planu osiągnięty</h2>
+        <h2 className={styles.header}>Dodaj firmę</h2>
+        <h3>Limit planu osiągnięty</h3>
         <p>
           Plan {user.plan} pozwala na maksymalnie{" "}
           {limit === Infinity ? "nielimitowaną liczbę" : limit} firm.

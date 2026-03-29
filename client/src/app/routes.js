@@ -13,9 +13,11 @@ export const routes = {
   forgotPassword: (c) => `/${c}/forgot-password`,
   resetPassword: (c, token) => `/${c}/reset-password/${token}`,
   about: (c) => `/${c}/about`,
-  companies: (c) => `/${c}/companies`,
+  accountCompanies: (c) => `/${c}/account/companies`,
+  addCompany: (c) => `/${c}/account/companies/add`,
   companySlug: (c, slug) => `/${c}/company/${slug}`,
   userPublic: (c, displayName) => `/${c}/user/${displayName}`,
-  editCompany: (c, id) => `/${c}/companies/edit/${id}`,
+  editCompany: (c, id) => `/${c}/account/companies/edit/${id}`,
   pricing: (c) => `/${c}/pricing`,
+  publish: (c, id) => `/${c}/account/companies/publish/${id}`,
 };

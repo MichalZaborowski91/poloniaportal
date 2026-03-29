@@ -1,0 +1,54 @@
+.wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.banner {
+  width: 100%;
+  max-width: calc(100% - 200px);
+  height: 140px;
+
+  border-radius: 4px;
+  overflow: hidden;
+  display: block;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* 🔥 PLACEHOLDER (sprzedający) */
+.placeholder {
+  width: 100%;
+  max-width: calc(100% - 200px);
+  height: 140px;
+
+  border-radius: 4px;
+  border: 2px dashed #ccc;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #f9fafb, #f1f5f9);
+
+  text-align: center;
+  gap: 5px;
+
+  p {
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  span {
+    font-size: 14px;
+    color: #666;
+  }
+}

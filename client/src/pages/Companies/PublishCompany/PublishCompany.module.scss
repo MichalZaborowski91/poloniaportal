@@ -1,0 +1,28 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.preview {
+  border: 1px solid #ddd;
+  padding: 16px;
+  margin-bottom: 20px;
+
+  img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+  }
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+}

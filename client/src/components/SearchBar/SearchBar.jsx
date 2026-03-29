@@ -14,14 +14,20 @@ export const SearchBar = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (type === "companies") {
+      if (query) {
+        navigate(`/${country}/companies?search=${query}`);
+      } else {
+        navigate(`/${country}/companies`);
+      }
+      return;
+    }
+
+    // default → listings
     const params = new URLSearchParams();
 
-    if (type) {
-      params.set("type", type);
-    }
-    if (query) {
-      params.set("q", query);
-    }
+    if (type) params.set("type", type);
+    if (query) params.set("q", query);
 
     navigate(`/${country}/listings?${params.toString()}`);
   };

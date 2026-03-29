@@ -80,6 +80,16 @@ export const CompaniesList = () => {
                   Edytuj
                 </button>
 
+                {company.status === "draft" && (
+                  <button
+                    onClick={() =>
+                      navigate(routes.publish(country, company._id))
+                    }
+                  >
+                    Opublikuj
+                  </button>
+                )}
+
                 <button
                   onClick={() =>
                     setDeleteModal({
@@ -91,6 +101,12 @@ export const CompaniesList = () => {
                 >
                   Usuń
                 </button>
+                <p>
+                  Status:{" "}
+                  {company.status === "published"
+                    ? "🟢 Opublikowana"
+                    : "🟡 Szkic"}
+                </p>
               </div>
             </div>
           ))}

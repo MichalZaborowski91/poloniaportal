@@ -1,4 +1,4 @@
-.title {
+.header {
   background-color: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(10px);
@@ -11,69 +11,4 @@
   align-items: center;
   gap: 10px;
   color: #2b2b2b;
-}
-
-.formSection {
-  margin-bottom: 30px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-}
-
-.sectionTitle {
-  font-weight: 600;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.badge {
-  background: #ff9800;
-  color: #fff;
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.locked {
-  opacity: 0.6;
-}
-
-.upgrade {
-  font-size: 12px;
-  color: #555;
-  margin-top: 4px;
-}
-
-.countryWrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.flag {
-  width: 20px;
-  height: 14px;
-  border-radius: 2px;
-  object-fit: cover;
-}
-
-.countrySelect {
-  flex: 1;
-}
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid #ddd;
-  border-top: 3px solid #111;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  margin-bottom: 5px;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }

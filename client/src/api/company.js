@@ -50,8 +50,9 @@ export const deleteCompany = async (id) => {
 };
 
 export const getCompanyBySlug = async (slug) => {
-  const res = await fetch(`${API_URL}/api/companies/${slug}`);
-
+  const res = await fetch(`${API_URL}/api/companies/${slug}`, {
+    credentials: "include",
+  });
   if (!res.ok) {
     throw new Error("Company not found");
   }
@@ -95,4 +96,31 @@ export const uploadCompanyLogo = async (id, file) => {
   }
 
   return data;
+};
+
+export const togglePublishCompany = async (id) => {
+  const res = await fetch(`${API_URL}/api/companies/${id}/publish`, {
+    method: "PATCH",
+    credentials: "include",
+  });
+
+  const json = await res.json();
+
+  if (!res.ok) {
+    throw new Error(json.message || "Publish failed");
+  }
+
+  return json;
+};
+
+export const getPublicCompanies = async (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+
+  const res = await fetch(`${API_URL}/api/companies?${query}`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch companies");
+  }
+
+  return res.json();
 };

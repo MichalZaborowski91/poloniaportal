@@ -7,8 +7,10 @@ import itHero from "./it/rome.webp";
 import nlHero from "./nl/amsterdam.webp";
 import noHero from "./no/oslo.webp";
 import seHero from "./se/stockholm.webp";
+import plHero from "./pl/warsaw.webp";
 
 export const HERO_BY_COUNTRY = {
+  pl: plHero,
   ie: ieHero,
   uk: ukHero,
   es: esHero,

@@ -259,6 +259,17 @@ export const getCompanyBySlug = async (req, res) => {
       });
     }
 
+    const isOwner =
+      req.user && company.ownerId._id.toString() === req.user._id.toString();
+    console.log("REQ USER:", req.user?._id);
+    console.log("OWNER ID:", company.ownerId._id);
+    console.log("STATUS:", company.status);
+    if (company.status !== "published" && !isOwner) {
+      return res.status(403).json({
+        message: "This company is not published",
+      });
+    }
+
     res.json(company);
   } catch (err) {
     console.error("GET COMPANY BY SLUG ERROR", err);
@@ -553,5 +564,76 @@ export const geocodeAddress = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Geocode error" });
+  }
+};
+
+export const publishCompany = async (req, res) => {
+  try {
+    const company = await Company.findOne({
+      _id: req.params.id,
+      ownerId: req.user.id,
+    });
+
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found",
+      });
+    }
+
+    const { featured, showOnHomepage } = req.body;
+
+    company.status = "published";
+
+    if (featured) {
+      company.isFeatured = true;
+      company.featuredUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    }
+
+    if (showOnHomepage) {
+      company.showOnHomepage = true;
+    }
+
+    await company.save();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("PUBLISH ERROR", err);
+    res.status(500).json({ message: "Publish failed" });
+  }
+};
+
+export const getPublicCompanies = async (req, res) => {
+  try {
+    const { search, city, category, country } = req.query;
+
+    const query = {
+      status: "published",
+    };
+
+    if (country) {
+      query.country = country;
+    }
+
+    if (city) {
+      query.city = city;
+    }
+
+    if (category) {
+      query.category = category;
+    }
+
+    if (search) {
+      query.name = {
+        $regex: search,
+        $options: "i",
+      };
+    }
+
+    const companies = await Company.find(query).sort({ createdAt: -1 });
+
+    res.json(companies);
+  } catch (err) {
+    console.error("GET PUBLIC COMPANIES ERROR", err);
+    res.status(500).json({ message: "Failed to fetch companies" });
   }
 };

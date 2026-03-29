@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import { useCountry } from "../../app/useCountry";
 import { routes } from "../../app/routes";
 import { getUserPublicProfile } from "../../api/user";
+import styles from "../PublicUser/PublicUser.module.scss";
+import { COUNTRIES_PL } from "../../app/countriesPL";
 
 export const PublicUser = () => {
   const { displayName } = useParams();
@@ -32,84 +34,87 @@ export const PublicUser = () => {
   const { profile, companies } = data;
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto" }}>
-      {/* HEADER */}
-      <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+    <div className={styles.publicUser}>
+      <aside className={styles.publicUser__aside}>
         <img
           src={profile.avatar || "/avatar/avt.jpg"}
           alt={profile.displayName}
           onError={(e) => {
             e.currentTarget.src = "/avatar/avt.jpg";
           }}
-          style={{
-            width: "80px",
-            height: "80px",
-            borderRadius: "50%",
-            objectFit: "cover",
-            display: "block",
-          }}
+          className={styles.publicUser__avatar}
         />
-        <div>
-          <h1>{profile.displayName}</h1>
-          <div>Country: {profile.country?.toUpperCase()}</div>
-          <div>Account: {profile.accountType}</div>
-          <div>
-            Member since: {new Date(profile.memberSince).toLocaleDateString()}
-          </div>
-        </div>
-      </div>
+        <div className={styles.publicUser__adCard}>Reklama</div>
+      </aside>
+      <main className={styles.publicUser__main}>
+        <h2 className={styles.publicUser__displayName}>
+          {profile.displayName}
+        </h2>
 
-      {/* OPTIONAL INFO */}
-      <div style={{ marginTop: 20 }}>
-        {profile.fullName && <p>Name: {profile.fullName}</p>}
-        {profile.city && <p>City: {profile.city}</p>}
-        {profile.bio && <p>{profile.bio}</p>}
-      </div>
-      {profile.email && (
-        <p>
-          Email: <a href={`mailto:${profile.email}`}>{profile.email}</a>
-        </p>
-      )}
-      {/* COMPANIES */}
-      <div style={{ marginTop: 40 }}>
-        <h2>Companies</h2>
-
-        {companies.length === 0 && <p>No companies</p>}
-
-        <div style={{ display: "grid", gap: 15 }}>
-          {companies.map((company) => (
-            <Link
-              key={company._id}
-              to={routes.companySlug(country, company.slug)}
-              style={{
-                display: "flex",
-                gap: 10,
-                border: "1px solid #eee",
-                padding: 10,
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
+        <div className={styles.publicUser__info}>
+          {profile.fullName && <p>Nazwa: {profile.fullName}</p>}
+          {profile.country && COUNTRIES_PL[profile.country] && (
+            <p>
+              Kraj: {COUNTRIES_PL[profile.country].name}{" "}
               <img
-                src={company.logo || "/images/company-placeholder.png"}
-                alt={company.name}
-                style={{
-                  width: 60,
-                  height: 60,
-                  objectFit: "contain",
-                }}
+                src={COUNTRIES_PL[profile.country].flag}
+                alt={COUNTRIES_PL[profile.country].name}
+                className={styles.publicUser__flag}
               />
-
-              <div>
-                <strong>{company.name}</strong>
-                <div>
-                  {company.city}, {company.country}
-                </div>
-              </div>
-            </Link>
-          ))}
+            </p>
+          )}
+          {profile.city && <p>Miasto: {profile.city}</p>}
+          {profile.bio && <p>Bio: {profile.bio}</p>}
+          <p>Typ konta: {profile.accountType}</p>
+          <p>
+            Użytkownik od:{" "}
+            {new Date(profile.memberSince).toLocaleDateString("pl-PL")}
+          </p>
+          {profile.email && (
+            <p>
+              Email: <a href={`mailto:${profile.email}`}>{profile.email}</a>
+            </p>
+          )}
         </div>
-      </div>
+        {companies.length > 0 && (
+          <div>
+            <h2 className={styles.publicUser__myCompanies}>Moje firmy</h2>
+            <div style={{ display: "grid", gap: 15 }}>
+              {companies.map((company) => (
+                <Link
+                  key={company._id}
+                  to={routes.companySlug(country, company.slug)}
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    border: "1px solid #eee",
+                    padding: 10,
+                    textDecoration: "none",
+                    color: "inherit",
+                  }}
+                >
+                  <img
+                    src={company.logo || "/images/company-placeholder.png"}
+                    alt={company.name}
+                    style={{
+                      width: 60,
+                      height: 60,
+                      objectFit: "contain",
+                    }}
+                  />
+
+                  <div>
+                    <strong>{company.name}</strong>
+                    <div>
+                      {company.city}, {company.country}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 };

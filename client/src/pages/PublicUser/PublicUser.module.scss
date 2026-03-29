@@ -1,0 +1,74 @@
+.publicUser {
+  padding: 30px 80px;
+  background-color: #f1efef;
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+
+  &__main {
+    flex: 1;
+    min-width: 0;
+    min-height: 440px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+  }
+
+  &__aside {
+    width: 300px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__avatar {
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+  }
+
+  &__adCard {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+  }
+
+  &__displayName {
+    margin: 0;
+    font-size: 40px;
+  }
+
+  &__info {
+    background-color: #f1efef;
+    border-radius: 4px;
+    padding: 10px;
+  }
+
+  &__info p {
+    margin: 0;
+  }
+
+  &__flag {
+    width: 22px;
+    height: 14px;
+    border-radius: 2px;
+    object-fit: cover;
+  }
+
+  &__myCompanies {
+    margin-top: 20px;
+    margin-bottom: 5px;
+  }
+}

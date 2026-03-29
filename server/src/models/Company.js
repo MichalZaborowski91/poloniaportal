@@ -64,6 +64,13 @@ const companySchema = new mongoose.Schema(
       index: true,
     },
 
+    status: {
+      type: String,
+      enum: ["draft", "published"],
+      default: "draft",
+      index: true,
+    },
+
     viewsTotal: {
       type: Number,
       default: 0,

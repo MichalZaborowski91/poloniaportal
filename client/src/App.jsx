@@ -7,7 +7,6 @@ import { AddOffer } from "./pages/AddOffer/AddOffer";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { ProfileCompletedRoute } from "./routes/ProfileCompletedRoute";
 import { DEFAULT_COUNTRY } from "./app/useCountry";
-import { Hero } from "./components/Hero/Hero";
 import { AccountLayout } from "./pages/Account/AccountLayout/AccountLayout";
 import { AccountProfile } from "./pages/Account/AccountProfile/AccountProfile";
 import { AccountSecurity } from "./pages/Account/AccountSecurity/AccountSecurity";
@@ -27,6 +26,9 @@ import { PublicCompany } from "./pages/Companies/PublicCompany/PublicCompany";
 import { PublicUser } from "./pages/PublicUser/PublicUser";
 import { EditCompany } from "./pages/Companies/EditCompany/EditCompany";
 import { Pricing } from "./pages/Pricing/Pricing";
+import { PublishCompany } from "./pages/Companies/PublishCompany/PublishCompany";
+import { CompaniesDatabase } from "./pages/Companies/CompaniesDatabase/CompaniesDatabase";
+import { HomePage } from "./pages/HomePage/HomePage";
 
 export const App = () => {
   return (
@@ -36,8 +38,9 @@ export const App = () => {
         element={<Navigate to={`/${DEFAULT_COUNTRY}`} replace />}
       />
       <Route path="/:country" element={<Layout />}>
-        <Route index element={<Hero />} />
+        <Route index element={<HomePage />} />
         <Route path="listings" element={<ListingsPage />} />
+        <Route path="companies" element={<CompaniesDatabase />} />
         <Route path="company/:slug" element={<PublicCompany />} />
         <Route path="user/:displayName" element={<PublicUser />} />
         <Route path="login" element={<Login />} />
@@ -74,13 +77,21 @@ export const App = () => {
           <Route path="security" element={<AccountSecurity />} />
         </Route>
         <Route
-          path="companies"
+          path="account/companies"
           element={
             <ProtectedRoute>
               <CompaniesLayout />
             </ProtectedRoute>
           }
         >
+          <Route
+            path="publish/:id"
+            element={
+              <ProtectedRoute>
+                <PublishCompany />
+              </ProtectedRoute>
+            }
+          />
           <Route index element={<CompaniesList />} />
           <Route path="add" element={<AddCompany />} />
           <Route path="edit/:id" element={<EditCompany />} />

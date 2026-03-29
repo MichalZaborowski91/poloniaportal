@@ -7,12 +7,14 @@ import { LogOutButton } from "../LogOutButton/LogOutButton";
 import styles from "./UserMenu.module.scss";
 import defaultAvatar from "../../assets/avatar/avt.jpg";
 
-export const UserMenu = ({ onMenuClose }) => {
+export const UserMenu = ({ onMenuClose, scrolled }) => {
   const [open, setOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   const { user } = useAuth();
   const menuRef = useRef(null);
   const country = useCountry();
+  const hoverTimeout = useRef(null);
 
   const avatarSrc = useMemo(() => {
     if (!user?.profile?.avatar) {
@@ -28,11 +30,13 @@ export const UserMenu = ({ onMenuClose }) => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setOpen(false);
+        setHovered(false);
       }
     };
     const handleEscape = (e) => {
       if (e.key === "Escape") {
         setOpen(false);
+        setHovered(false);
       }
     };
     const userMenuCloseEvents = () => {
@@ -43,6 +47,7 @@ export const UserMenu = ({ onMenuClose }) => {
     const handleFocusOut = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setOpen(false);
+        setHovered(false);
       }
     };
     userMenuCloseEvents();
@@ -51,12 +56,28 @@ export const UserMenu = ({ onMenuClose }) => {
     };
   }, [open]);
 
+  useEffect(() => {
+    return () => clearTimeout(hoverTimeout.current);
+  }, []);
+
   if (!user) {
     return <div className={styles.skeleton} />;
   }
 
   return (
-    <div ref={menuRef} className={styles.userMenu}>
+    <div
+      ref={menuRef}
+      className={styles.userMenu}
+      onMouseEnter={() => {
+        clearTimeout(hoverTimeout.current);
+        setHovered(true);
+      }}
+      onMouseLeave={() => {
+        hoverTimeout.current = setTimeout(() => {
+          setHovered(false);
+        }, 150);
+      }}
+    >
       <button
         onClick={() => {
           onMenuClose?.(); //MOBILE MENU CLOSE
@@ -64,25 +85,30 @@ export const UserMenu = ({ onMenuClose }) => {
         }}
         className={styles.userMenu__triggerButton}
       >
-        <span className={styles.userMenu__greeting}>
-          Witaj, {user.profile?.displayName || user.email}
-        </span>
-        <img src={avatarSrc} alt="avatar" className={styles.userMenu__avatar} />
+        <img
+          src={avatarSrc}
+          alt="avatar"
+          className={`${styles.userMenu__avatar} ${scrolled ? styles.smallAvatar : ""}`}
+        />
       </button>
 
-      {open && (
+      {(open || hovered) && (
         <div className={styles.menu} role="menu">
           <Link
             to={routes.account(country)}
-            onClick={() => setOpen(false)}
-            className={styles.menu__account}
+            onClick={() => {
+              setOpen(false);
+              setHovered(false);
+            }}
           >
             Konto
           </Link>
           <Link
-            to={routes.companies(country)}
-            onClick={() => setOpen(false)}
-            className={styles.menu__account}
+            to={routes.accountCompanies(country)}
+            onClick={() => {
+              setOpen(false);
+              setHovered(false);
+            }}
           >
             Moje firmy
           </Link>

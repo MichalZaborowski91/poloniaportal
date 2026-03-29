@@ -1,0 +1,43 @@
+.hero {
+  position: relative;
+}
+
+.heroInfo {
+  position: absolute;
+  top: 10px;
+  left: 80px;
+  color: white;
+  display: flex;
+  align-items: center;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
+}
+
+.capital {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.meta {
+  font-size: 14px;
+  opacity: 0.9;
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  margin-left: 5px;
+}
+
+.clock {
+  width: 17px;
+  height: 17px;
+}
+
+.weather {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 5px;
+}
+
+.weather svg {
+  font-size: 18px;
+}

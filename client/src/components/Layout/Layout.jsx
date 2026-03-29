@@ -13,6 +13,7 @@ import styles from "../Layout/Layout.module.scss";
 export const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+  const [scrolled, setScrolled] = useState(false);
 
   const { user } = useAuth();
   const location = useLocation();
@@ -34,6 +35,18 @@ export const Layout = () => {
   const handleMenuClose = () => {
     setIsMobileMenuOpen(false);
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const y = window.scrollY;
+
+      setScrolled(y > 5);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -58,6 +71,7 @@ export const Layout = () => {
       {!showDesktopAuthLayout && (
         <>
           <Header
+            scrolled={scrolled}
             onMenuToggle={handleMenuToggle}
             onMenuClose={handleMenuClose}
             isMenuOpen={isMobileMenuOpen}
@@ -82,7 +96,15 @@ export const Layout = () => {
         user={user}
       />
 
-      <main>
+      <main
+        style={{
+          paddingTop: showDesktopAuthLayout
+            ? "0px"
+            : scrolled
+              ? "34px"
+              : "70px",
+        }}
+      >
         <Outlet />
       </main>
       <Footer />

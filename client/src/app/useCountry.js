@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
 
-export const DEFAULT_COUNTRY = "ie";
+export const DEFAULT_COUNTRY = "pl";
 export const SUPPORTED_COUNTRIES = [
+  "pl",
   "ie",
   "uk",
   "de",

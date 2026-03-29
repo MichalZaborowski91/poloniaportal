@@ -35,7 +35,7 @@ export const EditCompany = () => {
       await uploadCompanyLogo(id, logoFile);
     }
 
-    navigate(routes.companies(country));
+    navigate(routes.accountCompanies(country));
   };
 
   if (!company) return <p>Ładowanie...</p>;

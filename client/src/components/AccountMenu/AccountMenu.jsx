@@ -5,7 +5,7 @@ import { RegisterButton } from "../RegisterButton/RegisterButton";
 import styles from "../AccountMenu/AccountMenu.module.scss";
 import UserIcon from "../../assets/icons/user.svg?react";
 
-export const AccountMenu = () => {
+export const AccountMenu = ({ scrolled }) => {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
 
   const { user } = useAuth();
@@ -28,7 +28,7 @@ export const AccountMenu = () => {
         <div className={styles.accountMenu} ref={accountRef}>
           <button
             type="button"
-            className={styles.accountMenu__trigger}
+            className={`${styles.accountMenu__trigger} ${scrolled ? styles.small : ""}`}
             onClick={() => setIsAccountOpen((prev) => !prev)}
           >
             <UserIcon className={styles.accountMenu__icon} />

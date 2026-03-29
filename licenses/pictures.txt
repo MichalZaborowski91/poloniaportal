@@ -10,6 +10,10 @@ Pictures:
   Photo by Suzy Hazelwood
   https://www.pexels.com/photo/shallow-focus-photo-of-world-globe-1098515/
 
+* warsaw.webp (subdomain: pl)
+  Photo by K M 
+  https://www.pexels.com/photo/drone-shot-of-warsaw-poland-9828440/
+
 * berlin.webp (subdomain: de)
   Photo by Michaela St
   https://www.pexels.com/photo/cityscape-of-berlin-19932126/
@@ -54,7 +58,4 @@ Pictures:
   Photo by Marcin Szmigiel
   https://www.pexels.com/photo/pink-and-white-key-chain-67094/
 
-* woodLayout.webp (Account Layout page)
-  Photo by FWStudio
-  https://www.pexels.com/photo/white-green-and-orange-wooden-plank-139321/
 

@@ -37,7 +37,7 @@ export const AccountLayout = () => {
                   </li>
                   <li className={styles.accountLayout__item}>
                     <NavLink
-                      to={routes.companies(country)}
+                      to={routes.accountCompanies(country)}
                       className={styles.accountLayout__link}
                     >
                       Moje firmy
