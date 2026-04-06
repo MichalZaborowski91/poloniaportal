@@ -7,8 +7,9 @@ export const LISTING_TYPES = [
   "housing_offer",
   "job_wanted",
   "job_offer",
-  "business_ad",
-  "event",
+  "market_offer",
+  "market_wanted",
+  "service_offer",
 ];
 
 export const LISTING_STATUS = ["active", "inactive", "expired", "deleted"];
@@ -20,7 +21,6 @@ const ListingDataSchema = new Schema(
     city: {
       type: String,
       trim: true,
-      minlength: 2,
       maxlength: 100,
     },
 
@@ -69,41 +69,33 @@ const ListingDataSchema = new Schema(
     availableFrom: {
       type: Date,
     },
-
-    //BUSINESS
-    companyName: {
-      type: String,
-      trim: true,
-      maxlength: 120,
-    },
-
+    // MARKETPLACE
     category: {
       type: String,
-      trim: true,
-      maxlength: 80,
-    },
-
-    website: {
-      type: String,
-      trim: true,
-      maxlength: 200,
-    },
-
-    //EVENT
-    eventDate: {
-      type: Date,
-    },
-
-    venue: {
-      type: String,
-      trim: true,
-      maxlength: 120,
+      enum: [
+        "electronics",
+        "cars",
+        "home",
+        "beauty",
+        "automotive",
+        "construction",
+        "cleaning",
+        "transport",
+        "other",
+      ],
     },
 
     price: {
       type: Number,
       min: 0,
     },
+
+    condition: {
+      type: String,
+      enum: ["new", "used"],
+    },
+
+    images: [String],
   },
   { _id: false },
 );
@@ -117,12 +109,17 @@ const ListingSchema = new Schema(
       index: true,
     },
 
+    company: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+      default: null,
+      index: true,
+    },
+
     country: {
       type: String,
       required: true,
       lowercase: true,
-      minlength: 2,
-      maxlength: 2,
       index: true,
     },
 
@@ -137,7 +134,6 @@ const ListingSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      minlength: 5,
       maxlength: 120,
     },
 
@@ -145,8 +141,7 @@ const ListingSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      minlength: 20,
-      maxlength: 5000,
+      maxlength: 1000,
     },
 
     data: {
@@ -169,7 +164,9 @@ const ListingSchema = new Schema(
 
     expiresAt: {
       type: Date,
-      required: true,
+      required: function () {
+        return this.type !== "service_offer";
+      },
     },
 
     renewedAt: {
@@ -181,6 +178,10 @@ const ListingSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    isPermanent: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -188,6 +189,12 @@ const ListingSchema = new Schema(
 );
 
 ListingSchema.pre("validate", function () {
+  if (this.type === "service_offer") {
+    this.isPermanent = true;
+    this.expiresAt = null;
+    return;
+  }
+
   if (!this.expiresAt) {
     const now = new Date();
     this.expiresAt = new Date(now.setDate(now.getDate() + this.durationDays));

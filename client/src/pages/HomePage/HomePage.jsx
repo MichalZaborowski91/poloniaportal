@@ -6,6 +6,7 @@ import { FeaturedCompanies } from "../../components/FeaturedCompanies/FeaturedCo
 import { getPublicCompanies } from "../../api/company";
 import { useCountry } from "../../app/useCountry";
 import { ValueSection } from "../../components/ValueSection/ValueSection";
+import { AdBanner } from "../../components/AddBanner/AddBanner";
 
 export const HomePage = () => {
   const [companies, setCompanies] = useState([]);
@@ -36,6 +37,7 @@ export const HomePage = () => {
 
       <FeaturedCompanies companies={companies} />
       <ValueSection />
+      <AdBanner />
     </>
   );
 };

@@ -1,0 +1,120 @@
+.addOffer {
+  padding: 30px 80px;
+  background-color: #f1efef;
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+
+  &__main {
+    flex: 1;
+    min-width: 0;
+    min-height: 440px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+  }
+
+  &__aside {
+    width: 300px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__topBar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  &__breadcrumb {
+    background: #f1efef;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  &__section {
+    margin-top: 20px;
+  }
+
+  &__title {
+    margin-bottom: 10px;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    input,
+    textarea,
+    select {
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      border: none;
+      background: black;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  }
+}
+
+.adCard {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+}
+
+.userCard {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 15px;
+}
+
+.userLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: black;
+}
+
+.userAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.breadcrumbBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 14px;
+  background: #2d6cdf;
+  color: white;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: center;
+}

@@ -31,12 +31,32 @@ export const PublicCompany = () => {
   const [company, setCompany] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isMapVisible, setIsMapVisible] = useState(false);
+  const [listings, setListings] = useState([]);
   const country = useCountry();
   const mapRef = useRef(null);
 
   const toggleFavorite = () => {
     setIsFavorite((prev) => !prev);
   };
+  useEffect(() => {
+    if (!company?._id) return;
+
+    const fetchListings = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/${country}/companies/${company._id}/listings`,
+        );
+
+        const data = await res.json();
+        setListings(data.listings);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchListings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [company]);
 
   useEffect(() => {
     const load = async () => {
@@ -384,6 +404,20 @@ export const PublicCompany = () => {
             </div>
           )}
         </div>
+        {listings.length > 0 && (
+          <div className={styles.publicCompany__contentContainer}>
+            <h3 className={styles.publicCompany__title}>Ogłoszenia firmy</h3>
+
+            <ul>
+              {listings.map((listing) => (
+                <li key={listing._id}>
+                  <strong>{listing.title}</strong>
+                  <p>{listing.data?.city}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </main>
       <aside className={styles.publicCompany__aside}>
         {company.ownerId?.profile?.displayName && (

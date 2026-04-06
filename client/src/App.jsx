@@ -3,7 +3,6 @@ import { Layout } from "./components/Layout/Layout";
 import { Login } from "./pages/Login/Login";
 import { Register } from "./pages/Register/Register";
 import { Onboarding } from "./pages/Onboarding/Onboarding";
-import { AddOffer } from "./pages/AddOffer/AddOffer";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { ProfileCompletedRoute } from "./routes/ProfileCompletedRoute";
 import { DEFAULT_COUNTRY } from "./app/useCountry";
@@ -29,6 +28,7 @@ import { Pricing } from "./pages/Pricing/Pricing";
 import { PublishCompany } from "./pages/Companies/PublishCompany/PublishCompany";
 import { CompaniesDatabase } from "./pages/Companies/CompaniesDatabase/CompaniesDatabase";
 import { HomePage } from "./pages/HomePage/HomePage";
+import { AddOfferPage } from "./pages/AddOfferPage/AddOfferPage";
 
 export const App = () => {
   return (
@@ -100,7 +100,7 @@ export const App = () => {
           path="add-offer"
           element={
             <ProfileCompletedRoute>
-              <AddOffer />
+              <AddOfferPage />
             </ProfileCompletedRoute>
           }
         />

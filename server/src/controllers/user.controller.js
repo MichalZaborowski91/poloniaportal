@@ -1,6 +1,7 @@
 import { User } from "../models/User.js";
 import cloudinary from "../config/cloudinary.js";
 import { Company } from "../models/Company.js";
+import Listing from "../models/Listing.js";
 
 export const updateMyProfile = async (req, res) => {
   try {
@@ -161,6 +162,16 @@ export const getUserPublicProfile = async (req, res) => {
       memberSince: user.createdAt,
     };
 
+    const now = new Date();
+
+    const listings = await Listing.find({
+      user: user._id,
+      status: "active",
+      $or: [{ expiresAt: { $gt: now } }, { isPermanent: true }],
+    })
+      .select("title type data createdAt")
+      .sort({ createdAt: -1 });
+
     if (profile.publicVisibility?.showFullName) {
       publicProfile.fullName =
         `${profile.firstName || ""} ${profile.lastName || ""}`.trim();
@@ -183,8 +194,10 @@ export const getUserPublicProfile = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.json({
+      _id: user._id,
       profile: publicProfile,
       companies,
+      listings,
     });
   } catch (err) {
     console.error("GET USER PUBLIC PROFILE ERROR", err);

@@ -31,7 +31,7 @@ export const PublicUser = () => {
     return <p>Loading...</p>;
   }
 
-  const { profile, companies } = data;
+  const { profile, companies, listings } = data;
 
   return (
     <div className={styles.publicUser}>
@@ -110,6 +110,33 @@ export const PublicUser = () => {
                     </div>
                   </div>
                 </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {listings?.length > 0 && (
+          <div>
+            <h2 className={styles.publicUser__myCompanies}>Ogłoszenia</h2>
+
+            <div style={{ display: "grid", gap: 15 }}>
+              {listings.map((listing) => (
+                <div
+                  key={listing._id}
+                  style={{
+                    border: "1px solid #eee",
+                    padding: 10,
+                    borderRadius: 4,
+                  }}
+                >
+                  <strong>{listing.title}</strong>
+
+                  {listing.data?.city && <div>{listing.data.city}</div>}
+
+                  <div style={{ fontSize: 12, color: "#666" }}>
+                    {listing.type}
+                  </div>
+                </div>
               ))}
             </div>
           </div>

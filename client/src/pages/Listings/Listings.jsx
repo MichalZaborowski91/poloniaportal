@@ -10,10 +10,12 @@ export const ListingsPage = () => {
   const { country } = useParams();
 
   useEffect(() => {
+    const category = searchParams.get("category");
     const type = searchParams.get("type");
     const q = searchParams.get("q");
 
     const query = new URLSearchParams();
+    if (category) query.append("category", category);
     if (type) query.append("type", type);
     if (q) query.append("q", q);
 

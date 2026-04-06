@@ -11,27 +11,41 @@ export const ServiceFooter = () => {
       <h3 className={styles.service__title}>Serwis:</h3>
       <ul className={styles.service__list}>
         <li className={styles.service__item}>
-          <Link to={routes.about(country)} className={styles.service__link}>
+          <Link to={routes.listings(country)} className={styles.service__link}>
             Ogłoszenia
           </Link>
         </li>
         <li className={styles.service__item}>
-          <Link to={routes.about(country)} className={styles.service__link}>
+          <Link
+            to={routes.listingsByCategory(country, "job")}
+            className={styles.service__link}
+          >
             Praca
           </Link>
         </li>
         <li className={styles.service__item}>
-          <Link to={routes.about(country)} className={styles.service__link}>
+          <Link
+            to={routes.listingsByCategory(country, "housing")}
+            className={styles.service__link}
+          >
             Mieszkanie
           </Link>
         </li>
         <li className={styles.service__item}>
-          <Link to={routes.about(country)} className={styles.service__link}>
+          <Link
+            to={routes.listingsByCategory(country, "service")}
+            className={styles.service__link}
+          >
+            Usługi
+          </Link>
+        </li>
+        <li className={styles.service__item}>
+          <Link to={routes.events(country)} className={styles.service__link}>
             Wydarzenia
           </Link>
         </li>
         <li className={styles.service__item}>
-          <Link to={routes.about(country)} className={styles.service__link}>
+          <Link to={routes.companies(country)} className={styles.service__link}>
             Firmy polonijne
           </Link>
         </li>

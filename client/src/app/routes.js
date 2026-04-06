@@ -20,4 +20,8 @@ export const routes = {
   editCompany: (c, id) => `/${c}/account/companies/edit/${id}`,
   pricing: (c) => `/${c}/pricing`,
   publish: (c, id) => `/${c}/account/companies/publish/${id}`,
+  listings: (c) => `/${c}/listings`,
+  listingsByCategory: (c, category) => `/${c}/listings?category=${category}`,
+  companies: (c) => `/${c}/companies`,
+  events: (c) => `/${c}/events`,
 };
