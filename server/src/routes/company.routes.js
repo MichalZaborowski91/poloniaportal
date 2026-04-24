@@ -9,6 +9,7 @@ import {
   geocodeAddress,
   publishCompany,
   getPublicCompanies,
+  getHomePageCompanies,
 } from "../controllers/company.controller.js";
 import { uploadCompanyLogo } from "../middleware/uploadCompanyLogo.js";
 import { uploadCompanyLogo as uploadCompanyLogoController } from "../controllers/company.controller.js";
@@ -21,6 +22,7 @@ router.get("/my", requireAuth, getMyCompanies);
 router.delete("/:id", requireAuth, deleteCompany);
 router.put("/:id", requireAuth, updateCompany);
 router.get("/", getPublicCompanies);
+router.get("/homepage", getHomePageCompanies);
 router.get("/:slug", optionalAuth, getCompanyBySlug);
 router.patch(
   "/:id/logo",

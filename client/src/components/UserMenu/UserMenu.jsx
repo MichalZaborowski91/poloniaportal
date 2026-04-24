@@ -24,35 +24,37 @@ export const UserMenu = ({ onMenuClose, scrolled }) => {
   }, [user?.profile?.avatar]);
 
   useEffect(() => {
-    if (!open) {
-      return;
-    }
+    if (!open) return;
+
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setOpen(false);
         setHovered(false);
       }
     };
+
     const handleEscape = (e) => {
       if (e.key === "Escape") {
         setOpen(false);
         setHovered(false);
       }
     };
-    const userMenuCloseEvents = () => {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("keydown", handleEscape);
-      document.addEventListener("focusin", handleFocusOut);
-    };
+
     const handleFocusOut = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setOpen(false);
         setHovered(false);
       }
     };
-    userMenuCloseEvents();
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    document.addEventListener("focusin", handleFocusOut);
+
     return () => {
-      userMenuCloseEvents();
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("focusin", handleFocusOut);
     };
   }, [open]);
 
@@ -111,6 +113,24 @@ export const UserMenu = ({ onMenuClose, scrolled }) => {
             }}
           >
             Moje firmy
+          </Link>
+          <Link
+            to={routes.accountCompanies(country)}
+            onClick={() => {
+              setOpen(false);
+              setHovered(false);
+            }}
+          >
+            Moje ogłoszenia
+          </Link>
+          <Link
+            to={routes.accountCompanies(country)}
+            onClick={() => {
+              setOpen(false);
+              setHovered(false);
+            }}
+          >
+            Ulubione
           </Link>
           <LogOutButton />
         </div>

@@ -67,7 +67,7 @@ export const Layout = () => {
   }, []);
 
   return (
-    <div>
+    <div className={styles.layout}>
       {!showDesktopAuthLayout && (
         <>
           <Header
@@ -97,6 +97,7 @@ export const Layout = () => {
       />
 
       <main
+        className={styles.main}
         style={{
           paddingTop: showDesktopAuthLayout
             ? "0px"

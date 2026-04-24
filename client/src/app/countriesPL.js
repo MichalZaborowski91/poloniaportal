@@ -8,6 +8,7 @@ export const COUNTRIES_PL = {
     lat: 53.35,
     lon: -6.26,
     timezone: "Europe/Dublin",
+    currency: "€",
   },
   de: {
     name: "Niemcy",
@@ -18,6 +19,7 @@ export const COUNTRIES_PL = {
     lat: 52.52,
     lon: 13.41,
     timezone: "Europe/Berlin",
+    currency: "€",
   },
   es: {
     name: "Hiszpania",
@@ -28,6 +30,7 @@ export const COUNTRIES_PL = {
     lat: 40.42,
     lon: -3.7,
     timezone: "Europe/Madrid",
+    currency: "€",
   },
   fr: {
     name: "Francja",
@@ -38,6 +41,7 @@ export const COUNTRIES_PL = {
     lat: 48.85,
     lon: 2.35,
     timezone: "Europe/Paris",
+    currency: "€",
   },
   it: {
     name: "Włochy",
@@ -48,6 +52,7 @@ export const COUNTRIES_PL = {
     lat: 41.9,
     lon: 12.49,
     timezone: "Europe/Rome",
+    currency: "€",
   },
   nl: {
     name: "Holandia",
@@ -58,6 +63,7 @@ export const COUNTRIES_PL = {
     lat: 52.37,
     lon: 4.9,
     timezone: "Europe/Amsterdam",
+    currency: "€",
   },
   se: {
     name: "Szwecja",
@@ -68,6 +74,7 @@ export const COUNTRIES_PL = {
     lat: 59.33,
     lon: 18.07,
     timezone: "Europe/Stockholm",
+    currency: "kr",
   },
   no: {
     name: "Norwegia",
@@ -78,6 +85,7 @@ export const COUNTRIES_PL = {
     lat: 59.91,
     lon: 10.75,
     timezone: "Europe/Oslo",
+    currency: "kr",
   },
   uk: {
     name: "Wielka Brytania",
@@ -88,6 +96,7 @@ export const COUNTRIES_PL = {
     lat: 51.51,
     lon: -0.13,
     timezone: "Europe/London",
+    currency: "£",
   },
   pl: {
     name: "Polska",
@@ -98,5 +107,6 @@ export const COUNTRIES_PL = {
     lat: 52.23,
     lon: 21.01,
     timezone: "Europe/Warsaw",
+    currency: "zł",
   },
 };

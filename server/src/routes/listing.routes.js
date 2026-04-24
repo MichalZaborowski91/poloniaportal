@@ -5,10 +5,16 @@ import {
   getCompanyListings,
   getListings,
 } from "../controllers/listing.controller.js";
+import { uploadListingImage } from "../middleware/uploadListingImage.js";
 
 const router = express.Router();
 
-router.post("/:country/listings", requireAuth, createListing);
+router.post(
+  "/:country/listings",
+  requireAuth,
+  uploadListingImage,
+  createListing,
+);
 router.get("/:country/listings", getListings);
 router.get("/:country/companies/:companyId/listings", getCompanyListings);
 

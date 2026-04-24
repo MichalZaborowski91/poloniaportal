@@ -4,6 +4,10 @@
   background-color: #f1efef;
   align-items: center;
   border-radius: 4px;
+  position: sticky;
+  top: 50px;
+  align-self: flex-start;
+  padding-bottom: 30px;
 
   &__list {
     margin: 0;

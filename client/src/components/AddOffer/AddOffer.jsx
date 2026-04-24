@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import styles from "../AddOffer/AddOffer.module.scss";
 import { useAuth } from "../../hooks/useAuth";
 import { BsArrowLeftShort } from "react-icons/bs";
+import styles from "../AddOffer/AddOffer.module.scss";
+import { COUNTRIES_PL } from "../../app/countriesPL";
+import { businessCategories } from "../../app/businessCategories";
 
 export const AddOffer = () => {
   const [step, setStep] = useState(1);
@@ -10,11 +12,29 @@ export const AddOffer = () => {
   const [category, setCategory] = useState(null);
   const [type, setType] = useState(null);
   const [company, setCompany] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [previewImages, setPreviewImages] = useState([]);
+  const [hoveredType, setHoveredType] = useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    data: {},
+    durationDays: 7,
+    isFeatured: false,
+    isUrgent: false,
+    data: {
+      city: "",
+      contactName: "",
+      contactPhone: "",
+      contactEmail: "",
+      portfolioLink: "",
+      linkedinLink: "",
+      image: null,
+      images: [],
+      price: "",
+      condition: "",
+      category: "",
+    },
   });
 
   const { country } = useParams();
@@ -65,24 +85,70 @@ export const AddOffer = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    setFormData({
+      ...formData,
+      data: {
+        ...formData.data,
+        image: file,
+      },
+    });
+
+    setPreviewImage(URL.createObjectURL(file));
+  };
+
+  const handleImagesChange = (e) => {
+    const files = Array.from(e.target.files).slice(0, 5);
+
+    setFormData({
+      ...formData,
+      data: {
+        ...formData.data,
+        images: files,
+      },
+    });
+
+    setPreviewImages(files.map((file) => URL.createObjectURL(file)));
+  };
+
   const handleSubmit = async () => {
     try {
+      const body = new FormData();
+
+      body.append("type", type);
+      body.append(
+        "title",
+        type.startsWith("job") ? formData.data.position : formData.title,
+      );
+      body.append("description", formData.description);
+      body.append("durationDays", formData.durationDays);
+      body.append("isFeatured", formData.isFeatured);
+      body.append("isUrgent", formData.isUrgent);
+
+      if (company) {
+        body.append("company", company);
+      }
+
+      body.append("data", JSON.stringify(formData.data));
+
+      if (formData.data.image) {
+        body.append("image", formData.data.image);
+      }
+
+      if (formData.data.images?.length) {
+        formData.data.images.forEach((file) => {
+          body.append("images", file);
+        });
+      }
+
       const res = await fetch(`http://localhost:5000/api/${country}/listings`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
-        body: JSON.stringify({
-          type,
-          title: type.startsWith("job")
-            ? formData.data.position
-            : formData.title,
-          description: formData.description,
-          durationDays: 7,
-          company,
-          data: formData.data,
-        }),
+        body,
       });
 
       const result = await res.json();
@@ -111,14 +177,13 @@ export const AddOffer = () => {
 
   return (
     <div className={styles.addOffer}>
-      {/* MAIN */}
       <main className={styles.addOffer__main}>
         {step > 1 && (
           <div className={styles.addOffer__topBar}>
             <button
               type="button"
               onClick={handleBack}
-              className={styles.breadcrumbBtn}
+              className={styles.addOffer__breadcrumbBtn}
             >
               <BsArrowLeftShort size={20} /> Wstecz
             </button>
@@ -140,38 +205,57 @@ export const AddOffer = () => {
             </div>
           </div>
         )}
-        {/* STEPY */}
         {step === 1 && (
-          <div>
-            <h2>Kategoria</h2>
+          <div className={styles.addOffer__categories}>
+            <h2 className={styles.addOffer__heading}>Kategoria ogłoszenia</h2>
 
             <button
+              className={styles.addOffer__categoryCard}
               onClick={() => {
                 setCategory("Praca");
                 setStep(2);
               }}
             >
-              Praca
+              <img
+                src="/offersCategories/Job.webp"
+                alt="Praca"
+                className={styles.addOffer__categoryImage}
+              />
+              <span>Praca</span>
             </button>
 
             <button
+              className={styles.addOffer__categoryCard}
               onClick={() => {
                 setCategory("Mieszkanie");
                 setStep(2);
               }}
             >
-              Mieszkanie
+              <img
+                src="/offersCategories/Housing.webp"
+                alt="Mieszkanie"
+                className={styles.addOffer__categoryImage}
+              />
+              <span>Mieszkanie</span>
             </button>
 
             <button
+              className={styles.addOffer__categoryCard}
               onClick={() => {
                 setCategory("Marketplace");
                 setStep(2);
               }}
             >
-              Marketplace
+              <img
+                src="/offersCategories/Marketplace.webp"
+                alt="Marketplace"
+                className={styles.addOffer__categoryImage}
+              />
+              <span>Marketplace</span>
             </button>
+
             <button
+              className={styles.addOffer__categoryCard}
               onClick={() => {
                 setCategory("Usługi");
                 setType(null);
@@ -184,117 +268,267 @@ export const AddOffer = () => {
                 setStep(2);
               }}
             >
-              Usługi
+              <img
+                src="/offersCategories/Services.webp"
+                alt="Usługi"
+                className={styles.addOffer__categoryImage}
+              />
+              <span>Usługi</span>
             </button>
           </div>
         )}
 
-        {step === 2 && (
-          <div>
-            <h2>Typ</h2>
+        {step === 2 && category === "Praca" && (
+          <div className={styles.addOffer__typeSection}>
+            <h2 className={styles.addOffer__heading}>Typ ogłoszenia</h2>
 
-            {category === "Praca" && (
-              <>
-                <button
-                  onClick={() => {
-                    setType("job_offer");
-                    setStep(3);
-                  }}
-                >
-                  Dam pracę
-                </button>
-                <button
-                  onClick={() => {
-                    setType("job_wanted");
-                    setStep(3);
-                  }}
-                >
-                  Szukam pracy
-                </button>
-              </>
-            )}
+            <div className={styles.addOffer__typeButtons}>
+              <button
+                className={styles.addOffer__typeButton}
+                onMouseEnter={() => setHoveredType("job_offer")}
+                onMouseLeave={() => setHoveredType(null)}
+                onClick={() => {
+                  setType("job_offer");
+                  setStep(3);
+                }}
+              >
+                Dam pracę
+              </button>
 
-            {category === "Mieszkanie" && (
-              <>
-                <button
-                  onClick={() => {
-                    setType("housing_offer");
-                    setStep(3);
-                  }}
-                >
-                  Wynajmę
-                </button>
-                <button
-                  onClick={() => {
-                    setType("housing_wanted");
-                    setStep(3);
-                  }}
-                >
-                  Szukam
-                </button>
-              </>
-            )}
+              <button
+                className={styles.addOffer__typeButton}
+                onMouseEnter={() => setHoveredType("job_wanted")}
+                onMouseLeave={() => setHoveredType(null)}
+                onClick={() => {
+                  setType("job_wanted");
+                  setStep(3);
+                }}
+              >
+                Szukam pracy
+              </button>
+            </div>
 
-            {category === "Marketplace" && (
-              <>
-                <button
-                  onClick={() => {
-                    setType("market_offer");
-                    setStep(3);
-                  }}
-                >
-                  Sprzedam
-                </button>
-                <button
-                  onClick={() => {
-                    setType("market_wanted");
-                    setStep(3);
-                  }}
-                >
-                  Kupię
-                </button>
-              </>
-            )}
-            {category === "Usługi" && (
-              <>
-                <button
-                  onClick={() => {
-                    setType("service_offer");
-                    setStep(3);
-                  }}
-                >
-                  Oferuję usługę
-                </button>
-              </>
-            )}
+            <div className={styles.addOffer__typeDescription}>
+              {hoveredType === "job_offer" && (
+                <p>
+                  Dodaj ofertę pracy, zlecenie lub ogłoszenie dla osób
+                  szukających zatrudnienia. Możesz zaoferować pracę stałą,
+                  dorywczą, na pół etatu albo zlecić wykonanie konkretnej usługi
+                  lub zadania.
+                </p>
+              )}
+
+              {hoveredType === "job_wanted" && (
+                <p>
+                  Dodaj ogłoszenie jako osoba szukająca pracy. Możesz opisać
+                  swoje doświadczenie, umiejętności, portfolio i określić
+                  jakiego rodzaju pracy lub zleceń szukasz.
+                </p>
+              )}
+
+              {!hoveredType && (
+                <p>
+                  Wybierz typ ogłoszenia, który najlepiej pasuje do tego co
+                  chcesz dodać.
+                </p>
+              )}
+            </div>
           </div>
         )}
+        {step === 2 && category === "Mieszkanie" && (
+          <div className={styles.addOffer__typeSection}>
+            <h2 className={styles.addOffer__heading}>Typ ogłoszenia</h2>
 
+            <div className={styles.addOffer__typeButtons}>
+              <button
+                className={styles.addOffer__typeButton}
+                onMouseEnter={() => setHoveredType("housing_offer")}
+                onMouseLeave={() => setHoveredType(null)}
+                onClick={() => {
+                  setType("housing_offer");
+                  setStep(3);
+                }}
+              >
+                Wynajmę
+              </button>
+
+              <button
+                className={styles.addOffer__typeButton}
+                onMouseEnter={() => setHoveredType("housing_wanted")}
+                onMouseLeave={() => setHoveredType(null)}
+                onClick={() => {
+                  setType("housing_wanted");
+                  setStep(3);
+                }}
+              >
+                Szukam lokalu
+              </button>
+            </div>
+
+            <div className={styles.addOffer__typeDescription}>
+              {hoveredType === "housing_offer" && (
+                <p>
+                  Dodaj ogłoszenie jeśli wynajmujesz mieszkanie, pokój, dom lub
+                  lokal. Możesz dodać zdjęcia, opis i dane kontaktowe.
+                </p>
+              )}
+
+              {hoveredType === "housing_wanted" && (
+                <p>
+                  Dodaj ogłoszenie jeśli szukasz mieszkania, pokoju, domu lub
+                  lokalu do wynajęcia. Opisz czego szukasz i dodaj dane
+                  kontaktowe.
+                </p>
+              )}
+
+              {!hoveredType && (
+                <p>
+                  Wybierz typ ogłoszenia, który najlepiej pasuje do tego co
+                  chcesz dodać.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+        {step === 2 && category === "Marketplace" && (
+          <div className={styles.addOffer__typeSection}>
+            <h2 className={styles.addOffer__heading}>Typ ogłoszenia</h2>
+
+            <div className={styles.addOffer__typeButtons}>
+              <button
+                className={styles.addOffer__typeButton}
+                onMouseEnter={() => setHoveredType("market_offer")}
+                onMouseLeave={() => setHoveredType(null)}
+                onClick={() => {
+                  setType("market_offer");
+                  setStep(3);
+                }}
+              >
+                Sprzedam
+              </button>
+
+              <button
+                className={styles.addOffer__typeButton}
+                onMouseEnter={() => setHoveredType("market_wanted")}
+                onMouseLeave={() => setHoveredType(null)}
+                onClick={() => {
+                  setType("market_wanted");
+                  setStep(3);
+                }}
+              >
+                Kupię
+              </button>
+            </div>
+
+            <div className={styles.addOffer__typeDescription}>
+              {hoveredType === "market_offer" && (
+                <p>
+                  Dodaj ogłoszenie jeśli chcesz sprzedać produkt, przedmiot lub
+                  rzecz. Możesz dodać opis, stan produktu, zdjęcie i dane
+                  kontaktowe.
+                </p>
+              )}
+
+              {hoveredType === "market_wanted" && (
+                <p>
+                  Dodaj ogłoszenie jeśli chcesz kupić konkretny produkt lub
+                  przedmiot. Opisz czego szukasz i dodaj dane kontaktowe.
+                </p>
+              )}
+
+              {!hoveredType && (
+                <p>
+                  Wybierz typ ogłoszenia, który najlepiej pasuje do tego co
+                  chcesz dodać.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+        {step === 2 && category === "Usługi" && (
+          <div className={styles.addOffer__typeSection}>
+            <h2 className={styles.addOffer__heading}>Typ ogłoszenia</h2>
+
+            <div className={styles.addOffer__typeButtons}>
+              <button
+                className={styles.addOffer__typeButton}
+                onMouseEnter={() => setHoveredType("service_offer")}
+                onMouseLeave={() => setHoveredType(null)}
+                onClick={() => {
+                  setType("service_offer");
+                  setStep(3);
+                }}
+              >
+                Oferuję usługę
+              </button>
+            </div>
+
+            <div className={styles.addOffer__typeDescription}>
+              {hoveredType === "service_offer" ? (
+                <p>
+                  Dodaj ogłoszenie jeśli oferujesz usługę jako osoba prywatna
+                  lub firma. Takie ogłoszenia są aktywne bezterminowo i będą
+                  widoczne również na profilu firmy.
+                </p>
+              ) : (
+                <p>
+                  Dodaj usługę, którą oferujesz. Może to być np. remont,
+                  fryzjer, transport, księgowość, strona internetowa albo
+                  dowolna inna usługa.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
         {step === 3 && (
-          <div>
-            <h2>Kto dodaje?</h2>
+          <div className={styles.addOffer__typeSection}>
+            <h2 className={styles.addOffer__heading}>Kto dodaje ogłoszenie?</h2>
 
-            <button
-              onClick={() => {
-                setCompany(null);
-                setStep(4);
-              }}
-            >
-              Prywatnie
-            </button>
+            <div className={styles.addOffer__typeDescription}>
+              <p>
+                Możesz dodać ogłoszenie jako osoba prywatna albo — jeśli
+                posiadasz firmę — wybrać ją z listy i opublikować ogłoszenie
+                jako firma.
+              </p>
+            </div>
 
-            {companies.length > 0 && (
-              <select onChange={(e) => setCompany(e.target.value)}>
-                <option value="">Wybierz firmę</option>
-                {companies.map((c) => (
-                  <option key={c._id} value={c._id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            )}
+            <div className={styles.addOffer__typeButtons}>
+              <button
+                className={styles.addOffer__typeButton}
+                onClick={() => {
+                  setCompany(null);
+                  setStep(4);
+                }}
+              >
+                Prywatnie
+              </button>
 
-            <button onClick={() => setStep(4)}>Dalej</button>
+              {companies.length > 0 && (
+                <select
+                  className={styles.addOffer__companySelect}
+                  value={company || ""}
+                  onChange={(e) => setCompany(e.target.value)}
+                >
+                  <option value="">Wybierz firmę</option>
+
+                  {companies.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              {companies.length > 0 && (
+                <button
+                  className={styles.addOffer__typeButton}
+                  disabled={!company}
+                  onClick={() => setStep(4)}
+                >
+                  Dodaj jako firma
+                </button>
+              )}
+            </div>
           </div>
         )}
 
@@ -303,50 +537,406 @@ export const AddOffer = () => {
             <h3 className={styles.addOffer__title}>Formularz</h3>
 
             <div className={styles.addOffer__form}>
-              {type?.startsWith("job") && (
+              {type === "job_offer" && (
                 <>
                   <input
                     name="position"
-                    placeholder="Stanowisko"
+                    placeholder="Stanowisko (np. Zatrudnię elektryka)"
                     onChange={handleDataChange}
                   />
+
                   <input
                     name="city"
                     placeholder="Miasto"
                     onChange={handleDataChange}
                   />
+
+                  <textarea
+                    name="description"
+                    placeholder="Opis ogłoszenia"
+                    onChange={handleChange}
+                  />
+                  <div className={styles.addOffer__imageUploader}>
+                    <img
+                      src={
+                        previewImage ||
+                        "/companyLogoPlaceholder/companyLogoPlaceholder.webp"
+                      }
+                      alt="Preview"
+                      className={styles.addOffer__imagePreview}
+                    />
+
+                    <label className={styles.addOffer__imageButton}>
+                      {previewImage ? "Zmień zdjęcie" : "Wybierz zdjęcie"}
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        hidden
+                      />
+                    </label>
+                  </div>
+
+                  <h4>Sekcja kontaktowa</h4>
+
+                  <input
+                    name="contactName"
+                    placeholder="Imię osoby kontaktowej"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactPhone"
+                    placeholder="Telefon"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactEmail"
+                    placeholder="Email"
+                    onChange={handleDataChange}
+                  />
                 </>
               )}
 
-              {type?.startsWith("housing") && (
+              {type === "market_offer" && (
                 <>
                   <input
                     name="title"
                     placeholder="Tytuł ogłoszenia"
                     onChange={handleChange}
                   />
+
+                  <select name="category" onChange={handleDataChange}>
+                    <option value="">Kategoria</option>
+                    <option value="automotive">Motoryzacja</option>
+                    <option value="real_estate">Nieruchomości</option>
+                    <option value="electronics">Elektronika</option>
+                    <option value="home_garden">Dom i ogród</option>
+                    <option value="fashion">Moda</option>
+                    <option value="kids">Dla dziecka</option>
+                    <option value="sports_hobbies">Sport i hobby</option>
+                    <option value="agriculture">Rolnictwo</option>
+                    <option value="animals">Zwierzęta</option>
+                    <option value="music_education">Muzyka i edukacja</option>
+                    <option value="business_services">Firma i usługi</option>
+                    <option value="health_beauty">Zdrowie i uroda</option>
+                    <option value="free_stuff">Oddam za darmo</option>
+                    <option value="other">Inne</option>
+                  </select>
+
+                  <textarea
+                    name="description"
+                    placeholder="Opis"
+                    onChange={handleChange}
+                  />
+
+                  <select name="condition" onChange={handleDataChange}>
+                    <option value="">Stan</option>
+                    <option value="new">Nowe</option>
+                    <option value="used">Używane</option>
+                  </select>
+
                   <input
                     name="city"
                     placeholder="Miasto"
                     onChange={handleDataChange}
                   />
+
+                  <div className={styles.addOffer__priceWrapper}>
+                    <input
+                      type="number"
+                      name="price"
+                      placeholder="Cena"
+                      onChange={handleDataChange}
+                    />
+
+                    <span>{COUNTRIES_PL[country]?.currency}</span>
+                  </div>
+
+                  <div className={styles.addOffer__imageUploader}>
+                    <div className={styles.addOffer__imagesGrid}>
+                      {previewImages.length > 0 ? (
+                        previewImages.map((img, index) => (
+                          <img
+                            key={index}
+                            src={img}
+                            alt={`Preview ${index + 1}`}
+                            className={styles.addOffer__multiImagePreview}
+                          />
+                        ))
+                      ) : (
+                        <img
+                          src="/marketplacePlaceholder/marketplace-offer-placeholder.webp"
+                          alt="Placeholder"
+                          className={styles.addOffer__imagePreview}
+                        />
+                      )}
+                    </div>
+
+                    <label className={styles.addOffer__imageButton}>
+                      {previewImages.length > 0
+                        ? "Zmień zdjęcia"
+                        : "Dodaj maksymalnie 5 zdjęć"}
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImagesChange}
+                        hidden
+                      />
+                    </label>
+                  </div>
+
+                  <h4>Sekcja kontaktowa</h4>
+
+                  <input
+                    name="contactName"
+                    placeholder="Imię osoby kontaktowej"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactPhone"
+                    placeholder="Telefon"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactEmail"
+                    placeholder="Email"
+                    onChange={handleDataChange}
+                  />
                 </>
               )}
 
-              {type?.startsWith("market") && (
+              {type === "market_wanted" && (
                 <>
                   <input
                     name="title"
-                    placeholder="Nazwa produktu"
+                    placeholder="Tytuł ogłoszenia"
                     onChange={handleChange}
                   />
 
                   <select name="category" onChange={handleDataChange}>
                     <option value="">Kategoria</option>
+                    <option value="automotive">Motoryzacja</option>
+                    <option value="real_estate">Nieruchomości</option>
                     <option value="electronics">Elektronika</option>
-                    <option value="cars">Samochody</option>
-                    <option value="home">Dom</option>
+                    <option value="home_garden">Dom i ogród</option>
+                    <option value="fashion">Moda</option>
+                    <option value="kids">Dla dziecka</option>
+                    <option value="sports_hobbies">Sport i hobby</option>
+                    <option value="agriculture">Rolnictwo</option>
+                    <option value="animals">Zwierzęta</option>
+                    <option value="music_education">Muzyka i edukacja</option>
+                    <option value="business_services">Firma i usługi</option>
+                    <option value="health_beauty">Zdrowie i uroda</option>
+                    <option value="free_stuff">Oddam za darmo</option>
+                    <option value="other">Inne</option>
                   </select>
+
+                  <textarea
+                    name="description"
+                    placeholder="Opis"
+                    onChange={handleChange}
+                  />
+
+                  <div className={styles.addOffer__imageUploader}>
+                    <img
+                      src={
+                        previewImage ||
+                        "/marketplacePlaceholder/marketplace-wanted-placeholder.webp"
+                      }
+                      alt="Preview"
+                      className={styles.addOffer__imagePreview}
+                    />
+
+                    <label className={styles.addOffer__imageButton}>
+                      {previewImage ? "Zmień zdjęcie" : "Dodaj zdjęcie"}
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        hidden
+                      />
+                    </label>
+                  </div>
+
+                  <h4>Sekcja kontaktowa</h4>
+
+                  <input
+                    name="contactName"
+                    placeholder="Imię osoby kontaktowej"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactPhone"
+                    placeholder="Telefon"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactEmail"
+                    placeholder="Email"
+                    onChange={handleDataChange}
+                  />
+                </>
+              )}
+              {type === "job_wanted" && (
+                <>
+                  <input
+                    name="position"
+                    placeholder="Tytuł ogłoszenia (np. Szukam pracy mechanik)"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="city"
+                    placeholder="Miasto"
+                    onChange={handleDataChange}
+                  />
+
+                  <textarea
+                    name="description"
+                    placeholder="Opis"
+                    onChange={handleChange}
+                  />
+
+                  <input
+                    name="portfolioLink"
+                    placeholder="Link do portfolio"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="linkedinLink"
+                    placeholder="Link do LinkedIn"
+                    onChange={handleDataChange}
+                  />
+
+                  <div className={styles.addOffer__imageUploader}>
+                    <img
+                      src={
+                        previewImage ||
+                        "/companyLogoPlaceholder/companyLogoPlaceholder.webp"
+                      }
+                      alt="Preview"
+                      className={styles.addOffer__imagePreview}
+                    />
+
+                    <label className={styles.addOffer__imageButton}>
+                      {previewImage ? "Zmień zdjęcie" : "Wybierz zdjęcie"}
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        hidden
+                      />
+                    </label>
+                  </div>
+
+                  <h4>Sekcja kontaktowa</h4>
+
+                  <input
+                    name="contactName"
+                    placeholder="Imię osoby kontaktowej"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactPhone"
+                    placeholder="Telefon"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactEmail"
+                    placeholder="Email"
+                    onChange={handleDataChange}
+                  />
+                </>
+              )}
+
+              {type === "housing_offer" && (
+                <>
+                  <input
+                    name="title"
+                    placeholder="Tytuł ogłoszenia"
+                    onChange={handleChange}
+                  />
+
+                  <input
+                    name="city"
+                    placeholder="Miasto"
+                    onChange={handleDataChange}
+                  />
+
+                  <textarea
+                    name="description"
+                    placeholder="Opis"
+                    onChange={handleChange}
+                  />
+
+                  <div className={styles.addOffer__imageUploader}>
+                    <div className={styles.addOffer__imagesGrid}>
+                      {previewImages.length > 0 ? (
+                        previewImages.map((img, index) => (
+                          <img
+                            key={index}
+                            src={img}
+                            alt={`Preview ${index + 1}`}
+                            className={styles.addOffer__multiImagePreview}
+                          />
+                        ))
+                      ) : (
+                        <img
+                          src="/housingPlaceholder/housing-offer-placeholder.webp"
+                          alt="Placeholder"
+                          className={styles.addOffer__imagePreview}
+                        />
+                      )}
+                    </div>
+
+                    <label className={styles.addOffer__imageButton}>
+                      {previewImages.length > 0
+                        ? "Zmień zdjęcia"
+                        : "Dodaj maksymalnie 5 zdjęć"}
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImagesChange}
+                        hidden
+                      />
+                    </label>
+                  </div>
+
+                  <h4>Sekcja kontaktowa</h4>
+
+                  <input
+                    name="contactName"
+                    placeholder="Imię osoby kontaktowej"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactPhone"
+                    placeholder="Telefon"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactEmail"
+                    placeholder="Email"
+                    onChange={handleDataChange}
+                  />
                 </>
               )}
 
@@ -354,9 +944,23 @@ export const AddOffer = () => {
                 <>
                   <input
                     name="title"
-                    placeholder="Nazwa usługi (np. Kosmetyczka mobilna)"
+                    placeholder="Tytuł ogłoszenia (np. Mobilny fryzjer damski)"
                     onChange={handleChange}
                   />
+
+                  <select name="category" onChange={handleDataChange}>
+                    <option value="">Kategoria usługi</option>
+
+                    {businessCategories.map((group) => (
+                      <optgroup key={group.group} label={group.group}>
+                        {group.items.map((item) => (
+                          <option key={item} value={item}>
+                            {item}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
+                  </select>
 
                   <input
                     name="city"
@@ -364,40 +968,177 @@ export const AddOffer = () => {
                     onChange={handleDataChange}
                   />
 
-                  <select name="category" onChange={handleDataChange}>
-                    <option value="">Kategoria</option>
-                    <option value="beauty">Uroda</option>
-                    <option value="automotive">Motoryzacja</option>
-                    <option value="construction">Budownictwo</option>
-                    <option value="cleaning">Sprzątanie</option>
-                    <option value="transport">Transport</option>
-                    <option value="other">Inne</option>
-                  </select>
+                  <textarea
+                    name="description"
+                    placeholder="Opis usługi"
+                    onChange={handleChange}
+                  />
+
+                  <div className={styles.addOffer__imageUploader}>
+                    <img
+                      src={
+                        previewImage ||
+                        "/servicesPlaceholder/service-placeholder.webp"
+                      }
+                      alt="Preview"
+                      className={styles.addOffer__imagePreview}
+                    />
+
+                    <label className={styles.addOffer__imageButton}>
+                      {previewImage ? "Zmień zdjęcie" : "Dodaj zdjęcie"}
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        hidden
+                      />
+                    </label>
+                  </div>
+
+                  <h4>Sekcja kontaktowa</h4>
+
+                  <input
+                    name="contactName"
+                    placeholder="Osoba kontaktowa"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactPhone"
+                    placeholder="Telefon"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactEmail"
+                    placeholder="Email"
+                    onChange={handleDataChange}
+                  />
                 </>
               )}
+              {type !== "service_offer" && (
+                <>
+                  <h4 className={styles.addOffer__subtitle}>
+                    Czas trwania ogłoszenia
+                  </h4>
 
-              <textarea
-                name="description"
-                placeholder="Opis"
-                onChange={handleChange}
-              />
+                  <div className={styles.addOffer__durationOptions}>
+                    <button
+                      type="button"
+                      className={`${styles.addOffer__durationButton} ${
+                        formData.durationDays === 7
+                          ? styles.addOffer__durationButtonActive
+                          : ""
+                      }`}
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          durationDays: 7,
+                        }))
+                      }
+                    >
+                      7 dni
+                    </button>
 
+                    <button
+                      type="button"
+                      className={`${styles.addOffer__durationButton} ${
+                        formData.durationDays === 14
+                          ? styles.addOffer__durationButtonActive
+                          : ""
+                      }`}
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          durationDays: 14,
+                        }))
+                      }
+                    >
+                      14 dni
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`${styles.addOffer__durationButton} ${
+                        formData.durationDays === 31
+                          ? styles.addOffer__durationButtonActive
+                          : ""
+                      }`}
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          durationDays: 31,
+                        }))
+                      }
+                    >
+                      31 dni
+                    </button>
+                  </div>
+                </>
+              )}
+              <h4 className={styles.addOffer__subtitle}>
+                Promowanie ogłoszenia
+              </h4>
+
+              <div className={styles.addOffer__promotionOptions}>
+                <label className={styles.addOffer__promotionCard}>
+                  <input
+                    type="checkbox"
+                    checked={formData.isFeatured}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        isFeatured: e.target.checked,
+                      }))
+                    }
+                  />
+
+                  <div>
+                    <strong>Wyróżnione ogłoszenie</strong>
+                    <p>
+                      Ogłoszenie będzie wyżej w wynikach i dostanie specjalne
+                      oznaczenie.
+                    </p>
+                  </div>
+                </label>
+
+                {type !== "service_offer" && (
+                  <label className={styles.addOffer__promotionCard}>
+                    <input
+                      type="checkbox"
+                      checked={formData.isUrgent}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          isUrgent: e.target.checked,
+                        }))
+                      }
+                    />
+
+                    <div>
+                      <strong>Badge "Pilne"</strong>
+                      <p>
+                        Ogłoszenie dostanie oznaczenie "Pilne", aby szybciej
+                        przyciągnąć uwagę.
+                      </p>
+                    </div>
+                  </label>
+                )}
+              </div>
               <button onClick={handleSubmit}>Dodaj ogłoszenie</button>
             </div>
           </div>
         )}
       </main>
-
-      {/* ASIDE */}
-
       <aside className={styles.addOffer__aside}>
         {!company && step >= 4 && user && (
-          <div className={styles.userCard}>
-            <div className={styles.userLink}>
+          <div className={styles.addOffer__userCard}>
+            <div className={styles.addOffer__userLink}>
               <img
                 src={user.profile?.avatar || "/avatar/avt.jpg"}
                 alt={user.profile?.displayName}
-                className={styles.userAvatar}
+                className={styles.addOffer__userAvatar}
               />
 
               {user.profile?.displayName || "Użytkownik"}
@@ -409,15 +1150,15 @@ export const AddOffer = () => {
           companies
             .filter((c) => c._id === company)
             .map((c) => (
-              <div key={c._id} className={styles.userCard}>
-                <div className={styles.userLink}>
-                  <img src={c.logo} className={styles.userAvatar} />
+              <div key={c._id} className={styles.addOffer__userCard}>
+                <div className={styles.addOffer__userLink}>
+                  <img src={c.logo} className={styles.addOffer__userAvatar} />
                   {c.name}
                 </div>
               </div>
             ))}
 
-        <div className={styles.adCard}>Reklama</div>
+        <div className={styles.addOffer__adCard}>Reklama</div>
       </aside>
     </div>
   );

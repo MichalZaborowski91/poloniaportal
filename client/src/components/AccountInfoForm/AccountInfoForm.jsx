@@ -5,6 +5,7 @@ import { routes } from "../../app/routes";
 import { useAuth } from "../../hooks/useAuth";
 import { useCountry } from "../../app/useCountry";
 import { AvatarUpload } from "../AvatarUpload/AvatarUpload";
+import { VerifyEmailMessage } from "../../components/VerifyEmailMessage/VerifyEmailMessage";
 import toast from "react-hot-toast";
 import styles from "../AccountInfoForm/AccountInfoForm.module.scss";
 import Edit from "../../assets/icons/edit-3.svg?react";
@@ -13,7 +14,6 @@ import AtSign from "../../assets/icons/at-sign.svg?react";
 import User from "../../assets/icons/user.svg?react";
 import Text from "../../assets/icons/file-text.svg?react";
 import Save from "../../assets/icons/save.svg?react";
-import { VerifyEmailMessage } from "../../components/VerifyEmailMessage/VerifyEmailMessage";
 
 const COUNTRY_FLAGS = {
   ie: "/flags/ie.png",

@@ -124,3 +124,15 @@ export const getPublicCompanies = async (params = {}) => {
 
   return res.json();
 };
+
+export const getHomePageCompanies = async (country) => {
+  const res = await fetch(
+    `${API_URL}/api/companies/homepage?country=${country}`,
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch homepage companies");
+  }
+
+  return res.json();
+};

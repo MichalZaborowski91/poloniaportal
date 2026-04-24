@@ -1,5 +1,6 @@
 import Listing from "../models/Listing.js";
 import { Company } from "../models/Company.js";
+import cloudinary from "../config/cloudinary.js";
 import mongoose from "mongoose";
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -8,7 +9,61 @@ export const createListing = async (req, res, next) => {
   try {
     let listingCountry = req.user.country;
 
-    const { type, title, description, data, durationDays, company } = req.body;
+    const { type, title, description, durationDays, company } = req.body;
+
+    let data = {};
+
+    if (req.body.data) {
+      data = JSON.parse(req.body.data);
+    }
+
+    if (req.files?.image?.[0]) {
+      const file = req.files.image[0];
+
+      const uploadedImageUrl = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "poloniaportal/listings",
+          },
+          (error, result) => {
+            if (error) {
+              return reject(error);
+            }
+
+            resolve(result.secure_url);
+          },
+        );
+
+        uploadStream.end(file.buffer);
+      });
+
+      data.image = uploadedImageUrl;
+    }
+
+    if (req.files?.images?.length) {
+      const uploadedImages = await Promise.all(
+        req.files.images.map((file) => {
+          return new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+              {
+                folder: "poloniaportal/listings",
+              },
+              (error, result) => {
+                if (error) {
+                  return reject(error);
+                }
+
+                resolve(result.secure_url);
+              },
+            );
+
+            uploadStream.end(file.buffer);
+          });
+        }),
+      );
+
+      data.images = uploadedImages;
+    }
 
     let companyId = null;
 
@@ -61,7 +116,7 @@ export const getListings = async (req, res) => {
   console.log("QUERY:", req.query);
   try {
     const { country } = req.params;
-    const { type, category, q } = req.query;
+    const { type, category, q, limit } = req.query;
 
     const now = new Date();
 
@@ -99,7 +154,9 @@ export const getListings = async (req, res) => {
       });
     }
 
-    const listings = await Listing.find(filter).sort({ createdAt: -1 });
+    const listings = await Listing.find(filter)
+      .sort({ createdAt: -1 })
+      .limit(limit ? Number(limit) : 0);
 
     const total = await Listing.countDocuments({
       country,

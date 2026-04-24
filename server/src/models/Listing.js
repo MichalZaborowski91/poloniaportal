@@ -31,56 +31,62 @@ const ListingDataSchema = new Schema(
       maxlength: 120,
     },
 
-    salaryFrom: {
-      type: Number,
-      min: 0,
+    contactName: {
+      type: String,
+      trim: true,
+      maxlength: 100,
     },
 
-    salaryTo: {
-      type: Number,
-      min: 0,
+    contactPhone: {
+      type: String,
+      trim: true,
+      maxlength: 50,
     },
 
-    contractType: {
+    contactEmail: {
+      type: String,
+      trim: true,
+      maxlength: 120,
+    },
+
+    portfolioLink: {
+      type: String,
+      trim: true,
+      maxlength: 300,
+    },
+
+    linkedinLink: {
+      type: String,
+      trim: true,
+      maxlength: 300,
+    },
+
+    image: {
       type: String,
       trim: true,
     },
-
     //HOUSING
-    rent: {
-      type: Number,
-      min: 0,
-    },
-
-    budgetMax: {
-      type: Number,
-      min: 0,
-    },
-
-    rooms: {
-      type: Number,
-      min: 0,
-    },
-
-    furnished: {
-      type: Boolean,
-    },
-
-    availableFrom: {
-      type: Date,
+    images: {
+      type: [String],
+      default: [],
     },
     // MARKETPLACE
     category: {
       type: String,
       enum: [
-        "electronics",
-        "cars",
-        "home",
-        "beauty",
         "automotive",
-        "construction",
-        "cleaning",
-        "transport",
+        "real_estate",
+        "electronics",
+        "home_garden",
+        "fashion",
+        "kids",
+        "sports_hobbies",
+        "agriculture",
+        "animals",
+        "music_education",
+        "business_services",
+        "health_beauty",
+        "free_stuff",
         "other",
       ],
     },
@@ -94,8 +100,6 @@ const ListingDataSchema = new Schema(
       type: String,
       enum: ["new", "used"],
     },
-
-    images: [String],
   },
   { _id: false },
 );

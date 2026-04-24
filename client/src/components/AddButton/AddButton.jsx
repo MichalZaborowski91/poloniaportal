@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useCountry } from "../../app/useCountry";
 import { routes } from "../../app/routes";
-import styles from "../AddButton/AddButton.module.scss";
 import { BsPlus } from "react-icons/bs";
+import styles from "../AddButton/AddButton.module.scss";
 
 export const AddButton = ({ scrolled }) => {
   const [open, setOpen] = useState(false);

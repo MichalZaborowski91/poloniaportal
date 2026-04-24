@@ -1,9 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
-import styles from "./CompanyForm.module.scss";
-import Add from "../../assets/icons/plus.svg?react";
-import Edit from "../../assets/icons/edit-3.svg?react";
 import { businessCategories } from "../../app/businessCategories";
 import { COUNTRIES_PL } from "../../app/countriesPL";
 import {
@@ -34,6 +30,8 @@ import { DAYS_PL } from "../../app/weekDaysPL";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../app/routes";
 import { useCountry } from "../../app/useCountry";
+import styles from "./CompanyForm.module.scss";
+import toast from "react-hot-toast";
 
 export const CompanyForm = ({ initialData = null, onSubmit, mode }) => {
   const { user } = useAuth();

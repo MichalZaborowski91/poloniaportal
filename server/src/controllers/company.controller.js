@@ -604,36 +604,85 @@ export const publishCompany = async (req, res) => {
 
 export const getPublicCompanies = async (req, res) => {
   try {
-    const { search, city, category, country } = req.query;
+    const { search, category, country, page = 1, limit = 15 } = req.query;
+
+    const baseQuery = {
+      status: "published",
+    };
+
+    if (country) {
+      baseQuery.country = country;
+    }
+
+    if (category) {
+      baseQuery.category = category;
+    }
+
+    if (search && search.trim()) {
+      baseQuery.$or = [
+        { name: { $regex: search.trim(), $options: "i" } },
+        { city: { $regex: search.trim(), $options: "i" } },
+      ];
+    }
+
+    const featured = await Company.find({
+      ...baseQuery,
+      isFeatured: true,
+      featuredUntil: { $gte: new Date() },
+    })
+      .sort({ createdAt: -1 })
+      .limit(4);
+
+    const normalQuery = {
+      ...baseQuery,
+      isFeatured: { $ne: true },
+    };
+
+    const pageNumber = Math.max(1, parseInt(page) || 1);
+    const limitNumber = Math.max(1, parseInt(limit) || 15);
+
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const total = await Company.countDocuments(normalQuery);
+
+    const companies = await Company.find(normalQuery)
+      .sort({ isFeatured: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(limitNumber);
+
+    res.json({
+      featured,
+      companies,
+      total,
+      page: pageNumber,
+      totalPages: Math.ceil(total / limitNumber),
+    });
+  } catch (err) {
+    console.error("GET PUBLIC COMPANIES ERROR", err);
+    res.status(500).json({ message: "Failed to fetch companies" });
+  }
+};
+
+export const getHomePageCompanies = async (req, res) => {
+  try {
+    const { country } = req.query;
 
     const query = {
       status: "published",
+      showOnHomepage: true,
     };
 
     if (country) {
       query.country = country;
     }
 
-    if (city) {
-      query.city = city;
-    }
-
-    if (category) {
-      query.category = category;
-    }
-
-    if (search) {
-      query.name = {
-        $regex: search,
-        $options: "i",
-      };
-    }
-
-    const companies = await Company.find(query).sort({ createdAt: -1 });
+    const companies = await Company.find(query)
+      .sort({ isFeatured: -1, createdAt: -1 })
+      .limit(20);
 
     res.json(companies);
   } catch (err) {
-    console.error("GET PUBLIC COMPANIES ERROR", err);
-    res.status(500).json({ message: "Failed to fetch companies" });
+    console.error("GET HOMEPAGE COMPANIES ERROR", err);
+    res.status(500).json({ message: "Failed to fetch homepage companies" });
   }
 };
