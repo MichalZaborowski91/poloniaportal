@@ -186,6 +186,17 @@ const ListingSchema = new Schema(
       type: Boolean,
       default: false,
     },
+
+    featuredDays: {
+      type: Number,
+      enum: [0, 7, 14, 31],
+      default: 0,
+    },
+
+    isUrgent: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

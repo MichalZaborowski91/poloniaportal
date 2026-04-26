@@ -5,6 +5,7 @@ import { BsArrowLeftShort } from "react-icons/bs";
 import styles from "../AddOffer/AddOffer.module.scss";
 import { COUNTRIES_PL } from "../../app/countriesPL";
 import { businessCategories } from "../../app/businessCategories";
+import { FormRenderer } from "../forms/FormRenderer/FormRenderer";
 
 export const AddOffer = () => {
   const [step, setStep] = useState(1);
@@ -20,7 +21,7 @@ export const AddOffer = () => {
     title: "",
     description: "",
     durationDays: 7,
-    isFeatured: false,
+    featuredDays: 0,
     isUrgent: false,
     data: {
       city: "",
@@ -126,7 +127,7 @@ export const AddOffer = () => {
       );
       body.append("description", formData.description);
       body.append("durationDays", formData.durationDays);
-      body.append("isFeatured", formData.isFeatured);
+      body.append("featuredDays", formData.featuredDays);
       body.append("isUrgent", formData.isUrgent);
 
       if (company) {
@@ -174,6 +175,18 @@ export const AddOffer = () => {
 
     fetchCompanies();
   }, []);
+
+  const getTotal = () => {
+    let total = 0;
+
+    if (formData.featuredDays === 7) total += 1;
+    if (formData.featuredDays === 14) total += 2;
+    if (formData.featuredDays === 31) total += 3;
+
+    if (formData.isUrgent) total += 1;
+
+    return total;
+  };
 
   return (
     <div className={styles.addOffer}>
@@ -939,7 +952,69 @@ export const AddOffer = () => {
                   />
                 </>
               )}
+              {type === "housing_wanted" && (
+                <>
+                  <input
+                    name="title"
+                    placeholder="Tytuł ogłoszenia (np. Szukam mieszkania 2 pokoje)"
+                    onChange={handleChange}
+                  />
 
+                  <input
+                    name="city"
+                    placeholder="Miasto"
+                    onChange={handleDataChange}
+                  />
+
+                  <textarea
+                    name="description"
+                    placeholder="Opisz czego szukasz (lokalizacja, budżet, ilość pokoi...)"
+                    onChange={handleChange}
+                  />
+
+                  <div className={styles.addOffer__imageUploader}>
+                    <img
+                      src={
+                        previewImage ||
+                        "/housingPlaceholder/housing-wanted-placeholder.webp"
+                      }
+                      alt="Preview"
+                      className={styles.addOffer__imagePreview}
+                    />
+
+                    <label className={styles.addOffer__imageButton}>
+                      {previewImage ? "Zmień zdjęcie" : "Dodaj zdjęcie"}
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        hidden
+                      />
+                    </label>
+                  </div>
+
+                  <h4>Sekcja kontaktowa</h4>
+
+                  <input
+                    name="contactName"
+                    placeholder="Imię osoby kontaktowej"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactPhone"
+                    placeholder="Telefon"
+                    onChange={handleDataChange}
+                  />
+
+                  <input
+                    name="contactEmail"
+                    placeholder="Email"
+                    onChange={handleDataChange}
+                  />
+                </>
+              )}
               {type === "service_offer" && (
                 <>
                   <input
@@ -1024,108 +1099,68 @@ export const AddOffer = () => {
                   </h4>
 
                   <div className={styles.addOffer__durationOptions}>
-                    <button
-                      type="button"
-                      className={`${styles.addOffer__durationButton} ${
-                        formData.durationDays === 7
-                          ? styles.addOffer__durationButtonActive
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          durationDays: 7,
-                        }))
-                      }
-                    >
-                      7 dni
-                    </button>
-
-                    <button
-                      type="button"
-                      className={`${styles.addOffer__durationButton} ${
-                        formData.durationDays === 14
-                          ? styles.addOffer__durationButtonActive
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          durationDays: 14,
-                        }))
-                      }
-                    >
-                      14 dni
-                    </button>
-
-                    <button
-                      type="button"
-                      className={`${styles.addOffer__durationButton} ${
-                        formData.durationDays === 31
-                          ? styles.addOffer__durationButtonActive
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          durationDays: 31,
-                        }))
-                      }
-                    >
-                      31 dni
-                    </button>
+                    {[7, 14, 31].map((d) => (
+                      <label key={d} className={styles.addOffer__promotionCard}>
+                        <input
+                          type="checkbox"
+                          checked={formData.durationDays === d}
+                          onChange={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              durationDays: d,
+                              // reset featured jeśli za duży
+                              featuredDays:
+                                prev.featuredDays > d ? 0 : prev.featuredDays,
+                            }))
+                          }
+                        />
+                        <div>{d} dni</div>
+                      </label>
+                    ))}
                   </div>
                 </>
               )}
               <h4 className={styles.addOffer__subtitle}>
-                Promowanie ogłoszenia
+                Wyróżnienie ogłoszenia
               </h4>
-
-              <div className={styles.addOffer__promotionOptions}>
-                <label className={styles.addOffer__promotionCard}>
-                  <input
-                    type="checkbox"
-                    checked={formData.isFeatured}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        isFeatured: e.target.checked,
-                      }))
-                    }
-                  />
-
-                  <div>
-                    <strong>Wyróżnione ogłoszenie</strong>
-                    <p>
-                      Ogłoszenie będzie wyżej w wynikach i dostanie specjalne
-                      oznaczenie.
-                    </p>
-                  </div>
-                </label>
-
-                {type !== "service_offer" && (
-                  <label className={styles.addOffer__promotionCard}>
+              <div className={styles.addOffer__durationOptions}>
+                {[7, 14, 31].map((d) => (
+                  <label key={d} className={styles.addOffer__promotionCard}>
                     <input
                       type="checkbox"
-                      checked={formData.isUrgent}
-                      onChange={(e) =>
+                      disabled={d > formData.durationDays}
+                      checked={formData.featuredDays === d}
+                      onChange={() =>
                         setFormData((prev) => ({
                           ...prev,
-                          isUrgent: e.target.checked,
+                          featuredDays: prev.featuredDays === d ? 0 : d,
                         }))
                       }
                     />
-
                     <div>
-                      <strong>Badge "Pilne"</strong>
-                      <p>
-                        Ogłoszenie dostanie oznaczenie "Pilne", aby szybciej
-                        przyciągnąć uwagę.
-                      </p>
+                      {d} dni ({d === 7 ? "1€" : d === 14 ? "2€" : "3€"})
                     </div>
                   </label>
-                )}
+                ))}
               </div>
+              {type !== "service_offer" && (
+                <label className={styles.addOffer__promotionCard}>
+                  <input
+                    type="checkbox"
+                    checked={formData.isUrgent}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        isUrgent: e.target.checked,
+                      }))
+                    }
+                  />
+                  <div>
+                    <strong>Pilne</strong>
+                    <p>+1€</p>
+                  </div>
+                </label>
+              )}
               <button onClick={handleSubmit}>Dodaj ogłoszenie</button>
             </div>
           </div>
@@ -1157,7 +1192,27 @@ export const AddOffer = () => {
                 </div>
               </div>
             ))}
+        {step >= 4 && (
+          <div className={styles.addOffer__userCard}>
+            <strong>Podsumowanie</strong>
 
+            <div style={{ marginTop: "10px", fontSize: "14px" }}>
+              {type !== "service_offer" && (
+                <p>Długość: {formData.durationDays} dni</p>
+              )}
+
+              {formData.featuredDays > 0 && (
+                <p>Wyróżnione: {formData.featuredDays} dni</p>
+              )}
+
+              {formData.isUrgent && <p>Badge: Pilne</p>}
+
+              <hr style={{ margin: "10px 0" }} />
+
+              <strong>Total: €{getTotal()}</strong>
+            </div>
+          </div>
+        )}
         <div className={styles.addOffer__adCard}>Reklama</div>
       </aside>
     </div>

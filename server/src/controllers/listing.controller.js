@@ -9,7 +9,15 @@ export const createListing = async (req, res, next) => {
   try {
     let listingCountry = req.user.country;
 
-    const { type, title, description, durationDays, company } = req.body;
+    const {
+      type,
+      title,
+      description,
+      durationDays,
+      company,
+      featuredDays,
+      isUrgent,
+    } = req.body;
 
     let data = {};
 
@@ -85,6 +93,14 @@ export const createListing = async (req, res, next) => {
 
     const isService = type === "service_offer";
 
+    if (!isService) {
+      if (featuredDays > durationDays) {
+        return res.status(400).json({
+          message: "Featured days cannot be greater than listing duration",
+        });
+      }
+    }
+
     const listing = await Listing.create({
       user: req.user._id,
       company: companyId,
@@ -95,6 +111,8 @@ export const createListing = async (req, res, next) => {
       data,
       durationDays: isService ? null : durationDays,
       isPermanent: isService,
+      featuredDays: isService ? featuredDays || 0 : featuredDays || 0,
+      isUrgent: isService ? false : isUrgent,
     });
 
     res.status(201).json({ listing });
