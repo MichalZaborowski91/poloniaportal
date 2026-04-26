@@ -14,7 +14,7 @@ export const LISTING_TYPES = [
 
 export const LISTING_STATUS = ["active", "inactive", "expired", "deleted"];
 
-export const LISTING_DURATIONS = [7, 31];
+export const LISTING_DURATIONS = [7, 14, 31];
 
 const ListingDataSchema = new Schema(
   {

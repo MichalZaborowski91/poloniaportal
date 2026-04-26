@@ -5,7 +5,6 @@ import { BsArrowLeftShort } from "react-icons/bs";
 import styles from "../AddOffer/AddOffer.module.scss";
 import { COUNTRIES_PL } from "../../app/countriesPL";
 import { businessCategories } from "../../app/businessCategories";
-import { FormRenderer } from "../forms/FormRenderer/FormRenderer";
 
 export const AddOffer = () => {
   const [step, setStep] = useState(1);
@@ -153,6 +152,13 @@ export const AddOffer = () => {
       });
 
       const result = await res.json();
+
+      if (!res.ok) {
+        console.error("ERROR:", result);
+        alert(result.message);
+        return;
+      }
+
       console.log("SUCCESS:", result);
     } catch (err) {
       console.error(err);
@@ -590,26 +596,6 @@ export const AddOffer = () => {
                       />
                     </label>
                   </div>
-
-                  <h4>Sekcja kontaktowa</h4>
-
-                  <input
-                    name="contactName"
-                    placeholder="Imię osoby kontaktowej"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactPhone"
-                    placeholder="Telefon"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactEmail"
-                    placeholder="Email"
-                    onChange={handleDataChange}
-                  />
                 </>
               )}
 
@@ -702,26 +688,6 @@ export const AddOffer = () => {
                       />
                     </label>
                   </div>
-
-                  <h4>Sekcja kontaktowa</h4>
-
-                  <input
-                    name="contactName"
-                    placeholder="Imię osoby kontaktowej"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactPhone"
-                    placeholder="Telefon"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactEmail"
-                    placeholder="Email"
-                    onChange={handleDataChange}
-                  />
                 </>
               )}
 
@@ -778,26 +744,6 @@ export const AddOffer = () => {
                       />
                     </label>
                   </div>
-
-                  <h4>Sekcja kontaktowa</h4>
-
-                  <input
-                    name="contactName"
-                    placeholder="Imię osoby kontaktowej"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactPhone"
-                    placeholder="Telefon"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactEmail"
-                    placeholder="Email"
-                    onChange={handleDataChange}
-                  />
                 </>
               )}
               {type === "job_wanted" && (
@@ -853,26 +799,6 @@ export const AddOffer = () => {
                       />
                     </label>
                   </div>
-
-                  <h4>Sekcja kontaktowa</h4>
-
-                  <input
-                    name="contactName"
-                    placeholder="Imię osoby kontaktowej"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactPhone"
-                    placeholder="Telefon"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactEmail"
-                    placeholder="Email"
-                    onChange={handleDataChange}
-                  />
                 </>
               )}
 
@@ -930,26 +856,6 @@ export const AddOffer = () => {
                       />
                     </label>
                   </div>
-
-                  <h4>Sekcja kontaktowa</h4>
-
-                  <input
-                    name="contactName"
-                    placeholder="Imię osoby kontaktowej"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactPhone"
-                    placeholder="Telefon"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactEmail"
-                    placeholder="Email"
-                    onChange={handleDataChange}
-                  />
                 </>
               )}
               {type === "housing_wanted" && (
@@ -993,26 +899,6 @@ export const AddOffer = () => {
                       />
                     </label>
                   </div>
-
-                  <h4>Sekcja kontaktowa</h4>
-
-                  <input
-                    name="contactName"
-                    placeholder="Imię osoby kontaktowej"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactPhone"
-                    placeholder="Telefon"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactEmail"
-                    placeholder="Email"
-                    onChange={handleDataChange}
-                  />
                 </>
               )}
               {type === "service_offer" && (
@@ -1070,28 +956,29 @@ export const AddOffer = () => {
                       />
                     </label>
                   </div>
-
-                  <h4>Sekcja kontaktowa</h4>
-
-                  <input
-                    name="contactName"
-                    placeholder="Osoba kontaktowa"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactPhone"
-                    placeholder="Telefon"
-                    onChange={handleDataChange}
-                  />
-
-                  <input
-                    name="contactEmail"
-                    placeholder="Email"
-                    onChange={handleDataChange}
-                  />
                 </>
               )}
+              <div>
+                <h4>Sekcja kontaktowa</h4>
+
+                <input
+                  name="contactName"
+                  placeholder="Imię osoby kontaktowej"
+                  onChange={handleDataChange}
+                />
+
+                <input
+                  name="contactPhone"
+                  placeholder="Telefon"
+                  onChange={handleDataChange}
+                />
+
+                <input
+                  name="contactEmail"
+                  placeholder="Email"
+                  onChange={handleDataChange}
+                />
+              </div>
               {type !== "service_offer" && (
                 <>
                   <h4 className={styles.addOffer__subtitle}>

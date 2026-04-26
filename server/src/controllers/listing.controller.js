@@ -19,11 +19,19 @@ export const createListing = async (req, res, next) => {
       isUrgent,
     } = req.body;
 
+    const parsedIsUrgent = isUrgent === "true";
     let data = {};
+
+    console.log("BODY:", req.body);
+    console.log("FILES:", req.files);
 
     if (req.body.data) {
       data = JSON.parse(req.body.data);
     }
+
+    if (data.category === "") delete data.category;
+    if (data.condition === "") delete data.condition;
+    if (data.price === "") delete data.price;
 
     if (req.files?.image?.[0]) {
       const file = req.files.image[0];
@@ -93,8 +101,11 @@ export const createListing = async (req, res, next) => {
 
     const isService = type === "service_offer";
 
+    const parsedDuration = Number(durationDays);
+    const parsedFeatured = Number(featuredDays);
+
     if (!isService) {
-      if (featuredDays > durationDays) {
+      if (parsedFeatured > parsedDuration) {
         return res.status(400).json({
           message: "Featured days cannot be greater than listing duration",
         });
@@ -109,10 +120,10 @@ export const createListing = async (req, res, next) => {
       title,
       description,
       data,
-      durationDays: isService ? null : durationDays,
+      durationDays: isService ? null : parsedDuration,
+      featuredDays: parsedFeatured || 0,
       isPermanent: isService,
-      featuredDays: isService ? featuredDays || 0 : featuredDays || 0,
-      isUrgent: isService ? false : isUrgent,
+      isUrgent: isService ? false : parsedIsUrgent,
     });
 
     res.status(201).json({ listing });
@@ -130,40 +141,39 @@ const CATEGORY_MAP = {
 };
 
 export const getListings = async (req, res) => {
-  console.log("PARAMS:", req.params);
-  console.log("QUERY:", req.query);
   try {
     const { country } = req.params;
-    const { type, category, q, limit } = req.query;
+    const { type, category, q, page = 1, limit = 16 } = req.query;
 
-    const now = new Date();
-
-    const filter = {
+    const baseQuery = {
       country,
       status: "active",
       $and: [
         {
-          $or: [{ expiresAt: { $gt: now } }, { isPermanent: true }],
+          $or: [
+            { expiresAt: { $gt: new Date() }, isPermanent: false },
+            { isPermanent: true },
+          ],
         },
       ],
     };
 
-    // FILTER BY CATEGORY
+    // FILTER CATEGORY
     if (category && CATEGORY_MAP[category]) {
-      filter.type = { $in: CATEGORY_MAP[category] };
+      baseQuery.type = { $in: CATEGORY_MAP[category] };
     }
 
-    //FILTER BY TYPE
+    // FILTER TYPE
     if (type) {
-      filter.type = type;
+      baseQuery.type = type;
     }
 
-    //TEXT INPUT
-    if (q) {
+    // SEARCH
+    if (q && q.trim()) {
       const safe = escapeRegex(q.trim());
       const regex = new RegExp(`.*${safe}.*`, "i");
 
-      filter.$and.push({
+      baseQuery.$and.push({
         $or: [
           { title: regex },
           { "data.position": regex },
@@ -172,17 +182,46 @@ export const getListings = async (req, res) => {
       });
     }
 
-    const listings = await Listing.find(filter)
+    // ⭐ FEATURED (tak jak firmy)
+    const featured = await Listing.find({
+      ...baseQuery,
+      featuredDays: { $gt: 0 },
+    })
       .sort({ createdAt: -1 })
-      .limit(limit ? Number(limit) : 0);
+      .limit(4);
 
-    const total = await Listing.countDocuments({
-      country,
-      status: "active",
-      $or: [{ expiresAt: { $gt: now } }, { isPermanent: true }],
+    // 📦 NORMALNE
+    const normalQuery = {
+      ...baseQuery,
+      featuredDays: { $eq: 0 },
+    };
+
+    const pageNumber = Math.max(1, parseInt(page) || 1);
+    const limitNumber = Math.max(1, parseInt(limit) || 16);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const total = await Listing.countDocuments(normalQuery);
+
+    const [featuredCount, normalCount] = await Promise.all([
+      Listing.countDocuments({ ...baseQuery, featuredDays: { $gt: 0 } }),
+      Listing.countDocuments({ ...baseQuery, featuredDays: { $eq: 0 } }),
+    ]);
+
+    const totalAll = featuredCount + normalCount;
+
+    const listings = await Listing.find(normalQuery)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNumber);
+
+    res.json({
+      featured,
+      listings,
+      total,
+      totalAll,
+      page: pageNumber,
+      totalPages: Math.ceil(total / limitNumber),
     });
-
-    res.json({ listings, total });
   } catch (err) {
     console.error("GET LISTINGS ERROR:", err);
     res.status(500).json({ message: "Failed to fetch listings" });

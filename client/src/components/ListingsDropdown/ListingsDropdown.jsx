@@ -57,7 +57,7 @@ export const ListingsDropdown = () => {
         console.log("FETCH COUNTRY:", country);
         const data = await res.json();
 
-        setTotalCount(data.total);
+        setTotalCount(data.totalAll);
       } catch (err) {
         console.error(err);
       }

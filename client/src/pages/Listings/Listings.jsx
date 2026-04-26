@@ -135,12 +135,15 @@ export const ListingsPage = () => {
             {featured.map((listing) => (
               <div
                 key={listing._id}
-                onClick={() => navigate(`/${country}/listing/${listing.slug}`)}
+                onClick={() => navigate(`/${country}/listing/${listing._id}`)}
                 className={styles.featuredCard}
               >
                 <div className={styles.image}>
-                  {listing.photos?.[0] ? (
-                    <img src={listing.photos[0]} alt={listing.title} />
+                  {listing.data?.images?.[0] || listing.data?.image ? (
+                    <img
+                      src={listing.data?.images?.[0] || listing.data?.image}
+                      alt={listing.title}
+                    />
                   ) : (
                     <span>Brak zdjęcia</span>
                   )}
@@ -170,12 +173,15 @@ export const ListingsPage = () => {
             {adInsertIndex !== null && index === adInsertIndex && <AdBanner />}
 
             <div
-              onClick={() => navigate(`/${country}/listing/${listing.slug}`)}
+              onClick={() => navigate(`/${country}/listing/${listing._id}`)}
               className={styles.card}
             >
               <div className={styles.image}>
-                {listing.photos?.[0] ? (
-                  <img src={listing.photos[0]} alt={listing.title} />
+                {listing.data?.images?.[0] || listing.data?.image ? (
+                  <img
+                    src={listing.data?.images?.[0] || listing.data?.image}
+                    alt={listing.title}
+                  />
                 ) : (
                   <span>Brak zdjęcia</span>
                 )}
