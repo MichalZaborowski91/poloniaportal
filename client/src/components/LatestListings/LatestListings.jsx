@@ -54,7 +54,7 @@ export const LatestListings = () => {
           <div
             key={item._id}
             className={styles.card}
-            onClick={() => navigate(`/${country}/listings/${item._id}`)}
+            onClick={() => navigate(`/${country}/listing/${item._id}`)}
           >
             <div className={`${styles.badge} ${styles[TYPE_COLOR[item.type]]}`}>
               {TYPE_LABEL[item.type]}

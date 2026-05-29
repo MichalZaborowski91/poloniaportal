@@ -1,0 +1,16 @@
+export const MARKET_CATEGORY_LABELS = {
+  automotive: "Motoryzacja",
+  real_estate: "Nieruchomości",
+  electronics: "Elektronika",
+  home_garden: "Dom i ogród",
+  fashion: "Moda",
+  kids: "Dla dziecka",
+  sports_hobbies: "Sport i hobby",
+  agriculture: "Rolnictwo",
+  animals: "Zwierzęta",
+  music_education: "Muzyka i edukacja",
+  business_services: "Firma i usługi",
+  health_beauty: "Zdrowie i uroda",
+  free_stuff: "Oddam za darmo",
+  other: "Inne",
+};

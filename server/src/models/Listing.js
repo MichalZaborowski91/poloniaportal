@@ -70,25 +70,10 @@ const ListingDataSchema = new Schema(
       type: [String],
       default: [],
     },
-    // MARKETPLACE
     category: {
       type: String,
-      enum: [
-        "automotive",
-        "real_estate",
-        "electronics",
-        "home_garden",
-        "fashion",
-        "kids",
-        "sports_hobbies",
-        "agriculture",
-        "animals",
-        "music_education",
-        "business_services",
-        "health_beauty",
-        "free_stuff",
-        "other",
-      ],
+      trim: true,
+      maxlength: 120,
     },
 
     price: {
@@ -178,6 +163,11 @@ const ListingSchema = new Schema(
       default: null,
     },
 
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
+
     isPaid: {
       type: Boolean,
       default: false,
@@ -190,6 +180,21 @@ const ListingSchema = new Schema(
     featuredDays: {
       type: Number,
       enum: [0, 7, 14, 31],
+      default: 0,
+    },
+
+    featuredUntil: {
+      type: Date,
+      default: null,
+    },
+
+    views: {
+      type: Number,
+      default: 0,
+    },
+
+    favoritesCount: {
+      type: Number,
       default: 0,
     },
 
@@ -210,9 +215,18 @@ ListingSchema.pre("validate", function () {
     return;
   }
 
+  const now = new Date();
+
   if (!this.expiresAt) {
-    const now = new Date();
-    this.expiresAt = new Date(now.setDate(now.getDate() + this.durationDays));
+    this.expiresAt = new Date(
+      now.getTime() + this.durationDays * 24 * 60 * 60 * 1000,
+    );
+  }
+
+  if (this.featuredDays > 0 && !this.featuredUntil) {
+    this.featuredUntil = new Date(
+      now.getTime() + this.featuredDays * 24 * 60 * 60 * 1000,
+    );
   }
 });
 

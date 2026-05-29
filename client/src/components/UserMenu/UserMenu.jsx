@@ -115,7 +115,7 @@ export const UserMenu = ({ onMenuClose, scrolled }) => {
             Moje firmy
           </Link>
           <Link
-            to={routes.accountCompanies(country)}
+            to={`/${country}/my-listings`}
             onClick={() => {
               setOpen(false);
               setHovered(false);

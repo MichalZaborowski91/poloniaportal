@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import listingRoutes from "./routes/listing.routes.js";
 import { deleteExpiredUsers } from "./jobs/deleteUsers.job.js";
+import { deleteExpiredListings } from "./jobs/deleteListings.job.js";
 import companyRoutes from "./routes/company.routes.js";
 //import { loginLimiter } from "./middleware/rateLimit.js";
 
@@ -53,6 +54,25 @@ app.get("/api/cron/delete-users", async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     console.error("Cron error:", err);
+    res.status(500).json({ ok: false });
+  }
+});
+app.get("/api/cron/delete-listings", async (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    await deleteExpiredListings();
+
+    console.log("Cron: deleted listings removed");
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Cron error:", err);
+
     res.status(500).json({ ok: false });
   }
 });

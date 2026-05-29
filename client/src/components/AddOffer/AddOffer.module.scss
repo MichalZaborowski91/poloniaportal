@@ -44,6 +44,10 @@
     cursor: pointer;
     font-size: 14px;
     text-align: center;
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      scale: calc(1.05);
+    }
   }
 
   &__breadcrumb {
@@ -106,24 +110,18 @@
       border-radius: 4px;
       border: 1px solid #ccc;
     }
-
-    button {
-      margin-top: 10px;
-      padding: 10px;
-      border: none;
-      background: black;
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-    }
   }
 }
 
 .addOffer__imageUploader {
   display: flex;
-  flex-direction: column;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  border-top: 1px solid #f1efef;
+  border-bottom: 1px solid #f1efef;
   gap: 10px;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
 }
 
 .addOffer__imagePreview {
@@ -137,11 +135,14 @@
 
 .addOffer__imageButton {
   padding: 10px 14px;
-  border-radius: 6px;
+  border-radius: 4px;
   background: black;
   color: white;
   cursor: pointer;
   font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  width: 150px;
 }
 
 .addOffer__imageButton input {
@@ -282,41 +283,6 @@
   font-weight: 600;
 }
 
-.addOffer__subtitle {
-  margin: 20px 0 12px;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.addOffer__durationOptions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 25px;
-}
-
-.addOffer__durationButton {
-  min-width: 100px;
-  padding: 12px 18px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s;
-}
-
-.addOffer__durationButton:hover {
-  border-color: #111;
-  background: #fafafa;
-}
-
-.addOffer__durationButtonActive {
-  background: #111;
-  color: #fff;
-  border-color: #111;
-}
-
 .addOffer__promotionOptions {
   display: flex;
   flex-direction: column;
@@ -343,4 +309,231 @@
   margin-top: 4px;
   color: #666;
   font-size: 14px;
+}
+
+.addOffer__removeButton {
+  border: none;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 130px;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    scale: calc(1.05);
+    background: #d9363e;
+  }
+}
+
+.buttonLike {
+  background: #2d6cdf;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+  width: 130px;
+  margin-bottom: 10px;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    scale: calc(1.05);
+  }
+}
+
+.addOffer__imageActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.adInfo {
+  padding-top: 25px;
+  padding-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+textarea {
+  resize: none;
+  height: 150px;
+}
+
+//--------------------------- Contact section
+.contactSection {
+  &__title {
+    margin-top: 0;
+    margin-bottom: 5px;
+  }
+  &__container {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-top: 1px solid #f1efef;
+    border-bottom: 1px solid #f1efef;
+  }
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+  }
+  &__item {
+    margin-bottom: 5px;
+  }
+  &__input {
+    width: 100%;
+  }
+}
+//*****************************
+
+//------------------duration
+
+.duration {
+  &__title {
+    margin-top: 25px;
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  &__container {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    border: 1px solid #f1efef;
+    padding: 15px;
+    justify-content: center;
+    border-radius: 4px;
+  }
+  &__buttons {
+    min-width: 100px;
+    padding: 12px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    border: none;
+    background: black;
+    color: white;
+    cursor: pointer;
+
+    &:hover {
+      scale: calc(1.07);
+    }
+
+    &--active {
+      background: #2d6cdf !important;
+      color: #fff !important;
+      scale: calc(1.05);
+    }
+  }
+}
+
+//*********************featured
+
+.featured {
+  &__title {
+    margin-top: 25px;
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  &__container {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    border: 1px solid #f1efef;
+    padding: 15px;
+    justify-content: center;
+    border-radius: 4px;
+    background-color: #f1efef;
+  }
+  &__buttons {
+    min-width: 120px;
+    padding: 12px 18px;
+    border-radius: 4px;
+    border: none;
+    background: black;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      scale: calc(1.07);
+    }
+
+    &--active {
+      background: #2d6cdf !important;
+      color: #fff !important;
+      scale: calc(1.05);
+    }
+
+    &--disabled {
+      opacity: 0.4;
+      cursor: not-allowed !important;
+      transform: none;
+    }
+  }
+}
+//***************urgent
+
+.urgent {
+  margin-bottom: 25px;
+  &__title {
+    margin-top: 25px;
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  &__container {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    border: 1px solid #f1efef;
+    padding: 15px;
+    justify-content: center;
+    border-radius: 4px;
+    background-color: #f1efef;
+  }
+  &__button {
+    min-width: 120px;
+    padding: 12px 18px;
+    border-radius: 4px;
+    border: none;
+    background: black;
+    color: white;
+    cursor: pointer;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      scale: calc(1.07);
+    }
+
+    &--active {
+      background: #ff4d4f !important;
+      color: #fff !important;
+      scale: calc(1.05);
+    }
+  }
+}
+
+.imageItem {
+  position: relative;
+}
+
+.removeImageButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 10; // 🔥 BEZ TEGO NIE DZIAŁA
+  background: #f1efef;
+  color: black;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
 }

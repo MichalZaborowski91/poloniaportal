@@ -29,6 +29,11 @@ import { PublishCompany } from "./pages/Companies/PublishCompany/PublishCompany"
 import { CompaniesDatabase } from "./pages/Companies/CompaniesDatabase/CompaniesDatabase";
 import { HomePage } from "./pages/HomePage/HomePage";
 import { AddOfferPage } from "./pages/AddOfferPage/AddOfferPage";
+import { PublicListing } from "./pages/PublicListing/PublicListing";
+import { MyListings } from "./pages/MyListings/MyListings";
+import { MyListingsLayout } from "./pages/MyListingsLayout/MyListingsLayout";
+import { DeletedListings } from "./pages/DeletedListings/DeletedListings";
+import { EditListing } from "./pages/EditListings/EditListings";
 
 export const App = () => {
   return (
@@ -49,6 +54,7 @@ export const App = () => {
         <Route path="reset-password/:token" element={<ResetPassword />} />
         <Route path="confirm-email-change" element={<ConfirmEmailChange />} />
         <Route path="pricing" element={<Pricing />} />
+        <Route path="listing/:id" element={<PublicListing />} />
         <Route
           path="forgot-password"
           element={
@@ -104,6 +110,25 @@ export const App = () => {
             </ProfileCompletedRoute>
           }
         />
+        <Route
+          path="edit-listing/:id"
+          element={
+            <ProfileCompletedRoute>
+              <EditListing />
+            </ProfileCompletedRoute>
+          }
+        />
+        <Route
+          path="my-listings"
+          element={
+            <ProtectedRoute>
+              <MyListingsLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<MyListings />} />
+          <Route path="deleted" element={<DeletedListings />} />
+        </Route>
 
         <Route path="*" element={<h2>Not Found</h2>} />
       </Route>
