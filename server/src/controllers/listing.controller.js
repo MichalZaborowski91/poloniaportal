@@ -580,3 +580,70 @@ export const getMyListingById = async (req, res) => {
     });
   }
 };
+
+export const updateListing = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const listing = await Listing.findOne({
+      _id: id,
+      user: req.user._id,
+    });
+
+    if (!listing) {
+      return res.status(404).json({
+        message: "Listing not found",
+      });
+    }
+
+    const {
+      company,
+      title,
+      description,
+
+      city,
+      contactName,
+      contactPhone,
+      contactEmail,
+
+      position,
+      portfolioLink,
+      linkedinLink,
+
+      category,
+      condition,
+      price,
+    } = req.body;
+
+    listing.company = company || null;
+
+    listing.title = title;
+    listing.description = description;
+
+    listing.data.city = city;
+    listing.data.contactName = contactName;
+    listing.data.contactPhone = contactPhone;
+    listing.data.contactEmail = contactEmail;
+
+    listing.data.position = position;
+    listing.data.portfolioLink = portfolioLink;
+    listing.data.linkedinLink = linkedinLink;
+
+    listing.data.category = category;
+    listing.data.condition = condition || undefined;
+    listing.data.price = price || undefined;
+
+    await listing.save();
+
+    res.json({
+      success: true,
+      listing,
+    });
+  } catch (err) {
+    console.error("UPDATE LISTING ERROR:", err);
+
+    res.status(500).json({
+      message: "Failed to update listing",
+    });
+  }
+};

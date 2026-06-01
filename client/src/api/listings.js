@@ -112,3 +112,25 @@ export const getMyListingById = async (country, listingId) => {
 
   return data.listing;
 };
+
+export const updateListing = async (country, listingId, formData) => {
+  const res = await fetch(
+    `${API_URL}/api/${country}/my-listings/${listingId}/update`,
+    {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    },
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed to update listing");
+  }
+
+  return data;
+};

@@ -11,6 +11,7 @@ import {
   renewListing,
   featureListing,
   getMyListingById,
+  updateListing,
 } from "../controllers/listing.controller.js";
 import { uploadListingImage } from "../middleware/uploadListingImage.js";
 
@@ -29,6 +30,7 @@ router.patch("/:country/my-listings/:id/delete", requireAuth, deleteListing);
 router.patch("/:country/my-listings/:id/restore", requireAuth, restoreListing);
 router.patch("/:country/my-listings/:id/renew", requireAuth, renewListing);
 router.patch("/:country/my-listings/:id/feature", requireAuth, featureListing);
+router.patch("/:country/my-listings/:id/update", requireAuth, updateListing);
 router.get("/:country/my-listings/:id", requireAuth, getMyListingById);
 router.get("/:country/listings/:id", getListingById);
 
