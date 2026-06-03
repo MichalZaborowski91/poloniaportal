@@ -114,15 +114,56 @@ export const getMyListingById = async (country, listingId) => {
 };
 
 export const updateListing = async (country, listingId, formData) => {
+  const body = new FormData();
+
+  body.append("company", formData.company || "");
+  body.append("title", formData.title || "");
+  body.append("description", formData.description || "");
+
+  body.append("city", formData.city || "");
+
+  body.append("contactName", formData.contactName || "");
+  body.append("contactPhone", formData.contactPhone || "");
+  body.append("contactEmail", formData.contactEmail || "");
+
+  body.append("position", formData.position || "");
+
+  body.append("portfolioLink", formData.portfolioLink || "");
+  body.append("linkedinLink", formData.linkedinLink || "");
+
+  body.append("category", formData.category || "");
+  body.append("condition", formData.condition || "");
+  body.append("price", formData.price || "");
+
+  // SINGLE IMAGE
+  if (formData.image instanceof File) {
+    body.append("image", formData.image);
+  }
+
+  body.append(
+    "existingImage",
+    typeof formData.image === "string" ? formData.image : "",
+  );
+
+  // MULTI IMAGES
+  const existingImages = (formData.images || []).filter(
+    (img) => typeof img === "string",
+  );
+
+  body.append("existingImages", JSON.stringify(existingImages));
+
+  (formData.images || [])
+    .filter((img) => img instanceof File)
+    .forEach((file) => {
+      body.append("images", file);
+    });
+
   const res = await fetch(
     `${API_URL}/api/${country}/my-listings/${listingId}/update`,
     {
       method: "PATCH",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
+      body,
     },
   );
 

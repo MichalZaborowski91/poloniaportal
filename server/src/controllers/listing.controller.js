@@ -2,6 +2,7 @@ import Listing from "../models/Listing.js";
 import { Company } from "../models/Company.js";
 import cloudinary from "../config/cloudinary.js";
 import mongoose from "mongoose";
+import { getPublicIdFromUrl } from "../../utils/getPublicIdFromUrl.js";
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -585,10 +586,19 @@ export const updateListing = async (req, res) => {
   try {
     const { id } = req.params;
 
+    const existingImage = req.body.existingImage || "";
+
+    const existingImages = req.body.existingImages
+      ? JSON.parse(req.body.existingImages)
+      : [];
+
     const listing = await Listing.findOne({
       _id: id,
       user: req.user._id,
     });
+
+    const oldImages = listing?.data?.images || [];
+    const oldSingleImage = listing.data.image;
 
     if (!listing) {
       return res.status(404).json({
@@ -631,7 +641,104 @@ export const updateListing = async (req, res) => {
 
     listing.data.category = category;
     listing.data.condition = condition || undefined;
-    listing.data.price = price || undefined;
+    listing.data.price = price !== "" ? Number(price) : undefined;
+
+    if (req.files?.image?.[0]) {
+      const file = req.files.image[0];
+
+      const uploadedImageUrl = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "poloniaportal/listings",
+          },
+          (error, result) => {
+            if (error) {
+              return reject(error);
+            }
+
+            resolve(result.secure_url);
+          },
+        );
+
+        uploadStream.end(file.buffer);
+      });
+
+      listing.data.image = uploadedImageUrl;
+      if (oldSingleImage) {
+        const publicId = getPublicIdFromUrl(oldSingleImage);
+
+        if (publicId) {
+          try {
+            await cloudinary.uploader.destroy(publicId);
+          } catch (err) {
+            console.error("CLOUDINARY SINGLE IMAGE DELETE ERROR:", err);
+          }
+        }
+      }
+    } else {
+      listing.data.image = existingImage || null;
+    }
+
+    let finalImages = [...existingImages];
+
+    if (req.files?.images?.length) {
+      const uploadedImages = await Promise.all(
+        req.files.images.map((file) => {
+          return new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+              {
+                folder: "poloniaportal/listings",
+              },
+              (error, result) => {
+                if (error) {
+                  return reject(error);
+                }
+
+                resolve(result.secure_url);
+              },
+            );
+
+            uploadStream.end(file.buffer);
+          });
+        }),
+      );
+
+      finalImages = [...finalImages, ...uploadedImages];
+    }
+    finalImages = finalImages.slice(0, 5);
+    listing.data.images = finalImages;
+
+    const removedImages = oldImages.filter(
+      (img) => !existingImages.includes(img),
+    );
+
+    await Promise.all(
+      removedImages.map(async (url) => {
+        const publicId = getPublicIdFromUrl(url);
+
+        if (!publicId) {
+          return;
+        }
+
+        try {
+          await cloudinary.uploader.destroy(publicId);
+        } catch (err) {
+          console.error("CLOUDINARY DELETE ERROR:", err);
+        }
+      }),
+    );
+
+    if (
+      oldSingleImage &&
+      oldSingleImage !== existingImage &&
+      !req.files?.image?.[0]
+    ) {
+      const publicId = getPublicIdFromUrl(oldSingleImage);
+
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
 
     await listing.save();
 
