@@ -12,6 +12,8 @@ import {
   featureListing,
   getMyListingById,
   updateListing,
+  permanentlyDeleteSelectedListings,
+  permanentlyDeleteAllDeletedListings,
 } from "../controllers/listing.controller.js";
 import { uploadListingImage } from "../middleware/uploadListingImage.js";
 
@@ -38,5 +40,15 @@ router.patch(
 );
 router.get("/:country/my-listings/:id", requireAuth, getMyListingById);
 router.get("/:country/listings/:id", getListingById);
+router.delete(
+  "/:country/my-listings/delete-selected",
+  requireAuth,
+  permanentlyDeleteSelectedListings,
+);
+router.delete(
+  "/:country/my-listings/delete-all-deleted",
+  requireAuth,
+  permanentlyDeleteAllDeletedListings,
+);
 
 export default router;

@@ -3,6 +3,7 @@ import { Company } from "../models/Company.js";
 import cloudinary from "../config/cloudinary.js";
 import mongoose from "mongoose";
 import { getPublicIdFromUrl } from "../../utils/getPublicIdFromUrl.js";
+import { deleteListingImages } from "../../utils/deleteListingImages.js";
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -751,6 +752,65 @@ export const updateListing = async (req, res) => {
 
     res.status(500).json({
       message: "Failed to update listing",
+    });
+  }
+};
+
+export const permanentlyDeleteSelectedListings = async (req, res) => {
+  try {
+    const { listingIds } = req.body;
+
+    const listings = await Listing.find({
+      _id: { $in: listingIds },
+      user: req.user._id,
+      status: "deleted",
+    });
+
+    for (const listing of listings) {
+      await deleteListingImages(listing);
+
+      await Listing.deleteOne({
+        _id: listing._id,
+      });
+    }
+
+    res.json({
+      success: true,
+      deleted: listings.length,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: "Failed to delete listings",
+    });
+  }
+};
+
+export const permanentlyDeleteAllDeletedListings = async (req, res) => {
+  try {
+    const listings = await Listing.find({
+      user: req.user._id,
+      status: "deleted",
+    });
+
+    for (const listing of listings) {
+      await deleteListingImages(listing);
+
+      await Listing.deleteOne({
+        _id: listing._id,
+      });
+    }
+
+    res.json({
+      success: true,
+      deleted: listings.length,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: "Failed to delete listings",
     });
   }
 };

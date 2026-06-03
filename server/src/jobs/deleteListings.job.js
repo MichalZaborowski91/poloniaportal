@@ -1,3 +1,4 @@
+import { deleteListingImages } from "../../utils/deleteListingImages.js";
 import Listing from "../models/Listing.js";
 
 export const deleteExpiredListings = async () => {
@@ -5,10 +6,18 @@ export const deleteExpiredListings = async () => {
 
   const cutoffDate = new Date(Date.now() - THIRTY_ONE_DAYS);
 
-  const result = await Listing.deleteMany({
+  const listings = await Listing.find({
     status: "deleted",
     deletedAt: { $lte: cutoffDate },
   });
 
-  console.log(`Deleted ${result.deletedCount} permanently deleted listings`);
+  for (const listing of listings) {
+    await deleteListingImages(listing);
+
+    await Listing.deleteOne({
+      _id: listing._id,
+    });
+  }
+
+  console.log(`Deleted ${listings.length} permanently deleted listings`);
 };

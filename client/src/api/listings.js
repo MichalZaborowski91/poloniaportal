@@ -175,3 +175,48 @@ export const updateListing = async (country, listingId, formData) => {
 
   return data;
 };
+
+export const permanentlyDeleteSelectedListings = async (
+  country,
+  listingIds,
+) => {
+  const res = await fetch(
+    `${API_URL}/api/${country}/my-listings/delete-selected`,
+    {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        listingIds,
+      }),
+    },
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed");
+  }
+
+  return data;
+};
+
+export const permanentlyDeleteAllDeletedListings = async (country) => {
+  const res = await fetch(
+    `${API_URL}/api/${country}/my-listings/delete-all-deleted`,
+    {
+      method: "DELETE",
+      credentials: "include",
+    },
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed");
+  }
+
+  return data;
+};
