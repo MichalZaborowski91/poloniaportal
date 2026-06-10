@@ -270,11 +270,19 @@ export const getListingById = async (req, res) => {
   try {
     const { id, country } = req.params;
 
-    const listing = await Listing.findOne({
-      _id: id,
-      country,
-      status: "active",
-    })
+    const listing = await Listing.findOneAndUpdate(
+      {
+        _id: id,
+        country,
+        status: "active",
+      },
+      {
+        $inc: { views: 1 },
+      },
+      {
+        new: true,
+      },
+    )
       .populate({
         path: "user",
         select: "profile",

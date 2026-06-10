@@ -34,6 +34,7 @@ import { MyListings } from "./pages/MyListings/MyListings";
 import { MyListingsLayout } from "./pages/MyListingsLayout/MyListingsLayout";
 import { DeletedListings } from "./pages/DeletedListings/DeletedListings";
 import { EditListing } from "./pages/EditListings/EditListings";
+import { Favorites } from "./pages/Favorites/Favorites";
 
 export const App = () => {
   return (
@@ -129,6 +130,14 @@ export const App = () => {
           <Route index element={<MyListings />} />
           <Route path="deleted" element={<DeletedListings />} />
         </Route>
+        <Route
+          path="favorites"
+          element={
+            <ProtectedRoute>
+              <Favorites />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="*" element={<h2>Not Found</h2>} />
       </Route>

@@ -6,6 +6,10 @@ import { TYPE_LABELS } from "../../app/adLabels";
 import { BsHeart, BsHeartFill, BsShare } from "react-icons/bs";
 import { COUNTRIES_PL } from "../../app/countriesPL";
 import { MARKET_CATEGORY_LABELS } from "../../app/marketplaceCategories";
+import { useAuth } from "../../hooks/useAuth";
+import toast from "react-hot-toast";
+
+import { toggleFavoriteListing, getFavoriteStatus } from "../../api/listings";
 
 export const PublicListing = () => {
   const { id, country } = useParams();
@@ -14,8 +18,28 @@ export const PublicListing = () => {
   const [activeImage, setActiveImage] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
-  const toggleFavorite = () => {
-    setIsFavorite((prev) => !prev);
+  const { user } = useAuth();
+
+  const toggleFavorite = async () => {
+    if (!user) {
+      toast.error("Zaloguj się aby dodać ogłoszenie do ulubionych");
+      return;
+    }
+
+    try {
+      const result = await toggleFavoriteListing(country, listing._id);
+
+      setIsFavorite(result.isFavorite);
+
+      if (result.isFavorite) {
+        toast.success("Dodano do ulubionych");
+      } else {
+        toast.success("Usunięto z ulubionych");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Nie udało się zaktualizować ulubionych");
+    }
   };
 
   const getPlaceholderImage = () => {
@@ -49,13 +73,22 @@ export const PublicListing = () => {
 
         const data = await res.json();
         setListing(data.listing);
+        if (user) {
+          try {
+            const favorite = await getFavoriteStatus(country, id);
+
+            setIsFavorite(favorite);
+          } catch (err) {
+            console.error(err);
+          }
+        }
       } catch (err) {
         console.error(err);
       }
     };
 
     fetchListing();
-  }, [id, country]);
+  }, [id, country, user]);
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -76,6 +109,9 @@ export const PublicListing = () => {
   };
 
   if (!listing) return <p>Loading...</p>;
+
+  const isOwner =
+    user?._id && listing?.user?._id && user._id === listing.user._id;
 
   const images =
     listing.data?.images?.length > 0
@@ -107,13 +143,15 @@ export const PublicListing = () => {
           </div>
 
           <div className={styles.actions}>
+            <span className={styles.views}>👁 {listing.views || 0}</span>
             <button onClick={handleShare} title="Udostępnij">
               <BsShare />
             </button>
-
-            <button onClick={toggleFavorite} title="Dodaj do ulubionych">
-              {isFavorite ? <BsHeartFill /> : <BsHeart />}
-            </button>
+            {!isOwner && (
+              <button onClick={toggleFavorite} title="Dodaj do ulubionych">
+                {isFavorite ? <BsHeartFill /> : <BsHeart />}
+              </button>
+            )}
           </div>
         </div>
         <div className={styles.header}>

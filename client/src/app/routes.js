@@ -24,4 +24,5 @@ export const routes = {
   listingsByCategory: (c, category) => `/${c}/listings?category=${category}`,
   companies: (c) => `/${c}/companies`,
   events: (c) => `/${c}/events`,
+  favorites: (c) => `/${c}/favorites`,
 };

@@ -15,6 +15,11 @@ import {
   permanentlyDeleteSelectedListings,
   permanentlyDeleteAllDeletedListings,
 } from "../controllers/listing.controller.js";
+import {
+  toggleFavoriteListing,
+  getFavoriteListings,
+  getFavoriteStatus,
+} from "../controllers/favorite.controller.js";
 import { uploadListingImage } from "../middleware/uploadListingImage.js";
 
 const router = express.Router();
@@ -40,6 +45,17 @@ router.patch(
 );
 router.get("/:country/my-listings/:id", requireAuth, getMyListingById);
 router.get("/:country/listings/:id", getListingById);
+router.get(
+  "/:country/listings/:id/favorite-status",
+  requireAuth,
+  getFavoriteStatus,
+);
+router.post(
+  "/:country/listings/:id/favorite",
+  requireAuth,
+  toggleFavoriteListing,
+);
+router.get("/:country/favorites", requireAuth, getFavoriteListings);
 router.delete(
   "/:country/my-listings/delete-selected",
   requireAuth,

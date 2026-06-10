@@ -124,7 +124,7 @@ export const UserMenu = ({ onMenuClose, scrolled }) => {
             Moje ogłoszenia
           </Link>
           <Link
-            to={routes.accountCompanies(country)}
+            to={routes.favorites(country)}
             onClick={() => {
               setOpen(false);
               setHovered(false);

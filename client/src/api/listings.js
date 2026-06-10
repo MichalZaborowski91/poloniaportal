@@ -220,3 +220,70 @@ export const permanentlyDeleteAllDeletedListings = async (country) => {
 
   return data;
 };
+
+export const toggleFavoriteListing = async (country, listingId) => {
+  const res = await fetch(
+    `${API_URL}/api/${country}/listings/${listingId}/favorite`,
+    {
+      method: "POST",
+      credentials: "include",
+    },
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed");
+  }
+
+  return data;
+};
+
+export const getFavoriteStatus = async (country, listingId) => {
+  const res = await fetch(
+    `${API_URL}/api/${country}/listings/${listingId}/favorite-status`,
+    {
+      credentials: "include",
+    },
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed");
+  }
+
+  return data.isFavorite;
+};
+
+export const getFavoriteListings = async (country) => {
+  const res = await fetch(`${API_URL}/api/${country}/favorites`, {
+    credentials: "include",
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed");
+  }
+
+  return data.listings || [];
+};
+
+export const removeFavoriteListing = async (country, listingId) => {
+  const res = await fetch(
+    `${API_URL}/api/${country}/listings/${listingId}/favorite`,
+    {
+      method: "POST",
+      credentials: "include",
+    },
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed");
+  }
+
+  return data;
+};
