@@ -1,6 +1,8 @@
 import Favorite from "../models/Favorite.js";
 import Listing from "../models/Listing.js";
+import { Company } from "../models/Company.js";
 
+//LISTINGS
 export const toggleFavoriteListing = async (req, res) => {
   try {
     const { id } = req.params;
@@ -112,6 +114,100 @@ export const getFavoriteStatus = async (req, res) => {
 
     res.status(500).json({
       message: "Failed to fetch favorite status",
+    });
+  }
+};
+
+//COMPANY
+export const toggleFavoriteCompany = async (req, res) => {
+  try {
+    const company = await Company.findById(req.params.id);
+
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found",
+      });
+    }
+
+    if (company.ownerId.toString() === req.user._id.toString()) {
+      return res.status(400).json({
+        message: "You cannot favorite your own company",
+      });
+    }
+
+    const existing = await Favorite.findOne({
+      user: req.user._id,
+      targetId: company._id,
+      targetType: "company",
+    });
+
+    if (existing) {
+      await existing.deleteOne();
+
+      return res.json({
+        isFavorite: false,
+      });
+    }
+
+    await Favorite.create({
+      user: req.user._id,
+      targetId: company._id,
+      targetType: "company",
+    });
+
+    res.json({
+      isFavorite: true,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: "Failed",
+    });
+  }
+};
+
+export const getCompanyFavoriteStatus = async (req, res) => {
+  try {
+    const favorite = await Favorite.findOne({
+      user: req.user._id,
+      targetId: req.params.id,
+      targetType: "company",
+    });
+
+    res.json({
+      isFavorite: !!favorite,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: "Failed",
+    });
+  }
+};
+
+export const getFavoriteCompanies = async (req, res) => {
+  try {
+    const favorites = await Favorite.find({
+      user: req.user._id,
+      targetType: "company",
+    });
+
+    const companyIds = favorites.map((f) => f.targetId);
+
+    const companies = await Company.find({
+      _id: { $in: companyIds },
+    });
+
+    res.json({
+      companies,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: "Failed",
     });
   }
 };

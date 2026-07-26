@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import eventRoutes from "./routes/event.routes.js";
 import listingRoutes from "./routes/listing.routes.js";
 import { deleteExpiredUsers } from "./jobs/deleteUsers.job.js";
 import { deleteExpiredListings } from "./jobs/deleteListings.job.js";
@@ -20,7 +21,7 @@ app.use(
 );
 
 //MIDDLEWARES
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
 
 //TEST LIMITER ENDPOINT
@@ -33,7 +34,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/companies", companyRoutes);
 
 app.use("/api", listingRoutes);
-app.use(express.json({ limit: "1mb" }));
+app.use("/api", eventRoutes);
+
 //HEALTH CHECK
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "API is running" });

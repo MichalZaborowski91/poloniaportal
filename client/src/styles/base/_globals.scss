@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+
+  color: var(--color-text);
+  background: var(--color-background);
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--color-primary);
+  color: var(--color-text-white);
+}
+
+strong {
+  font-weight: var(--font-weight-semibold);
+}
+
+b {
+  font-weight: var(--font-weight-bold);
+}

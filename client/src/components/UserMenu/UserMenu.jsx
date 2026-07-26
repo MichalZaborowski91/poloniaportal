@@ -124,6 +124,15 @@ export const UserMenu = ({ onMenuClose, scrolled }) => {
             Moje ogłoszenia
           </Link>
           <Link
+            to={`/${country}/my-events`}
+            onClick={() => {
+              setOpen(false);
+              setHovered(false);
+            }}
+          >
+            Moje wydarzenia
+          </Link>
+          <Link
             to={routes.favorites(country)}
             onClick={() => {
               setOpen(false);

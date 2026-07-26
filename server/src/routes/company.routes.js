@@ -14,6 +14,11 @@ import {
 import { uploadCompanyLogo } from "../middleware/uploadCompanyLogo.js";
 import { uploadCompanyLogo as uploadCompanyLogoController } from "../controllers/company.controller.js";
 import { optionalAuth } from "../middleware/optionalAuth.middleware.js";
+import {
+  getCompanyFavoriteStatus,
+  getFavoriteCompanies,
+  toggleFavoriteCompany,
+} from "../controllers/favorite.controller.js";
 
 const router = express.Router();
 
@@ -23,6 +28,9 @@ router.delete("/:id", requireAuth, deleteCompany);
 router.put("/:id", requireAuth, updateCompany);
 router.get("/", getPublicCompanies);
 router.get("/homepage", getHomePageCompanies);
+router.get("/favorites", requireAuth, getFavoriteCompanies);
+router.get("/:id/favorite-status", requireAuth, getCompanyFavoriteStatus);
+router.post("/:id/favorite", requireAuth, toggleFavoriteCompany);
 router.get("/:slug", optionalAuth, getCompanyBySlug);
 router.patch(
   "/:id/logo",

@@ -35,6 +35,11 @@ import { MyListingsLayout } from "./pages/MyListingsLayout/MyListingsLayout";
 import { DeletedListings } from "./pages/DeletedListings/DeletedListings";
 import { EditListing } from "./pages/EditListings/EditListings";
 import { Favorites } from "./pages/Favorites/Favorites";
+import { AddEvent } from "./pages/Events/AddEvent/AddEvent";
+import { MyEvents } from "./pages/Events/MyEvents/MyEvents";
+import { PublicEvents } from "./pages/Events/PublicEvents/PublicEvents";
+import { EventDetails } from "./pages/Events/EventDetails/EventDetails";
+import { EditEvent } from "./pages/Events/EditEvent/EditEvent";
 
 export const App = () => {
   return (
@@ -48,6 +53,8 @@ export const App = () => {
         <Route path="listings" element={<ListingsPage />} />
         <Route path="companies" element={<CompaniesDatabase />} />
         <Route path="company/:slug" element={<PublicCompany />} />
+        <Route path="events" element={<PublicEvents />} />
+        <Route path="events/:id" element={<EventDetails />} />
         <Route path="user/:displayName" element={<PublicUser />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
@@ -112,11 +119,35 @@ export const App = () => {
           }
         />
         <Route
+          path="add-event"
+          element={
+            <ProfileCompletedRoute>
+              <AddEvent />
+            </ProfileCompletedRoute>
+          }
+        />
+        <Route
+          path="edit-event/:id"
+          element={
+            <ProfileCompletedRoute>
+              <EditEvent />
+            </ProfileCompletedRoute>
+          }
+        />
+        <Route
           path="edit-listing/:id"
           element={
             <ProfileCompletedRoute>
               <EditListing />
             </ProfileCompletedRoute>
+          }
+        />
+        <Route
+          path="my-events"
+          element={
+            <ProtectedRoute>
+              <MyEvents />
+            </ProtectedRoute>
           }
         />
         <Route

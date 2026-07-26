@@ -1,6 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getCompanyBySlug } from "../../../api/company";
+import { useAuth } from "../../../hooks/useAuth";
+import toast from "react-hot-toast";
+import {
+  getCompanyBySlug,
+  toggleFavoriteCompany,
+  getCompanyFavoriteStatus,
+} from "../../../api/company";
 import { routes } from "../../../app/routes";
 import { useCountry } from "../../../app/useCountry";
 import styles from "../PublicCompany/PublicCompany.module.scss";
@@ -33,11 +39,49 @@ export const PublicCompany = () => {
   const [isMapVisible, setIsMapVisible] = useState(false);
   const [listings, setListings] = useState([]);
   const country = useCountry();
+  const { user } = useAuth();
   const mapRef = useRef(null);
 
-  const toggleFavorite = () => {
-    setIsFavorite((prev) => !prev);
+  const toggleFavorite = async () => {
+    if (!user) {
+      toast.error("Zaloguj się aby dodać firmę do ulubionych");
+      return;
+    }
+
+    try {
+      const result = await toggleFavoriteCompany(company._id);
+
+      setIsFavorite(result.isFavorite);
+
+      if (result.isFavorite) {
+        toast.success("Dodano do ulubionych");
+      } else {
+        toast.success("Usunięto z ulubionych");
+      }
+    } catch (err) {
+      console.error(err);
+
+      toast.error("Nie udało się zaktualizować ulubionych");
+    }
   };
+
+  useEffect(() => {
+    if (!user || !company?._id) {
+      return;
+    }
+
+    const loadFavoriteStatus = async () => {
+      try {
+        const status = await getCompanyFavoriteStatus(company._id);
+
+        setIsFavorite(status);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    loadFavoriteStatus();
+  }, [user, company]);
   useEffect(() => {
     if (!company?._id) return;
 
@@ -173,9 +217,11 @@ export const PublicCompany = () => {
               <BsShare />
             </button>
 
-            <button onClick={toggleFavorite} title="Dodaj do ulubionych">
-              {isFavorite ? <BsHeartFill /> : <BsHeart />}
-            </button>
+            {company.ownerId?._id !== user?._id && (
+              <button onClick={toggleFavorite} title="Dodaj do ulubionych">
+                {isFavorite ? <BsHeartFill /> : <BsHeart />}
+              </button>
+            )}
           </div>
         </div>
         <div className={styles.publicCompany__header}>

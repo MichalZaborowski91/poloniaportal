@@ -7,6 +7,8 @@ export const routes = {
   account: (c) => `/${c}/account`,
   security: (c) => `/${c}/account/security`,
   addOffer: (c) => `/${c}/add-offer`,
+  addEvent: (c) => `/${c}/add-event`,
+  editEvent: (c, id) => `/${c}/edit-event/${id}`,
   terms: () => "/terms",
   privacy: () => "/privacy",
   copyrights: () => "/copyrights",
@@ -25,4 +27,6 @@ export const routes = {
   companies: (c) => `/${c}/companies`,
   events: (c) => `/${c}/events`,
   favorites: (c) => `/${c}/favorites`,
+  myEvents: (c) => `/${c}/my-events`,
+  event: (c, id) => `/${c}/events/${id}`,
 };

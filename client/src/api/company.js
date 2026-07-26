@@ -136,3 +136,49 @@ export const getHomePageCompanies = async (country) => {
 
   return res.json();
 };
+
+export const toggleFavoriteCompany = async (companyId) => {
+  const res = await fetch(`${API_URL}/api/companies/${companyId}/favorite`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed");
+  }
+
+  return data;
+};
+
+export const getCompanyFavoriteStatus = async (companyId) => {
+  const res = await fetch(
+    `${API_URL}/api/companies/${companyId}/favorite-status`,
+    {
+      credentials: "include",
+    },
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed");
+  }
+
+  return data.isFavorite;
+};
+
+export const getFavoriteCompanies = async () => {
+  const res = await fetch(`${API_URL}/api/companies/favorites`, {
+    credentials: "include",
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed");
+  }
+
+  return data.companies;
+};

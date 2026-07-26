@@ -70,8 +70,15 @@ export const AddButton = ({ scrolled }) => {
           >
             Firma
           </Link>
-
-          <span className={styles.disabled}>Wydarzenie (wkrótce)</span>
+          <Link
+            to={routes.addEvent(country)}
+            onClick={() => {
+              setOpen(false);
+              setHovered(false);
+            }}
+          >
+            Wydarzenie
+          </Link>
         </div>
       )}
     </div>
