@@ -1,0 +1,16 @@
+:root {
+  --layout-max-width: 1280px;
+
+  --layout-padding-mobile: var(--space-4);
+  --layout-padding-tablet: var(--space-6);
+  --layout-padding-desktop: var(--space-8);
+
+  --header-height-mobile: 64px;
+  --header-height-mobile-scrolled: 54px;
+
+  --header-height-tablet: 72px;
+  --header-height-tablet-scrolled: 62px;
+
+  --header-height-desktop: 72px;
+  --header-height-desktop-scrolled: 62px;
+}

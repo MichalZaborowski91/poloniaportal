@@ -25,4 +25,28 @@
 
 .main {
   flex: 1;
+  padding-top: var(--header-height-mobile);
+}
+
+.backdrop {
+  position: fixed;
+  inset: var(--header-height-mobile) 0 0 0;
+
+  z-index: var(--z-backdrop);
+
+  background: rgb(0 0 0 / 35%);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    opacity var(--transition-fast),
+    visibility var(--transition-fast);
+}
+
+.backdropOpen {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }

@@ -8,9 +8,14 @@
 @use "./abstracts/theme";
 @use "./abstracts/transitions";
 @use "./abstracts/typography";
+@use "./abstracts/layout";
+@use "./abstracts/z-index";
 
 /* BASE */
 
 @use "./base/reset";
 @use "./base/globals";
 @use "./base/container";
+
+/* COMPONENT */
+@use "./components/button";

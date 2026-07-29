@@ -37,6 +37,34 @@ export const Layout = () => {
   };
 
   useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
     const handleScroll = () => {
       const y = window.scrollY;
 
@@ -90,22 +118,21 @@ export const Layout = () => {
           </div>
         </div>
       )}
+      <div
+        className={`${styles.backdrop} ${
+          isMobileMenuOpen ? styles.backdropOpen : ""
+        }`}
+        onClick={handleMenuClose}
+        aria-hidden="true"
+      />
+
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={handleMenuClose}
         user={user}
       />
 
-      <main
-        className={styles.main}
-        style={{
-          paddingTop: showDesktopAuthLayout
-            ? "0px"
-            : scrolled
-              ? "34px"
-              : "70px",
-        }}
-      >
+      <main className={styles.main}>
         <Outlet />
       </main>
       <Footer />

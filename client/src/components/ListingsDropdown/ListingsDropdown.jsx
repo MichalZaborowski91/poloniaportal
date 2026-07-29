@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useCountry } from "../../app/useCountry";
 import styles from "./ListingsDropdown.module.scss";
 import { BsChevronRight, BsChevronDown } from "react-icons/bs";
+import { LISTING_MENU } from "../../app/listingNavigation";
 
 export const ListingsDropdown = () => {
   const [open, setOpen] = useState(false);
@@ -15,38 +16,6 @@ export const ListingsDropdown = () => {
   const hoverTimeout = useRef(null);
 
   const isActive = location.pathname.startsWith(`/${country}/listings`);
-
-  const MENU = [
-    {
-      label: "Praca",
-      category: "job",
-      sub: [
-        { label: "Dam pracę", type: "job_offer" },
-        { label: "Szukam pracy", type: "job_wanted" },
-      ],
-    },
-    {
-      label: "Mieszkanie",
-      category: "housing",
-      sub: [
-        { label: "Wynajmę", type: "housing_offer" },
-        { label: "Szukam lokalu", type: "housing_wanted" },
-      ],
-    },
-    {
-      label: "Marketplace",
-      category: "market",
-      sub: [
-        { label: "Sprzedam", type: "market_offer" },
-        { label: "Kupię", type: "market_wanted" },
-      ],
-    },
-    {
-      label: "Usługi",
-      category: "service",
-      sub: [],
-    },
-  ];
 
   useEffect(() => {
     const fetchTotal = async () => {
@@ -112,7 +81,7 @@ export const ListingsDropdown = () => {
             Wszystkie {totalCount !== null && <span>({totalCount})</span>}
           </Link>
 
-          {MENU.map((item) => (
+          {LISTING_MENU.map((item) => (
             <div
               key={item.category}
               className={styles.dropdownItem}

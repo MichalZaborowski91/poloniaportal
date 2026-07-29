@@ -8,6 +8,7 @@ import { useCountry } from "../../app/useCountry";
 import { ValueSection } from "../../components/ValueSection/ValueSection";
 import { AdBanner } from "../../components/AddBanner/AddBanner";
 import { LatestListings } from "../../components/LatestListings/LatestListings";
+import Button from "../../components/ui/Button";
 
 export const HomePage = () => {
   const [homepageCompanies, setHomepageCompanies] = useState([]);
@@ -34,6 +35,7 @@ export const HomePage = () => {
       />
 
       <FeaturedCompanies companies={homepageCompanies} />
+      <Button variant="ghost">Ghost</Button>
       <ValueSection />
       <AdBanner />
       <LatestListings />
