@@ -2,13 +2,12 @@ import { routes } from "@/app/routes";
 import styles from "./MobileMenuAccount.module.scss";
 import { useCountry } from "@/app/useCountry";
 import { Link } from "react-router-dom";
+import { MobileMenuSection } from "../MobileMenuSection/MobileMenuSection";
 
 export const MobileMenuAccount = () => {
   const country = useCountry();
   return (
-    <section className={styles.account}>
-      <h2 className={styles.title}>Konto</h2>
-
+    <MobileMenuSection title="Konto">
       <div className={styles.content}>
         <Link to={routes.login(country)} className={styles.loginLink}>
           Zaloguj się
@@ -20,6 +19,6 @@ export const MobileMenuAccount = () => {
           Rejestracja
         </Link>
       </div>
-    </section>
+    </MobileMenuSection>
   );
 };

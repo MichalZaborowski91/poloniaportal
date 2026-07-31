@@ -5,15 +5,19 @@ import { useCountry } from "../../app/useCountry";
 import { useAuth } from "../../hooks/useAuth";
 import toast from "react-hot-toast";
 import styles from "../LogOutButton/LogOutButton.module.scss";
+import { MdLogout } from "react-icons/md";
 
-export const LogOutButton = () => {
+export const LogOutButton = ({ onLogout }) => {
   const navigate = useNavigate();
   const country = useCountry();
   const { refreshUser } = useAuth();
 
   const handleLogout = async () => {
+    onLogout?.();
+
     try {
       navigate(routes.home(country), { replace: true });
+
       await logout();
       await refreshUser();
     } catch {
@@ -22,7 +26,10 @@ export const LogOutButton = () => {
   };
   return (
     <button onClick={handleLogout} className={styles.logoutButton}>
-      Wyloguj
+      <span className={styles.left}>
+        <MdLogout className={styles.icon} />
+        <span>Wyloguj</span>
+      </span>
     </button>
   );
 };

@@ -1,0 +1,18 @@
+.menu {
+  position: fixed;
+  top: var(--header-height);
+  right: 0;
+  width: min(360px, 100%);
+  height: calc(100dvh - var(--header-height));
+
+  background: var(--color-surface);
+
+  transform: translateX(100%);
+  transition: transform var(--transition-fast);
+
+  z-index: 1001;
+}
+
+.open {
+  transform: translateX(0);
+}

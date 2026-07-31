@@ -9,9 +9,10 @@ import { RegisterButton } from "../RegisterButton/RegisterButton";
 import { LogoSecondary } from "../LogoSecondary/LogoSecondary";
 import { CurrentCountry } from "../CurrentCountry/CurrentCountry";
 import styles from "../Layout/Layout.module.scss";
+import { MobileUserMenu } from "../MobileUserMenu/MobileUserMenu";
 
 export const Layout = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activePanel, setActivePanel] = useState(null);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
   const [scrolled, setScrolled] = useState(false);
 
@@ -28,16 +29,27 @@ export const Layout = () => {
   const isLoginPage = location.pathname.endsWith("/login");
   const isRegisterPage = location.pathname.endsWith("/register");
 
-  const handleMenuToggle = () => {
-    setIsMobileMenuOpen((prev) => !prev);
+  const isNavigationOpen = activePanel === "navigation";
+  const isUserMenuOpen = activePanel === "user";
+
+  const handleNavigationClose = () => {
+    setActivePanel((prev) => (prev === "navigation" ? null : prev));
   };
 
-  const handleMenuClose = () => {
-    setIsMobileMenuOpen(false);
+  const handleNavigationToggle = () => {
+    setActivePanel((prev) => (prev === "navigation" ? null : "navigation"));
+  };
+
+  const handleUserMenuToggle = () => {
+    setActivePanel((prev) => (prev === "user" ? null : "user"));
+  };
+
+  const handlePanelClose = () => {
+    setActivePanel(null);
   };
 
   useEffect(() => {
-    if (isMobileMenuOpen) {
+    if (activePanel) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -46,14 +58,14 @@ export const Layout = () => {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isMobileMenuOpen]);
+  }, [activePanel]);
 
   useEffect(() => {
-    if (!isMobileMenuOpen) return;
+    if (!activePanel) return;
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        setIsMobileMenuOpen(false);
+        setActivePanel(null);
       }
     };
 
@@ -62,7 +74,7 @@ export const Layout = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isMobileMenuOpen]);
+  }, [activePanel]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -77,9 +89,9 @@ export const Layout = () => {
   }, []);
 
   useEffect(() => {
-    if (isMobileMenuOpen) {
+    if (activePanel) {
       queueMicrotask(() => {
-        setIsMobileMenuOpen(false);
+        setActivePanel(null);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,9 +112,12 @@ export const Layout = () => {
         <>
           <Header
             scrolled={scrolled}
-            onMenuToggle={handleMenuToggle}
-            onMenuClose={handleMenuClose}
-            isMenuOpen={isMobileMenuOpen}
+            onMenuToggle={handleNavigationToggle}
+            onUserMenuToggle={handleUserMenuToggle}
+            onMenuClose={handlePanelClose}
+            isMenuOpen={isNavigationOpen}
+            isUserMenuOpen={isUserMenuOpen}
+            onNavigationClose={handleNavigationClose}
           />
         </>
       )}
@@ -120,17 +135,18 @@ export const Layout = () => {
       )}
       <div
         className={`${styles.backdrop} ${
-          isMobileMenuOpen ? styles.backdropOpen : ""
+          activePanel ? styles.backdropOpen : ""
         }`}
-        onClick={handleMenuClose}
+        onClick={handlePanelClose}
         aria-hidden="true"
       />
 
       <MobileMenu
-        isOpen={isMobileMenuOpen}
-        onClose={handleMenuClose}
+        isOpen={isNavigationOpen}
+        onClose={handlePanelClose}
         user={user}
       />
+      <MobileUserMenu isOpen={isUserMenuOpen} onClose={handlePanelClose} />
 
       <main className={styles.main}>
         <Outlet />

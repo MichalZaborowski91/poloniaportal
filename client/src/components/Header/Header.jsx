@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { UserMenu } from "../UserMenu/UserMenu";
 import { AccountMenu } from "../AccountMenu/AccountMenu";
 import { routes } from "../../app/routes";
 import { useCountry } from "../../app/useCountry";
@@ -14,10 +13,20 @@ import { CountryDropdown } from "../CountryDropdown/CountryDropdown";
 import { ListingsDropdown } from "../ListingsDropdown/ListingsDropdown";
 import { GAZETA_LINKS } from "../../app/newspaperLinks";
 import Container from "../Layout/Container/Container";
+import { DesktopUserMenu } from "../DesktopUserMenu/DesktopUserMenu";
+import { UserAvatar } from "../UserAvatar/UserAvatar";
 
-export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose, scrolled }) => {
+export const Header = ({
+  onMenuToggle,
+  isMenuOpen,
+  onMenuClose,
+  onNavigationClose,
+  onUserMenuToggle,
+  scrolled,
+}) => {
   const { user, loading } = useAuth();
   const country = useCountry();
+
   //const location = useLocation();
 
   //const hideAddOffer =
@@ -98,9 +107,32 @@ export const Header = ({ onMenuToggle, isMenuOpen, onMenuClose, scrolled }) => {
             <div className={styles.addButton}>
               <AddButton scrolled={scrolled} />
             </div>
-            <div className={styles.account}>
-              {user ? <UserMenu onMenuClose={onMenuClose} /> : <AccountMenu />}
-            </div>
+            {!user && (
+              <div className={styles.desktopAccount}>
+                <AccountMenu />
+              </div>
+            )}
+
+            {user && (
+              <>
+                <div className={styles.desktopAccount}>
+                  <DesktopUserMenu
+                    onMenuClose={onMenuClose}
+                    scrolled={scrolled}
+                  />
+                </div>
+
+                <div className={styles.mobileAccount}>
+                  <UserAvatar
+                    scrolled={scrolled}
+                    onClick={() => {
+                      onNavigationClose?.();
+                      onUserMenuToggle?.();
+                    }}
+                  />
+                </div>
+              </>
+            )}
 
             <button
               type="button"

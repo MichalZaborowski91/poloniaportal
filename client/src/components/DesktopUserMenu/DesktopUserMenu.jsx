@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useCountry } from "../../app/useCountry";
 import { routes } from "../../app/routes";
 import { LogOutButton } from "../LogOutButton/LogOutButton";
-import styles from "./UserMenu.module.scss";
-import defaultAvatar from "../../assets/avatar/avt.jpg";
+import styles from "./DesktopUserMenu.module.scss";
+import { UserAvatar } from "../UserAvatar/UserAvatar";
 
-export const UserMenu = ({ onMenuClose, scrolled }) => {
+export const DesktopUserMenu = ({ onMenuClose, scrolled }) => {
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
 
@@ -15,13 +15,6 @@ export const UserMenu = ({ onMenuClose, scrolled }) => {
   const menuRef = useRef(null);
   const country = useCountry();
   const hoverTimeout = useRef(null);
-
-  const avatarSrc = useMemo(() => {
-    if (!user?.profile?.avatar) {
-      return defaultAvatar;
-    }
-    return `${user.profile.avatar}?v=${user.profile.avatar}`;
-  }, [user?.profile?.avatar]);
 
   useEffect(() => {
     if (!open) return;
@@ -80,19 +73,15 @@ export const UserMenu = ({ onMenuClose, scrolled }) => {
         }, 150);
       }}
     >
-      <button
+      <UserAvatar
+        scrolled={scrolled}
         onClick={() => {
-          onMenuClose?.(); //MOBILE MENU CLOSE
-          setOpen((prevState) => !prevState);
+          onMenuClose?.();
+          setOpen((prev) => !prev);
         }}
-        className={styles.userMenu__triggerButton}
-      >
-        <img
-          src={avatarSrc}
-          alt="avatar"
-          className={`${styles.userMenu__avatar} ${scrolled ? styles.smallAvatar : ""}`}
-        />
-      </button>
+        buttonClassName={styles.userMenu__triggerButton}
+        className={styles.userMenu__avatar}
+      />
 
       {(open || hovered) && (
         <div className={styles.menu} role="menu">

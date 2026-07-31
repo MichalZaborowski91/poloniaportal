@@ -91,3 +91,23 @@
   opacity: 1;
   transform: scale(1);
 }
+
+.mobileAccount {
+  display: flex;
+  align-items: center;
+}
+
+.desktopAccount {
+  display: none;
+}
+
+@include desktop {
+  .mobileAccount {
+    display: none;
+  }
+
+  .desktopAccount {
+    display: flex;
+    align-items: center;
+  }
+}

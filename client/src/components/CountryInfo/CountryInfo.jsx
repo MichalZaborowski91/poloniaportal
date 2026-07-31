@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "../HeroInfo/HeroInfo.module.scss";
+import styles from "./CountryInfo.module.scss";
 import { COUNTRIES_PL } from "../../app/countriesPL";
 import {
   BsClock,
@@ -11,8 +11,10 @@ import {
   BsCloudFog,
   BsCloudLightning,
 } from "react-icons/bs";
+import { useCountry } from "@/app/useCountry";
 
-export default function HeroInfo({ countryCode = "ie" }) {
+export default function CountryInfo() {
+  const countryCode = useCountry();
   const [time, setTime] = useState("");
   const [weather, setWeather] = useState(null);
 
@@ -85,21 +87,22 @@ export default function HeroInfo({ countryCode = "ie" }) {
 
   return (
     <div className={styles.heroInfo}>
-      <div className={styles.capital}>{country.capital}:</div>
+      <div className={styles.capital}>{country.capital}</div>
 
       <div className={styles.meta}>
-        <BsClock className={styles.clock} />
-        <span>{time}</span>
-        <span className={styles.weather}>
-          {weather ? (
-            <>
-              {getWeatherIcon(weather.weathercode)}
-              {Math.round(weather.temperature)}°C
-            </>
-          ) : (
-            "…"
-          )}
-        </span>
+        <div className={styles.time}>
+          <BsClock className={styles.clock} />
+          <span>{time}</span>
+        </div>
+
+        <span className={styles.separator}>•</span>
+
+        <div className={styles.weather}>
+          {weather && getWeatherIcon(weather.weathercode)}
+          <span>
+            {weather ? `${Math.round(weather.temperature)}°C` : "..."}
+          </span>
+        </div>
       </div>
     </div>
   );

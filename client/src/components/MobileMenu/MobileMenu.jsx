@@ -1,19 +1,21 @@
-import styles from "./MobileMenu.module.scss";
+import { MobilePanel } from "../MobilePanel/MobilePanel";
 import { MobileMenuAccount } from "../MobileMenuAccount/MobileMenuAccount";
 import { MobileMenuNavigation } from "../MobileMenuNavigation/MobileMenuNavigation";
+import { useAuth } from "../../hooks/useAuth";
+import CountryInfo from "../CountryInfo/CountryInfo";
+import { MobileMenuSection } from "../MobileMenuSection/MobileMenuSection";
 
 export const MobileMenu = ({ isOpen, onClose }) => {
+  const { user } = useAuth();
   return (
-    <aside
-      onClick={(e) => e.stopPropagation()}
-      id="mobile-navigation"
-      className={`${styles.mobileMenu} ${isOpen ? styles.open : ""}`}
-    >
-      <div className={styles.content}>
-        <MobileMenuAccount />
+    <MobilePanel id="mobile-navigation" isOpen={isOpen}>
+      <MobileMenuSection>
+        <CountryInfo />
+      </MobileMenuSection>
 
-        <MobileMenuNavigation onNavigate={onClose} isMenuOpen={isOpen} />
-      </div>
-    </aside>
+      {!user && <MobileMenuAccount />}
+
+      <MobileMenuNavigation onNavigate={onClose} isMenuOpen={isOpen} />
+    </MobilePanel>
   );
 };

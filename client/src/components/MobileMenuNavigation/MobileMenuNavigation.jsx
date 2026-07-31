@@ -12,14 +12,13 @@ import {
 } from "react-icons/md";
 import { routes } from "@/app/routes";
 import { BsBoxArrowUpRight, BsChevronRight } from "react-icons/bs";
+import { MobileMenuSection } from "../MobileMenuSection/MobileMenuSection";
 
 export const MobileMenuNavigation = ({ onNavigate, isMenuOpen }) => {
   const country = useCountry();
 
   return (
-    <section className={styles.navigation}>
-      <h2 className={styles.title}>Nawigacja</h2>
-
+    <MobileMenuSection title="Nawigacja">
       <nav aria-label="Mobile navigation">
         <ul className={styles.navigationList}>
           <li className={styles.item}>
@@ -111,6 +110,6 @@ export const MobileMenuNavigation = ({ onNavigate, isMenuOpen }) => {
           </li>
         </ul>
       </nav>
-    </section>
+    </MobileMenuSection>
   );
 };
