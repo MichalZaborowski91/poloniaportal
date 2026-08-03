@@ -7,12 +7,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-.list {
-  list-style: none;
-  margin: 0;
-  padding: var(--space-2);
-}
-
 .link {
   display: flex;
   align-items: center;
@@ -78,4 +72,22 @@
 
 .active .label {
   color: var(--color-primary);
+}
+.sectionTitle {
+  padding: var(--space-4) var(--space-4) var(--space-2);
+
+  text-align: center;
+
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  color: var(--color-text-secondary);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--space-2) var(--space-2);
 }

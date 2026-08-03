@@ -101,6 +101,15 @@
   display: none;
 }
 
+.desktopCountry {
+  display: none;
+}
+
+.mobileCountry {
+  display: flex;
+  align-items: center;
+}
+
 @include desktop {
   .mobileAccount {
     display: none;
@@ -117,5 +126,14 @@
   .addButton {
     display: flex;
     align-items: center;
+  }
+
+  .desktopCountry {
+    display: flex;
+    align-items: center;
+  }
+
+  .mobileCountry {
+    display: none;
   }
 }

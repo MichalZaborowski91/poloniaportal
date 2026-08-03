@@ -7,7 +7,6 @@ import styles from "./Header.module.scss";
 import logo from "../../assets/logo/PoloniaPortalLogo.png";
 import Menu from "../../assets/icons/menu.svg?react";
 import CloseIcon from "../../assets/icons/x.svg?react";
-import { CountryDropdown } from "../CountryDropdown/CountryDropdown";
 import { ListingsDropdown } from "../ListingsDropdown/ListingsDropdown";
 import { GAZETA_LINKS } from "../../app/newspaperLinks";
 import Container from "../Layout/Container/Container";
@@ -15,6 +14,8 @@ import { DesktopUserMenu } from "../DesktopUserMenu/DesktopUserMenu";
 import { UserAvatar } from "../UserAvatar/UserAvatar";
 import { DesktopAccountMenu } from "../DesktopAccountMenu/DesktopAccountMenu";
 import { DesktopAddMenu } from "../DesktopAddMenu/DesktopAddMenu";
+import { DesktopCountryMenu } from "../DesktopCountryMenu/DesktopCountryMenu";
+import { MobileCountryButton } from "../MobileCountryButton/MobileCountryButton";
 
 export const Header = ({
   onMenuToggle,
@@ -22,6 +23,8 @@ export const Header = ({
   onMenuClose,
   onNavigationClose,
   onUserMenuToggle,
+  onCountryMenuToggle,
+  isCountryMenuOpen,
 }) => {
   const { user, loading } = useAuth();
   const country = useCountry();
@@ -94,7 +97,16 @@ export const Header = ({
           </nav>
 
           <div className={styles.actions}>
-            <CountryDropdown />
+            <div className={styles.desktopCountry}>
+              <DesktopCountryMenu />
+            </div>
+            <div className={styles.mobileCountry}>
+              <MobileCountryButton
+                isOpen={isCountryMenuOpen}
+                onClick={onCountryMenuToggle}
+              />
+            </div>
+
             <div className={styles.addButton}>
               <DesktopAddMenu />
             </div>

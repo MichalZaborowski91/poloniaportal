@@ -9,6 +9,7 @@ export const DesktopUserNavigation = ({ onNavigate }) => {
 
   return (
     <nav className={styles.navigation} aria-label="User navigation">
+      <div className={styles.sectionTitle}>Nawigacja</div>
       <ul className={styles.list}>
         {USER_MENU_ITEMS.map((item) => (
           <li key={item.key}>

@@ -10,6 +10,7 @@ import { LogoSecondary } from "../LogoSecondary/LogoSecondary";
 import { CurrentCountry } from "../CurrentCountry/CurrentCountry";
 import styles from "../Layout/Layout.module.scss";
 import { MobileUserMenu } from "../MobileUserMenu/MobileUserMenu";
+import { MobileCountryMenu } from "../MobileCountryMenu/MobileCountryMenu";
 
 export const Layout = () => {
   const [activePanel, setActivePanel] = useState(null);
@@ -30,6 +31,7 @@ export const Layout = () => {
 
   const isNavigationOpen = activePanel === "navigation";
   const isUserMenuOpen = activePanel === "user";
+  const isCountryMenuOpen = activePanel === "country";
 
   const handleNavigationClose = () => {
     setActivePanel((prev) => (prev === "navigation" ? null : prev));
@@ -41,6 +43,10 @@ export const Layout = () => {
 
   const handleUserMenuToggle = () => {
     setActivePanel((prev) => (prev === "user" ? null : "user"));
+  };
+
+  const handleCountryMenuToggle = () => {
+    setActivePanel((prev) => (prev === "country" ? null : "country"));
   };
 
   const handlePanelClose = () => {
@@ -100,9 +106,11 @@ export const Layout = () => {
           <Header
             onMenuToggle={handleNavigationToggle}
             onUserMenuToggle={handleUserMenuToggle}
+            onCountryMenuToggle={handleCountryMenuToggle}
             onMenuClose={handlePanelClose}
             isMenuOpen={isNavigationOpen}
             isUserMenuOpen={isUserMenuOpen}
+            isCountryMenuOpen={isCountryMenuOpen}
             onNavigationClose={handleNavigationClose}
           />
         </>
@@ -133,6 +141,10 @@ export const Layout = () => {
         user={user}
       />
       <MobileUserMenu isOpen={isUserMenuOpen} onClose={handlePanelClose} />
+      <MobileCountryMenu
+        isOpen={isCountryMenuOpen}
+        onClose={handlePanelClose}
+      />
 
       <main className={styles.main}>
         <Outlet />
