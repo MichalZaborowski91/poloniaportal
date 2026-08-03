@@ -25,6 +25,7 @@ export const USER_MENU_ITEMS = [
     label: "Moje firmy",
     icon: MdBusiness,
     path: (country) => `/${country}/account/companies`,
+    end: true,
   },
   {
     key: "events",

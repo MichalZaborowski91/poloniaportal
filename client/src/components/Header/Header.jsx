@@ -1,20 +1,20 @@
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { AccountMenu } from "../AccountMenu/AccountMenu";
 import { routes } from "../../app/routes";
 import { useCountry } from "../../app/useCountry";
 import styles from "./Header.module.scss";
 import logo from "../../assets/logo/PoloniaPortalLogo.png";
 import Menu from "../../assets/icons/menu.svg?react";
 import CloseIcon from "../../assets/icons/x.svg?react";
-import { AddButton } from "../AddButton/AddButton";
 import { CountryDropdown } from "../CountryDropdown/CountryDropdown";
 import { ListingsDropdown } from "../ListingsDropdown/ListingsDropdown";
 import { GAZETA_LINKS } from "../../app/newspaperLinks";
 import Container from "../Layout/Container/Container";
 import { DesktopUserMenu } from "../DesktopUserMenu/DesktopUserMenu";
 import { UserAvatar } from "../UserAvatar/UserAvatar";
+import { DesktopAccountMenu } from "../DesktopAccountMenu/DesktopAccountMenu";
+import { DesktopAddMenu } from "../DesktopAddMenu/DesktopAddMenu";
 
 export const Header = ({
   onMenuToggle,
@@ -22,18 +22,9 @@ export const Header = ({
   onMenuClose,
   onNavigationClose,
   onUserMenuToggle,
-  scrolled,
 }) => {
   const { user, loading } = useAuth();
   const country = useCountry();
-
-  //const location = useLocation();
-
-  //const hideAddOffer =
-  //location.pathname.endsWith("/forgot-password") ||
-  //location.pathname.endsWith("/reset-password") ||
-  // location.pathname.endsWith("/login") ||
-  //location.pathname.endsWith("/register");
 
   if (loading) {
     return null;
@@ -105,26 +96,22 @@ export const Header = ({
           <div className={styles.actions}>
             <CountryDropdown />
             <div className={styles.addButton}>
-              <AddButton scrolled={scrolled} />
+              <DesktopAddMenu />
             </div>
             {!user && (
               <div className={styles.desktopAccount}>
-                <AccountMenu />
+                <DesktopAccountMenu />
               </div>
             )}
 
             {user && (
               <>
                 <div className={styles.desktopAccount}>
-                  <DesktopUserMenu
-                    onMenuClose={onMenuClose}
-                    scrolled={scrolled}
-                  />
+                  <DesktopUserMenu onMenuClose={onMenuClose} />
                 </div>
 
                 <div className={styles.mobileAccount}>
                   <UserAvatar
-                    scrolled={scrolled}
                     onClick={() => {
                       onNavigationClose?.();
                       onUserMenuToggle?.();

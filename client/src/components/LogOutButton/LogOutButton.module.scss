@@ -22,7 +22,9 @@
     background-color var(--transition-fast),
     color var(--transition-fast);
 }
-
+.logoutButton:hover {
+  background: var(--color-surface-secondary);
+}
 .left {
   display: flex;
   align-items: center;
@@ -30,5 +32,5 @@
 }
 
 .icon {
-  font-size: 24px;
+  font-size: 28px;
 }

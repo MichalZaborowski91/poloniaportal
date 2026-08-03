@@ -31,7 +31,7 @@
 }
 
 .icon {
-  font-size: 20px;
+  font-size: 28px;
   color: var(--color-text-secondary);
 }
 .chevron {
@@ -53,7 +53,7 @@
   justify-content: space-between;
 
   min-height: 44px;
-  padding: 0 var(--space-3) 0 calc(var(--space-3) + 32px);
+  padding: 0 var(--space-3);
 
   border-radius: var(--radius-sm);
 
@@ -63,6 +63,17 @@
   transition:
     background-color var(--transition-fast),
     color var(--transition-fast);
+}
+
+.subLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.subIcon {
+  font-size: 20px;
+  color: var(--color-text-secondary);
 }
 
 .active {
@@ -108,12 +119,16 @@
   opacity: 1;
   margin-top: var(--space-1);
 }
+
 .current {
+  font-weight: 600;
   background: var(--color-surface-secondary);
   font-weight: 600;
 }
-.current {
-  font-weight: 600;
+
+.active .subIcon,
+.active .subChevron {
+  color: var(--color-primary);
 }
 
 .current .icon,

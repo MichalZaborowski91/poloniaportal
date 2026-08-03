@@ -5,7 +5,7 @@ import styles from "./UserAvatar.module.scss";
 
 export const UserAvatar = ({
   onClick,
-  scrolled,
+
   className = "",
   buttonClassName = "",
 }) => {
@@ -28,9 +28,7 @@ export const UserAvatar = ({
       <img
         src={avatarSrc}
         alt="Avatar użytkownika"
-        className={`${styles.avatar} ${
-          scrolled ? styles.smallAvatar : ""
-        } ${className}`}
+        className={`${styles.avatar} ${className}`}
       />
     </button>
   );

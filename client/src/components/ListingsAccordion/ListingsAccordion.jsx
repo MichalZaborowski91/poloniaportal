@@ -28,7 +28,7 @@ export const ListingsAccordion = ({ onNavigate, isMenuOpen }) => {
     <div className={styles.accordion}>
       <button
         type="button"
-        className={`${styles.link} ${isListingsPage ? styles.current : ""}`}
+        className={`${styles.link} ${isAccordionOpen ? styles.current : ""}`}
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={isAccordionOpen}
       >

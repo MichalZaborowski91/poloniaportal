@@ -14,7 +14,6 @@ import { MobileUserMenu } from "../MobileUserMenu/MobileUserMenu";
 export const Layout = () => {
   const [activePanel, setActivePanel] = useState(null);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
-  const [scrolled, setScrolled] = useState(false);
 
   const { user } = useAuth();
   const location = useLocation();
@@ -77,18 +76,6 @@ export const Layout = () => {
   }, [activePanel]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const y = window.scrollY;
-
-      setScrolled(y > 5);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
     if (activePanel) {
       queueMicrotask(() => {
         setActivePanel(null);
@@ -111,7 +98,6 @@ export const Layout = () => {
       {!showDesktopAuthLayout && (
         <>
           <Header
-            scrolled={scrolled}
             onMenuToggle={handleNavigationToggle}
             onUserMenuToggle={handleUserMenuToggle}
             onMenuClose={handlePanelClose}

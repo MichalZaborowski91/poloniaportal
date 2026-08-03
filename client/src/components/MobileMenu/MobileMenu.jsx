@@ -4,6 +4,7 @@ import { MobileMenuNavigation } from "../MobileMenuNavigation/MobileMenuNavigati
 import { useAuth } from "../../hooks/useAuth";
 import CountryInfo from "../CountryInfo/CountryInfo";
 import { MobileMenuSection } from "../MobileMenuSection/MobileMenuSection";
+import { AddAccordion } from "../AddAccordion/AddAccordion";
 
 export const MobileMenu = ({ isOpen, onClose }) => {
   const { user } = useAuth();
@@ -14,6 +15,9 @@ export const MobileMenu = ({ isOpen, onClose }) => {
       </MobileMenuSection>
 
       {!user && <MobileMenuAccount />}
+      <MobileMenuSection>
+        <AddAccordion onNavigate={onClose} />
+      </MobileMenuSection>
 
       <MobileMenuNavigation onNavigate={onClose} isMenuOpen={isOpen} />
     </MobilePanel>
