@@ -109,6 +109,82 @@
   display: flex;
   align-items: center;
 }
+.navExternal {
+  font-weight: 500;
+}
+
+.navItem a,
+.navExternal {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  height: 40px;
+  padding: 0 var(--space-3);
+
+  border-radius: var(--radius-sm);
+
+  text-decoration: none;
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+/* ---------- ICON ---------- */
+
+.icon {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+
+  transition: color var(--transition-fast);
+}
+
+/* ---------- LABEL ---------- */
+
+.label {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+
+  transition: color var(--transition-fast);
+}
+
+/* ---------- NORMAL HOVER ---------- */
+
+.navItem a:hover,
+.navExternal:hover {
+  background: var(--color-background);
+}
+
+.navItem a:hover .icon,
+.navExternal:hover .icon,
+.navItem a:hover .label,
+.navExternal:hover .label {
+  color: var(--color-text);
+}
+
+/* ---------- ACTIVE ---------- */
+
+.navItem a.active {
+  background: var(--color-primary-light);
+}
+
+.navItem a.active .icon,
+.navItem a.active .label {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* ---------- ACTIVE + HOVER ---------- */
+
+.navItem a.active:hover {
+  background: var(--color-background);
+}
+
+.navItem a.active:hover .icon,
+.navItem a.active:hover .label {
+  color: var(--color-text);
+}
 
 @include desktop {
   .mobileAccount {
@@ -135,5 +211,26 @@
 
   .mobileCountry {
     display: none;
+  }
+  .nav {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .navList {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  .navItem {
+    display: flex;
+    align-items: center;
   }
 }

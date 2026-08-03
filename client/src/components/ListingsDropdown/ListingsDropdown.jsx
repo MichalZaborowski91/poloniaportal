@@ -4,6 +4,7 @@ import { useCountry } from "../../app/useCountry";
 import styles from "./ListingsDropdown.module.scss";
 import { BsChevronRight, BsChevronDown } from "react-icons/bs";
 import { LISTING_MENU } from "../../app/listingNavigation";
+import { MdArticle } from "react-icons/md";
 
 export const ListingsDropdown = () => {
   const [open, setOpen] = useState(false);
@@ -50,6 +51,12 @@ export const ListingsDropdown = () => {
     return () => clearTimeout(hoverTimeout.current);
   }, []);
 
+  const handleClose = () => {
+    setOpen(false);
+    setHovered(false);
+    setActiveItem(null);
+  };
+
   return (
     <div
       className={styles.wrapper}
@@ -68,7 +75,10 @@ export const ListingsDropdown = () => {
         className={`${styles.button} ${isActive ? styles.active : ""}`}
         onClick={() => setOpen((prev) => !prev)}
       >
-        Ogłoszenia
+        <>
+          <MdArticle />
+          <span>Ogłoszenia</span>
+        </>
         <BsChevronDown
           size={16}
           className={`${styles.chevron} ${open || hovered ? styles.open : ""}`}
@@ -77,7 +87,7 @@ export const ListingsDropdown = () => {
 
       {(open || hovered) && (
         <div className={styles.dropdown}>
-          <Link to={`/${country}/listings`}>
+          <Link to={`/${country}/listings`} onClick={handleClose}>
             Wszystkie {totalCount !== null && <span>({totalCount})</span>}
           </Link>
 
@@ -88,7 +98,10 @@ export const ListingsDropdown = () => {
               onMouseEnter={() => setActiveItem(item.category)}
               onMouseLeave={() => setActiveItem(null)}
             >
-              <Link to={`/${country}/listings?category=${item.category}`}>
+              <Link
+                to={`/${country}/listings?category=${item.category}`}
+                onClick={handleClose}
+              >
                 {item.label}
                 {item.sub.length > 0 &&
                   (activeItem === item.category ? (
@@ -105,6 +118,7 @@ export const ListingsDropdown = () => {
                     <Link
                       key={sub.type}
                       to={`/${country}/listings?type=${sub.type}`}
+                      onClick={handleClose}
                     >
                       {sub.label}
                     </Link>

@@ -3,24 +3,46 @@
 }
 
 .button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 15px;
-  color: #111;
-  gap: 5px;
 
-  &:hover {
-    opacity: 0.7;
-  }
+  height: 40px;
+
+  padding: 0 var(--space-3);
+
+  border: none;
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+
+  cursor: pointer;
+
+  color: var(--color-text-secondary);
+  font-size: inherit;
+  font-weight: 500;
+
+  gap: var(--space-2);
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.button:hover {
+  background: var(--color-background);
+  color: var(--color-text);
 }
 
 .chevron {
-  transition: transform 0.2s ease;
+  color: var(--color-icon);
+
+  transition:
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.button:hover .chevron {
+  color: var(--color-icon-hover);
 }
 
 .open {
@@ -85,18 +107,12 @@
 }
 
 .active {
-  font-weight: 600;
-  position: relative;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
-.active::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 6px;
-  width: 89%;
-  height: 2px;
-  background: black;
+.active .chevron {
+  color: var(--color-primary);
 }
 
 //-----------------------------------------

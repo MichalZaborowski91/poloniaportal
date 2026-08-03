@@ -16,6 +16,7 @@ import { DesktopAccountMenu } from "../DesktopAccountMenu/DesktopAccountMenu";
 import { DesktopAddMenu } from "../DesktopAddMenu/DesktopAddMenu";
 import { DesktopCountryMenu } from "../DesktopCountryMenu/DesktopCountryMenu";
 import { MobileCountryButton } from "../MobileCountryButton/MobileCountryButton";
+import { MdBusiness, MdEvent, MdForum, MdNewspaper } from "react-icons/md";
 
 export const Header = ({
   onMenuToggle,
@@ -61,7 +62,8 @@ export const Header = ({
                   to={`/${country}/companies`}
                   className={({ isActive }) => (isActive ? styles.active : "")}
                 >
-                  Firmy
+                  <MdBusiness className={styles.icon} />
+                  <span className={styles.label}>Firmy</span>
                 </NavLink>
               </li>
               <li className={styles.navItem}>
@@ -69,7 +71,8 @@ export const Header = ({
                   to={`/${country}/events`}
                   className={({ isActive }) => (isActive ? styles.active : "")}
                 >
-                  Wydarzenia
+                  <MdEvent className={styles.icon} />
+                  <span className={styles.label}>Wydarzenia</span>
                 </NavLink>
               </li>
               <li className={styles.navItem}>
@@ -79,7 +82,8 @@ export const Header = ({
                   rel="noopener noreferrer"
                   className={styles.navExternal}
                 >
-                  Gazeta
+                  <MdNewspaper className={styles.icon} />
+                  <span className={styles.label}>Gazeta</span>
                 </a>
               </li>
               <li className={styles.navItem}>
@@ -87,7 +91,8 @@ export const Header = ({
                   to={`/${country}/forum`}
                   className={({ isActive }) => (isActive ? styles.active : "")}
                 >
-                  Forum
+                  <MdForum className={styles.icon} />
+                  <span className={styles.label}>Forum</span>
                 </NavLink>
               </li>
               <li className={styles.navItem}>

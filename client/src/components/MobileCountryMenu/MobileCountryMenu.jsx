@@ -23,16 +23,18 @@ export const MobileCountryMenu = ({ isOpen, onClose }) => {
   };
   return (
     <MobilePanel id="mobile-country-menu" isOpen={isOpen}>
-      <div className={styles.header}>
-        <div className={styles.titleRow}>
-          <BsGlobeEuropeAfrica className={styles.globe} />
-          <h2 className={styles.title}>Wybierz kraj</h2>
-        </div>
+      <MobileMenuSection>
+        <div className={styles.header}>
+          <div className={styles.titleRow}>
+            <BsGlobeEuropeAfrica className={styles.globe} />
+            <h2 className={styles.title}>Wybierz kraj</h2>
+          </div>
 
-        <p className={styles.description}>
-          Przeglądaj oferty, firmy i wydarzenia w wybranym kraju.
-        </p>
-      </div>
+          <p className={styles.description}>
+            Przeglądaj oferty, firmy i wydarzenia w wybranym kraju.
+          </p>
+        </div>
+      </MobileMenuSection>
       <MobileMenuSection>
         <MobileCountryList
           currentCountry={currentCountry}
