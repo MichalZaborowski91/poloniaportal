@@ -57,3 +57,37 @@
   color: var(--color-text-secondary);
   opacity: 0.7;
 }
+.heroVariant {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-5);
+
+  padding: 10px 20px;
+  flex-direction: row;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+.heroVariant .capital {
+  margin: 0;
+  color: var(--color-text-white);
+}
+
+.heroVariant .meta {
+  gap: var(--space-4);
+  color: var(--color-text-white);
+}
+
+.heroVariant .separator,
+.heroVariant .clock,
+.heroVariant .time,
+.heroVariant .weather,
+.heroVariant .weather svg {
+  color: var(--color-text-white);
+}

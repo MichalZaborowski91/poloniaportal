@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LISTING_TYPE_OPTIONS } from "./listingTypes";
 import styles from "./SearchBar.module.scss";
-import SearchIcon from "../../assets/icons/search.svg?react";
+import { MdSearch } from "react-icons/md";
 
 export const SearchBar = () => {
   const [type, setType] = useState("");
@@ -58,7 +58,7 @@ export const SearchBar = () => {
         />
 
         <button className={styles.searchForm__submitButton} type="submit">
-          <SearchIcon className={styles.searchForm__buttonIcon} />
+          <MdSearch className={styles.searchForm__buttonIcon} />
           Szukaj
         </button>
       </form>

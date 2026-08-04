@@ -676,9 +676,18 @@ export const getHomePageCompanies = async (req, res) => {
       query.country = country;
     }
 
-    const companies = await Company.find(query)
-      .sort({ isFeatured: -1, createdAt: -1 })
-      .limit(20);
+    const FEATURED_COMPANIES_COUNT = 20;
+
+    const companies = await Company.aggregate([
+      {
+        $match: query,
+      },
+      {
+        $sample: {
+          size: FEATURED_COMPANIES_COUNT,
+        },
+      },
+    ]);
 
     res.json(companies);
   } catch (err) {

@@ -13,7 +13,7 @@ import {
 } from "react-icons/bs";
 import { useCountry } from "@/app/useCountry";
 
-export default function CountryInfo() {
+export default function CountryInfo({ variant = "default" }) {
   const countryCode = useCountry();
   const [time, setTime] = useState("");
   const [weather, setWeather] = useState(null);
@@ -86,7 +86,11 @@ export default function CountryInfo() {
   if (!country) return null;
 
   return (
-    <div className={styles.heroInfo}>
+    <div
+      className={`${styles.heroInfo} ${
+        variant === "hero" ? styles.heroVariant : ""
+      }`}
+    >
       <div className={styles.capital}>{country.capital}</div>
 
       <div className={styles.meta}>
