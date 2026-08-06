@@ -5,32 +5,11 @@ import styles from "./FeaturedCompanies.module.scss";
 import Container from "../Layout/Container";
 import { MdLocationOn, MdChevronLeft, MdChevronRight } from "react-icons/md";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 const AUTOPLAY_DELAY = 7000;
 const DESKTOP_ITEMS = 5;
 const TABLET_ITEMS = 3;
 const MOBILE_ITEMS = 2;
-
-const gridVariants = {
-  hidden: {
-    opacity: 0,
-  },
-  visible: {
-    opacity: 1,
-    transition: {
-      when: "beforeChildren",
-      staggerChildren: 0.08,
-    },
-  },
-  exit: {
-    opacity: 0,
-    transition: {
-      when: "afterChildren",
-      staggerChildren: 0.04,
-      staggerDirection: -1,
-    },
-  },
-};
 
 const cardVariants = {
   hidden: {
@@ -38,7 +17,6 @@ const cardVariants = {
     y: 20,
     scale: 0.96,
   },
-
   visible: {
     opacity: 1,
     y: 0,
@@ -48,20 +26,11 @@ const cardVariants = {
       ease: "easeOut",
     },
   },
-
-  exit: {
-    opacity: 0,
-    y: -20,
-    scale: 0.96,
-    transition: {
-      duration: 0.2,
-    },
-  },
 };
-
 export const FeaturedCompanies = ({ companies = [] }) => {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(1);
   const [paused, setPaused] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(true);
   const autoplayTimeout = useRef(null);
   const navigate = useNavigate();
   const country = useCountry();
@@ -83,31 +52,74 @@ export const FeaturedCompanies = ({ companies = [] }) => {
     return groupedCompanies;
   }, [companies, chunkSize]);
 
+  const slides = useMemo(() => {
+    if (chunks.length <= 1) return chunks;
+
+    return [chunks[chunks.length - 1], ...chunks, chunks[0]];
+  }, [chunks]);
+
   useEffect(() => {
-    if (paused || chunks.length <= 1) return;
+    if (!slides.length) return;
+
+    if (index >= slides.length) {
+      setIndex(1);
+    }
+
+    if (index < 0) {
+      setIndex(slides.length - 2);
+    }
+  }, [index, slides.length]);
+
+  useEffect(() => {
+    if (paused || slides.length <= 1) return;
 
     autoplayTimeout.current = setTimeout(() => {
-      goToSlide((index + 1) % chunks.length);
+      goToNext();
     }, AUTOPLAY_DELAY);
 
     return () => clearTimeout(autoplayTimeout.current);
-  }, [index, paused, chunks.length]);
+  }, [index, paused, slides.length]);
 
-  const goToSlide = (newIndex) => {
-    setIndex(newIndex);
+  useEffect(() => {
+    if (isAnimating) return;
+
+    const id = requestAnimationFrame(() => {
+      setIsAnimating(true);
+    });
+
+    return () => cancelAnimationFrame(id);
+  }, [isAnimating]);
+
+  const goToNext = () => {
+    setIndex((prev) => prev + 1);
+  };
+
+  const goToPrev = () => {
+    setIndex((prev) => prev - 1);
   };
 
   const handlePrev = () => {
-    goToSlide(index === 0 ? chunks.length - 1 : index - 1);
+    goToPrev();
   };
 
   const handleNext = () => {
-    goToSlide((index + 1) % chunks.length);
+    goToNext();
   };
 
-  if (!chunks.length) return null;
+  const translateX = `-${index * 100}%`;
 
-  const currentChunk = chunks[index] ?? chunks[0];
+  const handleAnimationComplete = () => {
+    if (index === slides.length - 1) {
+      setIsAnimating(false);
+      setIndex(1);
+      return;
+    }
+
+    if (index === 0) {
+      setIsAnimating(false);
+      setIndex(slides.length - 2);
+    }
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -137,48 +149,71 @@ export const FeaturedCompanies = ({ companies = [] }) => {
             </div>
           )}
         </div>
-        <AnimatePresence mode="wait">
+
+        <div
+          className={styles.viewport}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
           <motion.div
-            key={index}
-            className={styles.grid}
-            variants={gridVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-          >
-            {currentChunk.map((company) => (
-              <motion.article
-                key={company._id}
-                className={styles.card}
-                variants={cardVariants}
-                onClick={() => navigate(`/${country}/company/${company.slug}`)}
-              >
-                <img
-                  src={
-                    company.logo ||
-                    "/companyLogoPlaceholder/companyLogoPlaceholder.webp"
+            className={styles.track}
+            animate={{
+              x: translateX,
+            }}
+            transition={
+              isAnimating
+                ? {
+                    duration: 0.45,
+                    ease: "easeInOut",
                   }
-                  alt={company.name}
-                />
+                : {
+                    duration: 0,
+                  }
+            }
+            onAnimationComplete={handleAnimationComplete}
+          >
+            {slides.map((chunk, chunkIndex) => (
+              <div key={chunkIndex} className={styles.slide}>
+                <div className={styles.grid}>
+                  {chunk.map((company) => (
+                    <motion.article
+                      key={company._id}
+                      className={styles.card}
+                      variants={cardVariants}
+                      initial="hidden"
+                      animate="visible"
+                      onClick={() =>
+                        navigate(`/${country}/company/${company.slug}`)
+                      }
+                    >
+                      <img
+                        src={
+                          company.logo ||
+                          "/companyLogoPlaceholder/companyLogoPlaceholder.webp"
+                        }
+                        alt={company.name}
+                      />
+                      <div className={styles.info}>
+                        <strong>{company.name}</strong>
 
-                <div className={styles.info}>
-                  <strong>{company.name}</strong>
+                        <div className={styles.category}>
+                          {company.category}
+                        </div>
 
-                  <div className={styles.category}>{company.category}</div>
-
-                  {company.city?.trim() && (
-                    <div className={styles.city}>
-                      <MdLocationOn />
-                      <span>{company.city}</span>
-                    </div>
-                  )}
+                        {company.city?.trim() && (
+                          <div className={styles.city}>
+                            <MdLocationOn />
+                            <span>{company.city}</span>
+                          </div>
+                        )}
+                      </div>
+                    </motion.article>
+                  ))}
                 </div>
-              </motion.article>
+              </div>
             ))}
           </motion.div>
-        </AnimatePresence>
+        </div>
       </Container>
     </div>
   );

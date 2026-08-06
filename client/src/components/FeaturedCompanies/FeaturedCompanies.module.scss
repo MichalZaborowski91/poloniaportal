@@ -3,6 +3,17 @@
   margin-bottom: var(--space-8);
 }
 
+.viewport {
+  overflow: hidden;
+  width: 100%;
+}
+.track {
+  display: flex;
+  width: 100%;
+}
+.slide {
+  flex: 0 0 100%;
+}
 .header {
   display: flex;
   justify-content: space-between;
