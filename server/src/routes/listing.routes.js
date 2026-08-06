@@ -14,6 +14,7 @@ import {
   updateListing,
   permanentlyDeleteSelectedListings,
   permanentlyDeleteAllDeletedListings,
+  getLatestListings,
 } from "../controllers/listing.controller.js";
 import {
   toggleFavoriteListing,
@@ -31,6 +32,7 @@ router.post(
   createListing,
 );
 router.get("/:country/listings", getListings);
+router.get("/:country/listings/latest", getLatestListings);
 router.get("/:country/companies/:companyId/listings", getCompanyListings);
 router.get("/:country/my-listings", requireAuth, getMyListings);
 router.patch("/:country/my-listings/:id/delete", requireAuth, deleteListing);

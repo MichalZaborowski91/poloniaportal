@@ -8,16 +8,23 @@ import { useCountry } from "../../app/useCountry";
 import { ValueSection } from "../../components/ValueSection/ValueSection";
 import { AdBanner } from "../../components/AddBanner/AddBanner";
 import { LatestListings } from "../../components/LatestListings/LatestListings";
+import { getLatestListings } from "@/api/listings";
 
 export const HomePage = () => {
   const [homepageCompanies, setHomepageCompanies] = useState([]);
+  const [latestListings, setLatestListings] = useState([]);
 
   const country = useCountry();
 
   useEffect(() => {
     const load = async () => {
-      const data = await getHomePageCompanies(country);
-      setHomepageCompanies(data);
+      const [companies, listings] = await Promise.all([
+        getHomePageCompanies(country),
+        getLatestListings(country),
+      ]);
+
+      setHomepageCompanies(companies);
+      setLatestListings(listings);
     };
 
     load();
@@ -36,7 +43,7 @@ export const HomePage = () => {
       <FeaturedCompanies companies={homepageCompanies} />
       <ValueSection />
       <AdBanner />
-      <LatestListings />
+      <LatestListings listings={latestListings} />
     </>
   );
 };

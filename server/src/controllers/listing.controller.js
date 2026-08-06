@@ -822,3 +822,51 @@ export const permanentlyDeleteAllDeletedListings = async (req, res) => {
     });
   }
 };
+
+export const getLatestListings = async (req, res) => {
+  try {
+    const { country } = req.params;
+
+    const now = new Date();
+
+    const listings = await Listing.find({
+      country,
+      status: "active",
+      $or: [
+        {
+          expiresAt: { $gt: now },
+          isPermanent: false,
+        },
+        {
+          isPermanent: true,
+        },
+      ],
+    })
+      .sort({
+        createdAt: -1,
+      })
+      .limit(6)
+      .select(
+        "_id title type country createdAt data.city data.image data.images data.price",
+      );
+
+    const mapped = listings.map((listing) => ({
+      _id: listing._id,
+      title: listing.title,
+      type: listing.type,
+      country: listing.country,
+      createdAt: listing.createdAt,
+      city: listing.data?.city || "",
+      price: listing.data?.price ?? null,
+      coverImage: listing.data?.image || listing.data?.images?.[0],
+    }));
+
+    res.json(mapped);
+  } catch (err) {
+    console.error("GET LATEST LISTINGS ERROR:", err);
+
+    res.status(500).json({
+      message: "Failed to fetch latest listings",
+    });
+  }
+};

@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCountry } from "../../app/useCountry";
 import styles from "./LatestListings.module.scss";
+import Container from "../Layout/Container";
+import { MdChevronRight, MdLocationOn, MdSchedule } from "react-icons/md";
 
 const TYPE_LABEL = {
   job_offer: "Praca",
@@ -23,65 +24,109 @@ const TYPE_COLOR = {
   service_offer: "service",
 };
 
-export const LatestListings = () => {
-  const [listings, setListings] = useState([]);
+const FALLBACK_IMAGES = {
+  service_offer: "/offersCategories/Services.webp",
+  job_offer: "/offersCategories/Jobs.webp",
+  job_wanted: "/offersCategories/Jobs.webp",
+  housing_offer: "/offersCategories/Housing.webp",
+  housing_wanted: "/offersCategories/Housing.webp",
+  market_offer: "/offersCategories/Marketplace.webp",
+  market_wanted: "/offersCategories/Marketplace.webp",
+};
+
+const formatRelativeDate = (date) => {
+  const now = new Date();
+  const created = new Date(date);
+
+  const diffMinutes = Math.floor((now - created) / 60000);
+
+  if (diffMinutes < 60) {
+    return `${diffMinutes} min temu`;
+  }
+
+  const diffHours = Math.floor(diffMinutes / 60);
+
+  if (diffHours < 24) {
+    return `${diffHours} godz. temu`;
+  }
+
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffDays < 30) {
+    return `${diffDays} dni temu`;
+  }
+
+  const diffMonths = Math.floor(diffDays / 30);
+
+  if (diffMonths < 12) {
+    return `${diffMonths} mies. temu`;
+  }
+
+  const diffYears = Math.floor(diffMonths / 12);
+
+  return `${diffYears} lat temu`;
+};
+
+export const LatestListings = ({ listings = [] }) => {
   const navigate = useNavigate();
   const country = useCountry();
-
-  useEffect(() => {
-    const fetchLatest = async () => {
-      try {
-        const res = await fetch(`/api/${country}/listings?limit=5`);
-        const data = await res.json();
-
-        setListings(data.listings);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchLatest();
-  }, [country]);
 
   if (!listings.length) return null;
 
   return (
-    <div className={styles.wrapper}>
-      <h2 className={styles.title}>Najnowsze ogłoszenia</h2>
+    <section className={styles.wrapper}>
+      <Container>
+        <div className={styles.header}>
+          <h2 className={styles.title}>Najnowsze ogłoszenia</h2>
 
-      <div className={styles.grid}>
-        {listings.map((item) => (
-          <div
-            key={item._id}
-            className={styles.card}
-            onClick={() => navigate(`/${country}/listing/${item._id}`)}
+          <button
+            type="button"
+            className={styles.seeAll}
+            onClick={() => navigate(`/${country}/listings`)}
           >
-            <div className={`${styles.badge} ${styles[TYPE_COLOR[item.type]]}`}>
-              {TYPE_LABEL[item.type]}
-            </div>
-            <img
-              src={
-                item.images?.[0] ||
-                "/listingPlaceholder/listingPlaceholder.webp"
-              }
-              alt={item.title}
-            />
+            <span>Zobacz wszystkie</span>
+            <MdChevronRight size={20} />
+          </button>
+        </div>
 
-            <div className={styles.info}>
-              <strong>{item.title}</strong>
-              <span>{item.data?.city}</span>
+        <div className={styles.grid}>
+          {listings.map((item) => (
+            <div
+              key={item._id}
+              className={styles.card}
+              onClick={() => navigate(`/${country}/listing/${item._id}`)}
+            >
+              <div className={styles.imageWrapper}>
+                <img
+                  src={item.coverImage || FALLBACK_IMAGES[item.type]}
+                  alt={item.title}
+                />
+                <div
+                  className={`${styles.badge} ${styles[TYPE_COLOR[item.type]]}`}
+                >
+                  {TYPE_LABEL[item.type]}
+                </div>
+              </div>
+
+              <div className={styles.info}>
+                <strong>{item.title}</strong>
+
+                {item.city && (
+                  <div className={styles.meta}>
+                    <MdLocationOn />
+                    <span>{item.city}</span>
+                  </div>
+                )}
+
+                <div className={styles.meta}>
+                  <MdSchedule />
+                  <span>{formatRelativeDate(item.createdAt)}</span>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-      <div className={styles.footer}>
-        <span
-          className={styles.seeAll}
-          onClick={() => navigate(`/${country}/listings`)}
-        >
-          Zobacz wszystkie...
-        </span>
-      </div>
-    </div>
+          ))}
+        </div>
+      </Container>
+    </section>
   );
 };

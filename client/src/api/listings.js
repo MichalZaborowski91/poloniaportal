@@ -287,3 +287,13 @@ export const removeFavoriteListing = async (country, listingId) => {
 
   return data;
 };
+
+export const getLatestListings = async (country) => {
+  const res = await fetch(`${API_URL}/api/${country}/listings/latest`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch latest listings");
+  }
+
+  return res.json();
+};
