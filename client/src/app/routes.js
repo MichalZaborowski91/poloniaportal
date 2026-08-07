@@ -11,6 +11,7 @@ export const routes = {
   editEvent: (c, id) => `/${c}/edit-event/${id}`,
   terms: () => "/terms",
   privacy: () => "/privacy",
+  cookie: () => "/cookie",
   copyrights: () => "/copyrights",
   forgotPassword: (c) => `/${c}/forgot-password`,
   resetPassword: (c, token) => `/${c}/reset-password/${token}`,
@@ -29,4 +30,8 @@ export const routes = {
   favorites: (c) => `/${c}/favorites`,
   myEvents: (c) => `/${c}/my-events`,
   event: (c, id) => `/${c}/events/${id}`,
+  business: (c) => `/${c}/business`,
+  contact: (c) => `/${c}/contact`,
+  faq: (c) => `/${c}/faq`,
+  reportProblem: (c) => `/${c}/report-problem`,
 };

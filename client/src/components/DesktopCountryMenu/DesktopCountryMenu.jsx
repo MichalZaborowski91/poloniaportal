@@ -8,7 +8,7 @@ import { BsGlobeEuropeAfrica } from "react-icons/bs";
 import styles from "./DesktopCountryMenu.module.scss";
 import { CountryList } from "../CountryList/CountryList";
 
-export const DesktopCountryMenu = () => {
+export const DesktopCountryMenu = ({ trigger }) => {
   const [open, setOpen] = useState(false);
 
   const currentCountry = useCountry();
@@ -58,24 +58,28 @@ export const DesktopCountryMenu = () => {
       )}
 
       <div ref={menuRef} className={styles.countryMenu}>
-        <button
-          type="button"
-          className={styles.trigger}
-          onClick={() => setOpen((prev) => !prev)}
-        >
-          <img
-            src={`/flags/${COUNTRIES_PL[currentCountry].subdomain}.png`}
-            alt={COUNTRIES_PL[currentCountry].name}
-          />
+        {trigger ? (
+          <div onClick={() => setOpen((prev) => !prev)}>{trigger}</div>
+        ) : (
+          <button
+            type="button"
+            className={styles.trigger}
+            onClick={() => setOpen((prev) => !prev)}
+          >
+            <img
+              src={`/flags/${COUNTRIES_PL[currentCountry].subdomain}.png`}
+              alt={COUNTRIES_PL[currentCountry].name}
+            />
 
-          <span className={styles.label}>
-            {COUNTRIES_PL[currentCountry].name}
-          </span>
+            <span className={styles.label}>
+              {COUNTRIES_PL[currentCountry].name}
+            </span>
 
-          <BsChevronDown
-            className={`${styles.chevron} ${open ? styles.open : ""}`}
-          />
-        </button>
+            <BsChevronDown
+              className={`${styles.chevron} ${open ? styles.open : ""}`}
+            />
+          </button>
+        )}
 
         {open && (
           <div className={styles.menu}>

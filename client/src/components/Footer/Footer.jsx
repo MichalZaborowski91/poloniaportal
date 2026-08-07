@@ -1,20 +1,19 @@
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { HeartIcon } from "../HeartIcon/HeartIcon";
 import { LogoSecondary } from "../LogoSecondary/LogoSecondary";
 import { RegisterButton } from "../RegisterButton/RegisterButton";
 import { LoginButton } from "../LoginButton/LoginButton";
-import { AboutUs } from "../AboutUs/AboutUs";
-import { ServiceFooter } from "../ServiceFooter/ServiceFooter";
-import { ContactFooter } from "../ContactFooter/ContactFooter";
-import { MediaFooter } from "../MediaFooter/MediaFooter";
 import { useCountry } from "../../app/useCountry";
-import { CountrySwitcher } from "../CountrySwitcher/CountrySwitcher";
 import { CurrentCountry } from "../CurrentCountry/CurrentCountry";
 import { routes } from "../../app/routes";
 import styles from "../Footer/Footer.module.scss";
+import Container from "../Layout/Container";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa6";
+import { MdChevronRight } from "react-icons/md";
+import { DesktopCountryMenu } from "../DesktopCountryMenu/DesktopCountryMenu";
 
-export const Footer = () => {
+export const Footer = ({ onCountryMenuToggle }) => {
   const location = useLocation();
   const country = useCountry();
 
@@ -26,77 +25,152 @@ export const Footer = () => {
 
   return (
     <footer className={styles.footer}>
-      <div className={styles.footer__backgroundContainer}>
-        <div className="container">
-          <div className={styles.footer__content}>
-            <div className={styles.footer__brand}>
+      <div className={styles.background}>
+        <Container>
+          <div className={styles.top}>
+            <div className={styles.brand}>
               <LogoSecondary />
+              <p className={styles.tagline}>Łączymy Polaków na całym świecie</p>
               <CurrentCountry />
-              <div className={styles.footer__authButtons}>
-                {!user && (
+              <div className={styles.authButtons}>
+                {!user ? (
                   <>
-                    {isLoginPage && <RegisterButton variant="footer" />}
+                    {isLoginPage && <RegisterButton />}
 
-                    {isRegisterPage && <LoginButton variant="footer" />}
+                    {isRegisterPage && <LoginButton />}
 
-                    {isForgotPassPage && <LoginButton variant="footer" />}
+                    {isForgotPassPage && <LoginButton />}
 
                     {!isLoginPage && !isRegisterPage && !isForgotPassPage && (
-                      <RegisterButton variant="footer" />
+                      <RegisterButton />
                     )}
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.changeCountryDesktop}>
+                      <DesktopCountryMenu
+                        trigger={
+                          <button className={styles.changeCountry}>
+                            <span>Zmień kraj</span>
+                            <MdChevronRight size={20} />
+                          </button>
+                        }
+                      />
+                    </div>
+
+                    <div className={styles.changeCountryMobile}>
+                      <button
+                        type="button"
+                        className={styles.changeCountry}
+                        onClick={onCountryMenuToggle}
+                      >
+                        <span>Zmień kraj</span>
+                        <MdChevronRight size={20} />
+                      </button>
+                    </div>
                   </>
                 )}
               </div>
             </div>
-            <AboutUs />
-            <ServiceFooter />
-            <ContactFooter />
-            <div>
-              <MediaFooter />
-              <CountrySwitcher currentCountry={country} />
+            <div className={styles.column}>
+              <h3>Portal</h3>
+              <nav className={styles.links}>
+                <Link to={routes.about(country)}>O portalu</Link>
+
+                <Link to={routes.companies(country)}>Firmy</Link>
+
+                <Link to={routes.listings(country)}>Ogłoszenia</Link>
+
+                <Link to={routes.events(country)}>Wydarzenia</Link>
+
+                <Link to={routes.pricing(country)}>Dla firm</Link>
+              </nav>
+            </div>
+            <div className={styles.column}>
+              <h3>Pomoc</h3>
+
+              <nav className={styles.links}>
+                <Link to={routes.contact(country)}>Kontakt</Link>
+
+                <Link to={routes.reportProblem(country)}>Zgłoś problem</Link>
+
+                <Link to={routes.faq(country)}>FAQ</Link>
+              </nav>
+            </div>
+            <div className={styles.column}>
+              <h3>Społeczność</h3>
+
+              <nav className={styles.links}>
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.socialLink}
+                >
+                  <FaFacebook />
+                  <span>Facebook</span>
+                </a>
+
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.socialLink}
+                >
+                  <FaInstagram />
+                  <span>Instagram</span>
+                </a>
+
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.socialLink}
+                >
+                  <FaLinkedin />
+                  <span>Linkedin</span>
+                </a>
+              </nav>
             </div>
           </div>
-        </div>
+        </Container>
       </div>
-      <div className={styles.footer__legal}>
-        <div className={styles.footer__slogan}>
-          <p>Stworzone z</p> <HeartIcon />
-          <p>dla Polonii</p>
+      <Container>
+        <div className={styles.bottom}>
+          <div className={styles.slogan}>
+            <p>Stworzone z</p> <HeartIcon />
+            <p>dla Polonii</p>
+          </div>
+          <a
+            href={routes.copyrights()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.copyright}
+          >
+            {" "}
+            &#xa9; 2026 All Rights Reserved
+          </a>
+          <nav className={styles.legalNav}>
+            <ul className={styles.legalList}>
+              <li className={styles.legalItem}>
+                <Link to={routes.terms()} className={styles.legalLink}>
+                  Regulamin
+                </Link>
+              </li>
+              <li className={styles.legalItem}>
+                <Link to={routes.privacy()} className={styles.legalLink}>
+                  Polityka Prywatności
+                </Link>
+              </li>
+              <li className={styles.legalItem}>
+                <Link to={routes.cookie()} className={styles.legalLink}>
+                  Cookie
+                </Link>
+              </li>
+            </ul>
+          </nav>
         </div>
-        <a
-          href={routes.copyrights()}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.footer__copyright}
-        >
-          {" "}
-          &#xa9; 2026 All Rights Reserved
-        </a>
-        <nav className={styles.footer__legalNav}>
-          <ul className={styles.footer__legalList}>
-            <li className={styles.footer__legalItem}>
-              <a
-                href={routes.terms()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.footer__legalLink}
-              >
-                Regulamin
-              </a>
-            </li>
-            <li className={styles.footer__legalItem}>
-              <a
-                href={routes.privacy()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.footer__legalLink}
-              >
-                Polityka Prywatności
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+      </Container>
     </footer>
   );
 };

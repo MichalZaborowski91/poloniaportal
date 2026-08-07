@@ -1,31 +1,32 @@
 .registerButton {
-  background-color: #f1efef;
-  border: 2px solid #1f2937;
-  padding: 5px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 12px;
+
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
-  cursor: pointer;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
-  font-weight: 500;
+
+  color: rgba(255, 255, 255, 0.9);
+
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+
   text-decoration: none;
-  color: #1f2937;
-  text-align: center;
+
+  cursor: pointer;
+
   transition:
-    background-color 200ms ease,
-    transform 150ms ease;
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
 
-  &:focus,
   &:hover {
-    background-color: #acb2b9;
-  }
+    color: white;
 
-  &--footer {
-    background-color: #acb2b9;
-    border: none;
-    box-shadow: none;
-
-    &:focus,
-    &:hover {
-      transform: scale(1.1);
-    }
+    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.04);
   }
 }

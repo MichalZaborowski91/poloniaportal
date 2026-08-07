@@ -14,9 +14,6 @@ export const LogoSecondary = () => {
           alt="Polonia Portal Logo"
           className={styles.logoSecondary__logo}
         />
-        <p className={styles.logoSecondary__description}>
-          Łączymy Polaków na całym świecie
-        </p>
       </Link>
     </div>
   );
