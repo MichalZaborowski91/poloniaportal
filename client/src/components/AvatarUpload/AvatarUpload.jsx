@@ -3,9 +3,9 @@ import { deleteAvatar, uploadAvatar } from "../../api/user";
 import { useAuth } from "../../hooks/useAuth";
 import styles from "../AvatarUpload/AvatarUpload.module.scss";
 import Loader from "../../assets/icons/loader.svg?react";
-import Image from "../../assets/icons/image.svg?react";
-import Delete from "../../assets/icons/delete.svg?react";
+import { MdAddPhotoAlternate, MdPhotoCamera, MdClose } from "react-icons/md";
 import toast from "react-hot-toast";
+import { Spinner } from "../Spinner/Spinner";
 
 const DEFAULT_AVATAR = "/avatar/avt.jpg";
 
@@ -57,14 +57,28 @@ export const AvatarUpload = () => {
 
   return (
     <div className={styles.avatar}>
-      <img
-        src={avatarSrc}
-        alt="avatar"
-        className={styles.avatar__image}
-        onError={(e) => {
-          e.currentTarget.src = DEFAULT_AVATAR;
-        }}
-      />
+      <div className={styles.imageWrapper}>
+        <img
+          src={avatarSrc}
+          alt="avatar"
+          className={styles.image}
+          onError={(e) => {
+            e.currentTarget.src = DEFAULT_AVATAR;
+          }}
+        />
+
+        {hasCustomAvatar && (
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={loading}
+            className={styles.removeButton}
+            aria-label="Usuń avatar"
+          >
+            <MdClose />
+          </button>
+        )}
+      </div>
 
       <input
         ref={fileInputRef}
@@ -73,31 +87,28 @@ export const AvatarUpload = () => {
         style={{ display: "none" }}
         onChange={handleChange}
       />
-      <div className={styles.avatar__buttonContainer}>
+
+      <div className={styles.buttonContainer}>
         <button
           type="button"
           onClick={openFilePicker}
           disabled={loading}
-          className={styles.avatar__button}
+          className={styles.button}
         >
-          {loading ? <Loader /> : <Image />}
+          {loading ? (
+            <Spinner />
+          ) : hasCustomAvatar ? (
+            <MdPhotoCamera />
+          ) : (
+            <MdAddPhotoAlternate />
+          )}
+
           {loading
             ? "Ładowanie..."
             : hasCustomAvatar
               ? "Zmień avatar"
               : "Dodaj avatar"}
         </button>
-        {hasCustomAvatar && (
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={loading}
-            className={styles.avatar__button}
-          >
-            <Delete />
-            Usuń avatar
-          </button>
-        )}
       </div>
     </div>
   );

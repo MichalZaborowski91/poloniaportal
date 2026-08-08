@@ -8,12 +8,15 @@ import { AvatarUpload } from "../AvatarUpload/AvatarUpload";
 import { VerifyEmailMessage } from "../../components/VerifyEmailMessage/VerifyEmailMessage";
 import toast from "react-hot-toast";
 import styles from "../AccountInfoForm/AccountInfoForm.module.scss";
-import Edit from "../../assets/icons/edit-3.svg?react";
-import MapPin from "../../assets/icons/map-pin.svg?react";
-import AtSign from "../../assets/icons/at-sign.svg?react";
-import User from "../../assets/icons/user.svg?react";
-import Text from "../../assets/icons/file-text.svg?react";
-import Save from "../../assets/icons/save.svg?react";
+import {
+  MdEdit,
+  MdLocationOn,
+  MdAlternateEmail,
+  MdPerson,
+  MdDescription,
+  MdSave,
+} from "react-icons/md";
+import { Spinner } from "../Spinner/Spinner";
 
 const COUNTRY_FLAGS = {
   ie: "/flags/ie.png",
@@ -27,6 +30,7 @@ export const AccountInfoForm = ({ mode = "edit" }) => {
 
   const [displayNameError, setDisplayNameError] = useState(false);
   const [error, setError] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [displayName, setDisplayName] = useState(
     user?.profile?.displayName || "",
   );
@@ -68,11 +72,11 @@ export const AccountInfoForm = ({ mode = "edit" }) => {
         behavior: "smooth",
       });
 
-      setDisplayNameError(false);
-      setTimeout(() => setDisplayNameError(true), 10);
+      setDisplayNameError(true);
 
       return;
     }
+    setIsSaving(true);
 
     try {
       const profileData = {
@@ -88,70 +92,100 @@ export const AccountInfoForm = ({ mode = "edit" }) => {
 
       await updateMyProfile(profileData);
       toast.success("Twoje dane zostały zapisane");
+
       window.scrollTo({
         top: 0,
         behavior: "smooth",
       });
+
       await refreshUser();
-      //ONBOARDING FLOW
+
       if (mode === "onboarding") {
         navigate(from, { replace: true });
       }
     } catch (error) {
       setError(error.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.accountInfoForm} noValidate>
-      <ul className={styles.accountInfoForm__list}>
-        <li className={styles.accountInfoForm__tile}>
+    <form onSubmit={handleSubmit} className={styles.form} noValidate>
+      <div className={styles.card}>
+        <section className={styles.group}>
+          <h3 className={styles.groupTitle}>Zdjęcie profilowe</h3>
+
           <AvatarUpload />
-        </li>
-        <li className={styles.accountInfoForm__tile}>
-          <div
-            className={`${styles.accountInfoForm__wrapper} ${
-              displayNameError ? styles.accountInfoForm__shake : ""
-            }`}
-          >
-            <Edit className={styles.accountInfoForm__icon} />
-            <input
-              type="text"
-              placeholder="Nazwa Publiczna"
-              value={displayName}
-              onChange={(e) => {
-                setDisplayName(e.target.value);
-                setDisplayNameError(false);
-              }}
-              required
-              className={`${styles.accountInfoForm__input} ${
-                displayNameError ? styles["accountInfoForm__input--error"] : ""
+        </section>
+        <section className={styles.group}>
+          <h3 className={styles.groupTitle}>Dane podstawowe</h3>
+          <div className={styles.field}>
+            <label
+              className={`${styles.label} ${
+                displayNameError ? styles.labelError : ""
               }`}
-            />
+              htmlFor="displayName"
+            >
+              Nazwa publiczna
+              {displayNameError && (
+                <span className={styles.requiredMessage}> — Wymagane pole</span>
+              )}
+            </label>
+            <div className={styles.inputWrapper}>
+              <MdEdit className={styles.icon} />
+              <input
+                type="text"
+                placeholder="Nazwa Publiczna"
+                value={displayName}
+                onChange={(e) => {
+                  setDisplayName(e.target.value);
+                  setDisplayNameError(false);
+                }}
+                required
+                className={`${styles.input} ${
+                  displayNameError ? styles["inputError"] : ""
+                }`}
+              />
+            </div>
           </div>
-          <div className={styles.accountInfoForm__wrapper}>
-            <Edit className={styles.accountInfoForm__icon} />
-            <input
-              type="text"
-              placeholder="Imię"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className={styles.accountInfoForm__input}
-            />
-          </div>
-          <div className={styles.accountInfoForm__wrapper}>
-            <Edit className={styles.accountInfoForm__icon} />
-            <input
-              type="text"
-              placeholder="Nazwisko"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className={styles.accountInfoForm__input}
-            />
+          <div className={styles.groupContent}>
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="firstName">
+                  Imię
+                </label>
+                <div className={styles.inputWrapper}>
+                  <MdEdit className={styles.icon} />
+                  <input
+                    type="text"
+                    placeholder="Imię"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className={styles.input}
+                  />
+                </div>
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="lastName">
+                  Nazwisko
+                </label>
+                <div className={styles.inputWrapper}>
+                  <MdEdit className={styles.icon} />
+                  <input
+                    type="text"
+                    placeholder="Nazwisko"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className={styles.input}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           <div>
             {(firstName || lastName) && (
-              <label className={styles.accountInfoForm__public}>
+              <label className={styles.visibility}>
                 <input
                   type="checkbox"
                   name="showFullName"
@@ -162,116 +196,160 @@ export const AccountInfoForm = ({ mode = "edit" }) => {
               </label>
             )}
           </div>
-        </li>
-        <li className={styles.accountInfoForm__tile}>
-          <div className={styles.accountInfoForm__wrapper}>
-            <img
-              src={COUNTRY_FLAGS[countryValue]}
-              alt={countryValue}
-              className={styles.accountInfoForm__flag}
-            />
-            <select
-              value={countryValue}
-              onChange={(e) => setCountryValue(e.target.value)}
-              className={`${styles.accountInfoForm__input} ${styles[`accountInfoForm__input--select`]}`}
-            >
-              <option value="ie">Irlandia</option>
-              <option value="uk">Wielka Brytania</option>
-              <option value="pl">Polska</option>
-            </select>
+        </section>
+        <section className={styles.group}>
+          <h3 className={styles.groupTitle}>Lokalizacja</h3>
+          <div className={styles.groupContent}>
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="countryValue">
+                  Kraj
+                </label>
+                <div className={styles.inputWrapper}>
+                  <img
+                    src={COUNTRY_FLAGS[countryValue]}
+                    alt={countryValue}
+                    className={styles.flag}
+                  />
+                  <select
+                    value={countryValue}
+                    onChange={(e) => setCountryValue(e.target.value)}
+                    className={`${styles.input} ${styles.select}`}
+                  >
+                    <option value="ie">Irlandia</option>
+                    <option value="uk">Wielka Brytania</option>
+                    <option value="pl">Polska</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor="city">
+                    Miasto
+                  </label>
+                  <div className={styles.inputWrapper}>
+                    <MdLocationOn className={styles.icon} />
+                    <input
+                      type="text"
+                      placeholder="Miasto"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      className={styles.input}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div>
-            <div className={styles.accountInfoForm__wrapper}>
-              <MapPin className={styles.accountInfoForm__icon} />
-              <input
-                type="text"
-                placeholder="Miasto"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className={styles.accountInfoForm__input}
-              />
-            </div>
-            {city && (
-              <label className={styles.accountInfoForm__public}>
-                <input
-                  type="checkbox"
-                  name="showCity"
-                  checked={publicVisibility.showCity}
-                  onChange={handleVisibilityChange}
-                />
-                Pokaż miasto publicznie
-              </label>
-            )}
-          </div>
-        </li>
-        <li className={styles.accountInfoForm__tile}>
-          <div>
-            <div className={styles.accountInfoForm__wrapper}>
-              <User className={styles.accountInfoForm__accType} />
-              <select
-                value={accountType}
-                onChange={(e) => setAccountType(e.target.value)}
-                className={`${styles.accountInfoForm__input} ${styles[`accountInfoForm__input--select`]}`}
-              >
-                <option value="private">Użytkownik prywatny</option>
-                <option value="business">Przedsiębiorca</option>
-              </select>
-            </div>
-            <div className={styles.accountInfoForm__wrapper}>
-              <AtSign className={styles.accountInfoForm__icon} />
-              <input
-                type="email"
-                value={user?.email || ""}
-                readOnly
-                className={styles.accountInfoForm__input}
-              />
-            </div>
-            <label className={styles.accountInfoForm__public}>
+          {city && (
+            <label className={styles.visibility}>
               <input
                 type="checkbox"
-                name="showEmail"
-                checked={publicVisibility.showEmail}
+                name="showCity"
+                checked={publicVisibility.showCity}
                 onChange={handleVisibilityChange}
               />
-              Pokaż email publicznie
+              Pokaż miasto publicznie
             </label>
-            <div className={styles.accountInfoForm__verifyMessage}>
-              <VerifyEmailMessage />
+          )}
+        </section>
+        <section className={styles.group}>
+          <h3 className={styles.groupTitle}>Konto</h3>
+          <div className={styles.groupContent}>
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label htmlFor="accountType" className={styles.label}>
+                  Typ konta
+                </label>
+                <div className={styles.inputWrapper}>
+                  <MdPerson className={styles.accountTypeIcon} />
+                  <select
+                    value={accountType}
+                    onChange={(e) => setAccountType(e.target.value)}
+                    className={`${styles.input} ${styles.select}`}
+                  >
+                    <option value="private">Użytkownik prywatny</option>
+                    <option value="business">Przedsiębiorca</option>
+                  </select>
+                </div>
+              </div>
+              <div className={styles.field}>
+                <label htmlFor="email" className={styles.label}>
+                  Adres email
+                </label>
+                <div className={styles.inputWrapper}>
+                  <MdAlternateEmail className={styles.icon} />
+
+                  <input
+                    id="email"
+                    type="email"
+                    value={user?.email || ""}
+                    readOnly
+                    className={styles.input}
+                  />
+                </div>
+                <p className={styles.helperText}>
+                  Adres email można zmienić w sekcji „Bezpieczeństwo”.
+                </p>
+              </div>
             </div>
           </div>
-        </li>
-        <li className={styles.accountInfoForm__tile}>
-          <div className={styles.accountInfoForm__wrapper}>
-            <Text className={styles.accountInfoForm__bioIcon} />
-
-            <textarea
-              placeholder="Bio: max 300 znaków"
-              maxLength={300}
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              className={`${styles.accountInfoForm__input} ${styles[`accountInfoForm__input--textarea`]}`}
+          <label className={styles.visibility}>
+            <input
+              type="checkbox"
+              name="showEmail"
+              checked={publicVisibility.showEmail}
+              onChange={handleVisibilityChange}
             />
-
-            {bio && (
-              <label className={styles.accountInfoForm__public}>
-                <input
-                  type="checkbox"
-                  name="showBio"
-                  checked={publicVisibility.showBio}
-                  onChange={handleVisibilityChange}
-                />
-                Pokaż bio publicznie
-              </label>
-            )}
+            Pokaż email publicznie
+          </label>
+          <div className={styles.verifyMessage}>
+            <VerifyEmailMessage />
           </div>
-        </li>
-      </ul>
+        </section>
+        <section className={styles.group}>
+          <h3 className={styles.groupTitle}>O mnie</h3>
+          <div className={styles.groupContent}>
+            <div className={styles.field}>
+              <div className={styles.inputWrapper}>
+                <MdDescription className={styles.bioIcon} />
+
+                <textarea
+                  placeholder="Napisz kilka słów o sobie..."
+                  maxLength={300}
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  className={`${styles.input} ${styles.textarea}`}
+                />
+                <span className={styles.characterCount}>
+                  {bio.length} / 300
+                </span>
+              </div>
+            </div>
+          </div>
+          {bio && (
+            <label className={styles.visibility}>
+              <input
+                type="checkbox"
+                name="showBio"
+                checked={publicVisibility.showBio}
+                onChange={handleVisibilityChange}
+              />
+              Pokaż "O mnie" publicznie
+            </label>
+          )}
+        </section>
+      </div>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <div className={styles.accountInfoForm__actions}>
-        <button type="submit" className={styles.accountInfoForm__submitButton}>
-          <Save />
-          Zapisz
+      <div className={styles.actions}>
+        <button
+          type="submit"
+          className={styles.submitButton}
+          disabled={isSaving}
+        >
+          {isSaving ? <Spinner /> : <MdSave />}
+          {isSaving ? "Zapisywanie..." : "Zapisz"}
         </button>
       </div>
     </form>

@@ -1,0 +1,161 @@
+.mobileMenu,
+.mobileList {
+  display: none;
+}
+.mobileMenu {
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+
+  padding: var(--space-3) var(--space-4);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface);
+
+  cursor: pointer;
+}
+
+.mobileMenuContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.chevron {
+  transition: transform var(--transition-fast);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.mobileList {
+  overflow: hidden;
+
+  max-height: 0;
+
+  margin: 0;
+
+  padding: 0;
+
+  list-style: none;
+
+  opacity: 0;
+
+  transition:
+    max-height var(--transition-fast),
+    opacity var(--transition-fast),
+    margin var(--transition-fast);
+}
+
+.mobileListOpen {
+  margin-top: -1px;
+  max-height: 300px;
+  padding: var(--space-2);
+
+  border: 1px solid var(--color-border);
+  border-top: none;
+
+  border-bottom-left-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+
+  background: var(--color-surface);
+
+  box-shadow: var(--shadow-sm);
+
+  opacity: 1;
+}
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 280px;
+  height: fit-content;
+
+  padding: var(--space-6);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.title {
+  margin: 0 0 var(--space-5);
+
+  color: var(--color-text);
+
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-2);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  padding: var(--space-3) var(--space-4);
+
+  border-radius: var(--radius-sm);
+
+  color: var(--color-text-secondary);
+  text-decoration: none;
+
+  transition: all var(--transition-fast);
+}
+.link:hover {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.active {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.mobileList li + li {
+  margin-top: var(--space-1);
+}
+@media (max-width: 767px) {
+  .sidebar {
+    width: 100%;
+    max-width: none;
+    position: static;
+  }
+
+  .mobileMenu {
+    display: flex;
+    margin-bottom: var(--space-4);
+  }
+
+  .mobileList {
+    display: block;
+  }
+
+  .sidebar > nav {
+    display: none;
+  }
+}
+
+@include desktop {
+  .sidebar {
+    position: sticky;
+    top: calc(var(--header-height-desktop) + var(--space-6));
+  }
+}

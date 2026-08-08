@@ -1,24 +1,42 @@
-.accountProfile {
-  &__title {
-    background-color: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    margin-top: 0;
-    display: flex;
-    justify-content: center;
-    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
-    align-items: center;
-    gap: 10px;
-    color: #2b2b2b;
-  }
+.card {
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  box-shadow: var(--shadow-sm);
+
+  overflow: hidden;
 }
 
-.message {
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 6px;
-  background: #fff3cd;
-  color: #664d03;
+.header {
+  padding: var(--space-3);
+
+  border-bottom: 1px solid var(--color-border);
+}
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  margin-bottom: var(--space-2);
+}
+
+.titleRow h1 {
+  margin: 0;
+
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+}
+
+.titleRow svg {
+  font-size: 28px;
+  color: var(--color-text);
+}
+.header p {
+  margin: 0;
+
+  color: var(--color-text-secondary);
+
+  line-height: 1.6;
 }

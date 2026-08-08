@@ -1,45 +1,121 @@
 .avatar {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
-  height: 100%;
+  gap: var(--space-4);
+}
 
-  &__image {
-    border-radius: 50%;
-    object-fit: cover;
-    width: 120px;
-    height: 120px;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.8);
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  min-height: 38px;
+
+  padding: 0 var(--space-4);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-background);
+
+  color: var(--color-text);
+
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    opacity var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 
-  &__buttonContainer {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
-  &__button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    background-color: #f1efef;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
-    font-weight: 400;
-    text-decoration: none;
-    color: #1f2937;
-    text-align: center;
-    transition:
-      background-color 200ms ease,
-      transform 150ms ease;
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
 
-    &:hover {
-      background-color: #acb2b9;
-    }
+.imageWrapper {
+  position: relative;
+}
+
+.image {
+  width: 120px;
+  height: 120px;
+
+  object-fit: cover;
+
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.removeButton {
+  position: absolute;
+
+  top: 4px;
+  right: 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 26px;
+  height: 26px;
+
+  padding: 0;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-background);
+  color: var(--color-text-secondary);
+
+  cursor: pointer;
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    color: var(--color-error);
+    border-color: var(--color-error);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
   }
 }

@@ -23,6 +23,10 @@
   flex-direction: column;
 }
 
+.main {
+  flex: 1;
+}
+
 .backdrop {
   position: fixed;
   inset: var(--header-height-mobile) 0 0 0;

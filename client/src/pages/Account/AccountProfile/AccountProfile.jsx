@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import { AccountInfoForm } from "../../../components/AccountInfoForm/AccountInfoForm";
 import styles from "../AccountProfile/AccountProfile.module.scss";
 import User from "../../../assets/icons/user.svg?react";
+import { MdPerson } from "react-icons/md";
 
 export const AccountProfile = () => {
   const location = useLocation();
@@ -23,11 +24,18 @@ export const AccountProfile = () => {
           Aby dodać firmę, profil musi zostać dokończony.
         </div>
       )}
-      <h2 className={styles.accountProfile__title}>
-        <User />
-        Profil
-      </h2>
-      <AccountInfoForm />
+      <div className={styles.card}>
+        <div className={styles.header}>
+          <div className={styles.titleRow}>
+            <MdPerson />
+            <h1>Profil</h1>
+          </div>
+
+          <p>Zarządzaj informacjami widocznymi dla innych użytkowników.</p>
+        </div>
+
+        <AccountInfoForm />
+      </div>
     </div>
   );
 };

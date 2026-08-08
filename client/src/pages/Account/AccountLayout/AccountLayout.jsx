@@ -1,57 +1,34 @@
-import { NavLink, Outlet } from "react-router-dom";
-import styles from "../AccountLayout/AccountLayout.module.scss";
-import User from "../../../assets/icons/user.svg?react";
-import Shield from "../../../assets/icons/shield.svg?react";
+import { Outlet } from "react-router-dom";
 import { useCountry } from "../../../app/useCountry";
 import { routes } from "../../../app/routes";
+import { MdPerson, MdShield, MdSettings } from "react-icons/md";
+import { SectionLayout } from "@/components/Layout/SectionLayout/SectionLayout";
 
 export const AccountLayout = () => {
   const country = useCountry();
 
+  const items = [
+    {
+      label: "Profil",
+      icon: <MdPerson size={20} />,
+      to: routes.account(country),
+      end: true,
+    },
+    {
+      label: "Bezpieczeństwo",
+      icon: <MdShield size={20} />,
+      to: routes.security(country),
+    },
+    {
+      label: "Ustawienia",
+      icon: <MdSettings size={20} />,
+      to: routes.accountSettings(country),
+    },
+  ];
+
   return (
-    <div className={styles.accountLayout}>
-      <div className={styles.accountLayout__overlay}>
-        <div className="container">
-          <div className={styles.accountLayout__content}>
-            <aside className={styles.accountLayout__aside}>
-              <h3>Konto:</h3>
-              <nav className={styles.accountLayout__navigation}>
-                <ul className={styles.accountLayout__list}>
-                  <li className={styles.accountLayout__item}>
-                    <User />
-                    <NavLink
-                      to={routes.account(country)}
-                      className={styles.accountLayout__link}
-                    >
-                      Profil
-                    </NavLink>
-                  </li>
-                  <li className={styles.accountLayout__item}>
-                    <Shield />
-                    <NavLink
-                      to={routes.security(country)}
-                      className={styles.accountLayout__link}
-                    >
-                      Bezpieczeństwo
-                    </NavLink>
-                  </li>
-                  <li className={styles.accountLayout__item}>
-                    <NavLink
-                      to={routes.accountCompanies(country)}
-                      className={styles.accountLayout__link}
-                    >
-                      Moje firmy
-                    </NavLink>
-                  </li>
-                </ul>
-              </nav>
-            </aside>
-            <main className={styles.accountLayout__main}>
-              <Outlet />
-            </main>
-          </div>
-        </div>
-      </div>
-    </div>
+    <SectionLayout title="Moje konto" items={items}>
+      <Outlet />
+    </SectionLayout>
   );
 };

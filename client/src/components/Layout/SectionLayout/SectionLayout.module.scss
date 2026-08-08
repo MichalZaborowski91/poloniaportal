@@ -1,0 +1,21 @@
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--space-8);
+
+  padding-top: calc(var(--header-height-desktop) + var(--space-6));
+  padding-bottom: var(--space-8);
+}
+
+.content {
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+
+    padding-top: calc(var(--header-height-mobile) + var(--space-6));
+  }
+}
