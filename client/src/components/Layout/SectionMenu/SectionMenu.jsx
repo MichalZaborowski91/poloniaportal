@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { MdExpandMore } from "react-icons/md";
+import { MdExpandMore, MdChevronRight } from "react-icons/md";
 import styles from "./SectionMenu.module.scss";
 
 export const SectionMenu = ({ title, items }) => {
@@ -43,8 +43,11 @@ export const SectionMenu = ({ title, items }) => {
               }
               onClick={() => setIsOpen(false)}
             >
-              {item.icon}
-              <span>{item.label}</span>
+              <span className={styles.linkContent}>
+                {item.icon}
+                <span>{item.label}</span>
+              </span>
+              <MdChevronRight className={styles.chevron} />
             </NavLink>
           </li>
         ))}
@@ -60,8 +63,12 @@ export const SectionMenu = ({ title, items }) => {
                   `${styles.link} ${isActive ? styles.active : ""}`
                 }
               >
-                {item.icon}
-                <span>{item.label}</span>
+                <span className={styles.linkContent}>
+                  {item.icon}
+                  <span>{item.label}</span>
+                </span>
+
+                <MdChevronRight className={styles.chevron} />
               </NavLink>
             </li>
           ))}

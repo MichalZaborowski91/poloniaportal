@@ -1,0 +1,37 @@
+.message {
+  display: flex;
+  align-items: center;
+}
+
+.verified,
+.unverified {
+  margin: 0;
+
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.message {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  margin: 0;
+
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+}
+
+.verified {
+  color: #16a34a;
+}
+
+.notVerified {
+  color: #f59e0b;
+}

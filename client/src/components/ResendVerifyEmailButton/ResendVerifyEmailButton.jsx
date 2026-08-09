@@ -1,7 +1,7 @@
 import { useAuth } from "../../hooks/useAuth";
 import toast from "react-hot-toast";
 import styles from "../ResendVerifyEmailButton/ResendVerifyEmailButton.module.scss";
-import Link from "../../assets/icons/link.svg?react";
+import { MdLink } from "react-icons/md";
 
 export const ResendVerifyEmailButton = () => {
   const { user } = useAuth();
@@ -38,7 +38,7 @@ export const ResendVerifyEmailButton = () => {
             onClick={handleResendVerify}
             className={styles.resendVerifyEmailButton}
           >
-            <Link />
+            <MdLink />
             Wyślij link weryfikacyjny
           </button>
         </>

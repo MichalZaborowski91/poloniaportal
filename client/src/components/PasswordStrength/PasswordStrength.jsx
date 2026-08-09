@@ -1,30 +1,38 @@
 import styles from "./PasswordStrength.module.scss";
 
-export const PasswordStrength = ({ touched, strength, mismatch, checks }) => {
+export const PasswordStrength = ({
+  touched,
+  strength,
+  mismatch,
+  checks,
+  variant,
+}) => {
   if (!touched) {
     return null;
   }
 
   return (
-    <div className={styles.passwordStrength}>
-      <div className={styles.passwordStrength__wrapper}>
+    <div
+      className={`${styles.passwordStrength} ${
+        variant === "modal" ? styles.modal : ""
+      }`}
+    >
+      <div className={styles.wrapper}>
         <div
-          className={`${styles.passwordStrength__bar} ${
+          className={`${styles.bar} ${
             strength <= 2
-              ? styles[`passwordStrength__bar--weak`]
+              ? styles.weak
               : strength <= 4
-                ? styles[`passwordStrength__bar--medium`]
-                : styles[`passwordStrength__bar--strong`]
+                ? styles.medium
+                : styles.strong
           }`}
           style={{ width: `${(strength / 5) * 100}%` }}
         />
       </div>
 
       <p
-        className={`${styles.passwordStrength__info} ${
-          mismatch
-            ? styles["passwordStrength__info--error"]
-            : styles["passwordStrength__info--rules"]
+        className={`${styles.info} ${
+          mismatch ? styles.error : styles.rulesInfo
         }`}
       >
         {mismatch
@@ -32,40 +40,31 @@ export const PasswordStrength = ({ touched, strength, mismatch, checks }) => {
           : "Hasło musi zawierać przynajmniej:"}
       </p>
 
-      <ul className={styles.passwordStrength__rulesList}>
+      <ul className={styles.rules}>
         <li
-          className={`${styles.passwordStrength__rulesItem} ${
-            checks.length
-              ? styles["passwordStrength__rulesItem--ok"]
-              : styles["passwordStrength__rulesItem--bad"]
-          }`}
+          className={`${styles.rule} ${checks.length ? styles.ok : styles.bad}`}
         >
           8 znaków
         </li>
+
         <li
-          className={`${styles.passwordStrength__rulesItem} ${
-            checks.uppercase
-              ? styles["passwordStrength__rulesItem--ok"]
-              : styles["passwordStrength__rulesItem--bad"]
+          className={`${styles.rule} ${
+            checks.uppercase ? styles.ok : styles.bad
           }`}
         >
           Jedną dużą literę
         </li>
+
         <li
-          className={`${styles.passwordStrength__rulesItem} ${
-            checks.lowercase
-              ? styles["passwordStrength__rulesItem--ok"]
-              : styles["passwordStrength__rulesItem--bad"]
+          className={`${styles.rule} ${
+            checks.lowercase ? styles.ok : styles.bad
           }`}
         >
           Jedną małą literę
         </li>
+
         <li
-          className={`${styles.passwordStrength__rulesItem} ${
-            checks.number
-              ? styles["passwordStrength__rulesItem--ok"]
-              : styles["passwordStrength__rulesItem--bad"]
-          }`}
+          className={`${styles.rule} ${checks.number ? styles.ok : styles.bad}`}
         >
           Jedną cyfrę
         </li>

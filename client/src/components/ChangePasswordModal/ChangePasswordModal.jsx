@@ -9,12 +9,15 @@ import { PasswordStrength } from "../PasswordStrength/PasswordStrength";
 import { usePasswordUI } from "../../hooks/usePasswordUI";
 import toast from "react-hot-toast";
 import styles from "../ChangePasswordModal/ChangePasswordModal.module.scss";
-import Lock from "../../assets/icons/lock.svg?react";
-import Eye from "../../assets/icons/eye.svg?react";
-import EyeOff from "../../assets/icons/eye-off.svg?react";
-import CheckCircle from "../../assets/icons/check-circle.svg?react";
-import Cancel from "../../assets/icons/x.svg?react";
-import Key from "../../assets/icons/key.svg?react";
+import {
+  MdLock,
+  MdVisibility,
+  MdVisibilityOff,
+  MdCheckCircle,
+  MdClose,
+  MdKey,
+} from "react-icons/md";
+import { Spinner } from "../Spinner/Spinner";
 
 export const ChangePasswordModal = ({ onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -27,7 +30,7 @@ export const ChangePasswordModal = ({ onClose }) => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
-  const [shake, setShake] = useState(false);
+
   const [sameAsOldError, setSameAsOldError] = useState(false);
   const [captchaToken, setCaptchaToken] = useState(null);
 
@@ -108,7 +111,6 @@ export const ChangePasswordModal = ({ onClose }) => {
         const msg = "Nieprawidłowe aktualne hasło";
         setError(msg);
         setPasswordError(msg);
-        triggerShake();
       } else if (code === "PASSWORD_WEAK") {
         setError("Hasło nie spełnia wymagań bezpieczeństwa");
       } else if (code === "PASSWORD_SAME_AS_OLD") {
@@ -145,12 +147,6 @@ export const ChangePasswordModal = ({ onClose }) => {
     onClose();
   }, [onClose]);
 
-  const triggerShake = () => {
-    setShake(true);
-    passwordRef.current?.focus();
-    setTimeout(() => setShake(false), 400);
-  };
-
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
@@ -174,33 +170,27 @@ export const ChangePasswordModal = ({ onClose }) => {
   }, []);
 
   return (
-    <div className={styles.changePassword__overlay}>
-      <div className={styles.changePassword__modal}>
-        <h2 className={styles.changePassword__title}>
+    <div className={styles.overlay}>
+      <div className={styles.modal}>
+        <h2 className={styles.title}>
           Zmiana hasła
-          <Key />
+          <MdKey />
         </h2>
 
         {success ? (
-          <div className={styles.changePassword__successText}>
-            Hasło zostało zmienione
-          </div>
+          <div className={styles.successText}>Hasło zostało zmienione</div>
         ) : (
-          <form onSubmit={handleSubmit} className={styles.changePassword__form}>
-            {error && (
-              <div className={styles.changePassword__error}>{error}</div>
-            )}
-            <div
-              className={`${styles.changePassword__inputContainer} ${shake ? styles.changePassword__shake : ""}`}
-            >
-              <Lock className={styles.changePassword__icon} />
+          <form onSubmit={handleSubmit} className={styles.form}>
+            {error && <div className={styles.error}>{error}</div>}
+            <div className={styles.inputContainer}>
+              <MdLock className={styles.icon} />
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Aktualne hasło"
                 value={currentPassword}
                 ref={passwordRef}
-                className={`${styles.changePassword__input}  ${
-                  passwordError ? styles["changePassword__input--error"] : ""
+                className={`${styles.input}  ${
+                  passwordError ? styles.inputError : ""
                 }`}
                 onChange={(e) => {
                   setCurrentPassword(e.target.value);
@@ -210,29 +200,29 @@ export const ChangePasswordModal = ({ onClose }) => {
               />
               <button
                 type="button"
-                className={styles.changePassword__showPassword}
+                className={styles.showPassword}
                 onClick={() => setShowPassword((prev) => !prev)}
                 aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
               >
-                {showPassword ? <Eye /> : <EyeOff />}
+                {showPassword ? <MdVisibility /> : <MdVisibilityOff />}
               </button>
             </div>
-            <div className={styles.changePassword__inputContainer}>
-              <Lock
-                className={`${styles.changePassword__icon} ${
+            <div className={styles.inputContainer}>
+              <MdLock
+                className={`${styles.icon} ${
                   sameAsOldError
-                    ? styles[`changePassword__icon--error`]
+                    ? styles.iconError
                     : passwordMismatch
                       ? ""
                       : passwordMatchOk
-                        ? styles[`changePassword__icon--success`]
+                        ? styles.iconSuccess
                         : ""
                 }`}
               />
 
               <input
-                className={`${styles.changePassword__input} ${
-                  passwordMismatch ? styles[`changePassword__input--error`] : ""
+                className={`${styles.input} ${
+                  passwordMismatch ? styles.inputError : ""
                 }`}
                 type={showNewPassword ? "text" : "password"}
                 placeholder="Nowe hasło"
@@ -246,29 +236,29 @@ export const ChangePasswordModal = ({ onClose }) => {
               />
               <button
                 type="button"
-                className={styles.changePassword__showPassword}
+                className={styles.showPassword}
                 onClick={() => setShowNewPassword((prev) => !prev)}
                 aria-label={showNewPassword ? "Ukryj hasło" : "Pokaż hasło"}
               >
-                {showNewPassword ? <Eye /> : <EyeOff />}
+                {showNewPassword ? <MdVisibility /> : <MdVisibilityOff />}
               </button>
             </div>
 
-            <div className={styles.changePassword__inputContainer}>
-              <Lock
-                className={`${styles.changePassword__icon} ${
+            <div className={styles.inputContainer}>
+              <MdLock
+                className={`${styles.icon} ${
                   sameAsOldError
-                    ? styles[`changePassword__icon--error`]
+                    ? styles.iconError
                     : passwordMismatch
                       ? ""
                       : passwordMatchOk
-                        ? styles[`changePassword__icon--success`]
+                        ? styles.iconSuccess
                         : ""
                 }`}
               />
               <input
-                className={`${styles.changePassword__input} ${
-                  passwordMismatch ? styles[`changePassword__input--error`] : ""
+                className={`${styles.input} ${
+                  passwordMismatch ? styles.inputError : ""
                 }`}
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Potwierdź hasło"
@@ -283,11 +273,11 @@ export const ChangePasswordModal = ({ onClose }) => {
 
               <button
                 type="button"
-                className={styles.changePassword__showPassword}
+                className={styles.showPassword}
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
                 aria-label={showConfirmPassword ? "Ukryj hasło" : "Pokaż hasło"}
               >
-                {showConfirmPassword ? <Eye /> : <EyeOff />}
+                {showConfirmPassword ? <MdVisibility /> : <MdVisibilityOff />}
               </button>
             </div>
 
@@ -296,6 +286,7 @@ export const ChangePasswordModal = ({ onClose }) => {
               strength={passwordStrength}
               mismatch={passwordMismatch}
               checks={passwordChecks}
+              variant="modal"
             />
 
             <Captcha
@@ -304,10 +295,10 @@ export const ChangePasswordModal = ({ onClose }) => {
               ref={captchaRef}
             />
 
-            <div className={styles.changePassword__actions}>
+            <div className={styles.actions}>
               <button
                 type="submit"
-                className={styles.changePassword__button}
+                className={styles.button}
                 disabled={
                   !passwordValid ||
                   !currentPassword ||
@@ -316,16 +307,16 @@ export const ChangePasswordModal = ({ onClose }) => {
                   loading
                 }
               >
-                <CheckCircle />
+                {loading ? <Spinner /> : <MdCheckCircle />}
                 {loading ? "Zapisywanie..." : "Zmień hasło"}
               </button>
 
               <button
                 type="button"
                 onClick={handleClose}
-                className={styles.changePassword__button}
+                className={styles.button}
               >
-                <Cancel />
+                <MdClose />
                 Anuluj
               </button>
             </div>

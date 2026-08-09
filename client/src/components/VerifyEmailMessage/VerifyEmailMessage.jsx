@@ -1,4 +1,6 @@
 import { useAuth } from "../../hooks/useAuth";
+import { MdCheckCircle, MdError } from "react-icons/md";
+import styles from "./VerifyEmailMessage.module.scss";
 
 export const VerifyEmailMessage = ({ showWhenVerified = false }) => {
   const { user } = useAuth();
@@ -14,12 +16,14 @@ export const VerifyEmailMessage = ({ showWhenVerified = false }) => {
   return (
     <div>
       {user.emailVerified ? (
-        <p style={{ color: "green", fontWeight: "bold", margin: 0 }}>
-          ✅ Email zweryfikowany
+        <p className={`${styles.message} ${styles.verified}`}>
+          <MdCheckCircle />
+          Email zweryfikowany
         </p>
       ) : (
-        <p style={{ color: "orange", fontWeight: "bold", margin: 0 }}>
-          ❌ Email niezweryfikowany
+        <p className={`${styles.message} ${styles.notVerified}`}>
+          <MdError />
+          Email niezweryfikowany
         </p>
       )}
     </div>

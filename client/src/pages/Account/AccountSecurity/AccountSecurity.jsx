@@ -5,20 +5,16 @@ import { useAuth } from "../../../hooks/useAuth";
 import { VerifyEmailMessage } from "../../../components/VerifyEmailMessage/VerifyEmailMessage";
 import { ResendVerifyEmailButton } from "../../../components/ResendVerifyEmailButton/ResendVerifyEmailButton";
 import { ChangeEmailModal } from "../../../components/ChangeEmailModal/ChangeEmailModal";
-import { DeleteAccountSection } from "../../../components/DeleteAccountSection/DeleteAccountSection";
+
 import { useState } from "react";
 import { logoutAllDevices } from "../../../api/auth";
 import { ChangePasswordModal } from "../../../components/ChangePasswordModal/ChangePasswordModal";
 import styles from "../AccountSecurity/AccountSecurity.module.scss";
 import toast from "react-hot-toast";
-import UserDelete from "../../../assets/icons/user-x.svg?react";
-import Shield from "../../../assets/icons/shield.svg?react";
-import Logout from "../../../assets/icons/log-out.svg?react";
-import AtSign from "../../../assets/icons/at-sign.svg?react";
-import Key from "../../../assets/icons/key.svg?react";
+
+import { MdShield, MdLogout, MdAlternateEmail, MdKey } from "react-icons/md";
 
 export const AccountSecurity = () => {
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showChangeEmail, setShowChangeEmail] = useState(false);
 
@@ -34,12 +30,6 @@ export const AccountSecurity = () => {
 
   const emailChangePending =
     user?.emailChangeExpires && new Date(user.emailChangeExpires) > new Date();
-
-  //DELETE ACC
-  const handleDeleted = async () => {
-    navigate(routes.home(country));
-    await refreshUser();
-  };
 
   const handleLogoutAll = async () => {
     try {
@@ -69,98 +59,88 @@ export const AccountSecurity = () => {
           Aby dodać ogłoszenie, musisz zweryfikować swój adres email.
         </div>
       )}
-      <div className={styles.accountSecurity}>
-        <h2 className={styles.accountSecurity__title}>
-          <Shield />
-          Bezpieczeństwo
-        </h2>
-        <ul className={styles.accountSecurity__grid}>
-          <li className={styles.accountSecurity__tile}>
-            <h4 className={styles.accountSecurity__header}>
-              Weryfikacja email
-            </h4>
-            <div className={styles.accountSecurity__wrapper}>
-              <div className={styles.accountSecurity__content}>
+      <div className={styles.card}>
+        <div className={styles.header}>
+          <div className={styles.titleRow}>
+            <MdShield />
+            <h1>Bezpieczeństwo</h1>
+          </div>
+
+          <p>Zarządzaj bezpieczeństwem swojego konta i ustawieniami dostępu.</p>
+        </div>
+        <div className={styles.groups}>
+          <section className={styles.group}>
+            <h3 className={styles.groupTitle}>Weryfikacja email</h3>
+
+            <div className={styles.groupContent}>
+              <div className={styles.emailVerification}>
                 <VerifyEmailMessage showWhenVerified={true} />
+
                 <ResendVerifyEmailButton />
               </div>
             </div>
-          </li>
+          </section>
 
-          <li className={styles.accountSecurity__tile}>
-            <h4 className={styles.accountSecurity__header}>Zmiana hasła</h4>
-            <div className={styles.accountSecurity__wrapper}>
-              <div className={styles.accountSecurity__content}>
+          <section className={styles.group}>
+            <h3 className={styles.groupTitle}>Zmiana hasła</h3>
+
+            <div className={styles.groupContent}>
+              <div className={styles.securityContent}>
                 <button
-                  className={styles.accountSecurity__button}
+                  type="button"
+                  className={styles.securityButton}
                   onClick={() => setShowChangePassword(true)}
                 >
-                  <Key />
+                  <MdKey />
                   Zmień hasło
                 </button>
               </div>
             </div>
-          </li>
-          <li className={styles.accountSecurity__tile}>
-            <h4 className={styles.accountSecurity__header}>Zmiana email</h4>
-            <div className={styles.accountSecurity__wrapper}>
-              <div className={styles.accountSecurity__content}>
+          </section>
+          <section className={styles.group}>
+            <h3 className={styles.groupTitle}>Zmiana email</h3>
+
+            <div className={styles.groupContent}>
+              <div className={styles.securityContent}>
                 {emailChangePending && (
-                  <div className={styles.accountSecurity__info}>
+                  <div className={styles.securityInfo}>
                     Wysłano prośbę o zmianę email na:
                     <strong>{user.emailChangeNewEmail}</strong>
                   </div>
                 )}
+
                 <button
+                  type="button"
                   disabled={emailChangePending}
-                  className={styles.accountSecurity__button}
+                  className={styles.securityButton}
                   onClick={() => setShowChangeEmail(true)}
                 >
-                  <AtSign />
+                  <MdAlternateEmail />
                   Zmień email
                 </button>
               </div>
             </div>
-          </li>
-          <li className={styles.accountSecurity__tile}>
-            <h4 className={styles.accountSecurity__header}>
+          </section>
+          <section className={styles.group}>
+            <h3 className={styles.groupTitle}>
               Wyloguj ze wszystkich urządzeń
-            </h4>
-            <div className={styles.accountSecurity__wrapper}>
-              <div className={styles.accountSecurity__content}>
+            </h3>
+
+            <div className={styles.groupContent}>
+              <div className={styles.securityContent}>
                 <button
-                  className={styles.accountSecurity__button}
+                  type="button"
+                  className={styles.securityButton}
                   onClick={handleLogoutAll}
                 >
-                  <Logout />
+                  <MdLogout />
                   Wyloguj
                 </button>
               </div>
             </div>
-          </li>
-          <li className={styles.accountSecurity__tile}>
-            <h4 className={styles.accountSecurity__header}>Usuń konto</h4>
-            <div className={styles.accountSecurity__wrapper}>
-              <div className={styles.accountSecurity__content}>
-                <button
-                  type="button"
-                  onClick={() => setShowDeleteModal(true)}
-                  className={styles.accountSecurity__button}
-                >
-                  <UserDelete />
-                  Usuń konto
-                </button>
-              </div>
-            </div>
-          </li>
-        </ul>
+          </section>
+        </div>
       </div>
-      {showDeleteModal && (
-        <DeleteAccountSection
-          onDeleted={handleDeleted}
-          onClose={() => setShowDeleteModal(false)}
-        />
-      )}
 
       {showChangePassword && (
         <ChangePasswordModal onClose={() => setShowChangePassword(false)} />
