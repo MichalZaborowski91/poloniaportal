@@ -4,13 +4,14 @@ import { useCountry } from "../../app/useCountry";
 import { Captcha } from "../Captcha/Captcha";
 import { useAuth } from "../../hooks/useAuth";
 import styles from "../ChangeEmailModal/ChangeEmailModal.module.scss";
-import Lock from "../../assets/icons/lock.svg?react";
-import Eye from "../../assets/icons/eye.svg?react";
-import EyeOff from "../../assets/icons/eye-off.svg?react";
-import AtSign from "../../assets/icons/at-sign.svg?react";
-import CheckCircle from "../../assets/icons/check-circle.svg?react";
-import Cancel from "../../assets/icons/x.svg?react";
-import toast from "react-hot-toast";
+import {
+  MdLock,
+  MdVisibility,
+  MdVisibilityOff,
+  MdAlternateEmail,
+  MdCheckCircle,
+  MdClose,
+} from "react-icons/md";
 
 export const ChangeEmailModal = ({ onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -20,29 +21,20 @@ export const ChangeEmailModal = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [shake, setShake] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [captchaToken, setCaptchaToken] = useState(null);
   const [emailMismatch, setEmailMismatch] = useState(false);
-  const [emailMatchOk, setEmailMatchOk] = useState(false);
   const [sameAsCurrentError, setSameAsCurrentError] = useState(false);
 
-  const { refreshUser } = useAuth();
-  const passwordRef = useRef(null);
   const captchaRef = useRef(null);
   const country = useCountry();
+  const { refreshUser } = useAuth();
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail);
 
   const clearServerErrors = () => {
     setError("");
     setSameAsCurrentError(false);
-  };
-
-  const triggerShake = () => {
-    setShake(true);
-    passwordRef.current?.focus();
-    setTimeout(() => setShake(false), 400);
   };
 
   const handleSubmit = async (e) => {
@@ -82,7 +74,6 @@ export const ChangeEmailModal = ({ onClose }) => {
       await refreshUser();
       captchaRef.current?.resetCaptcha();
       setSuccess(true);
-      toast.success("Sprawdź skrzynkę email, aby potwierdzić zmianę");
       setCaptchaToken(null);
     } catch (error) {
       const code = error?.code;
@@ -90,7 +81,6 @@ export const ChangeEmailModal = ({ onClose }) => {
       if (code === "INVALID_PASSWORD") {
         setError("Nieprawidłowe hasło");
         setPasswordError("Nieprawidłowe hasło");
-        triggerShake();
       } else if (code === "EMAIL_IN_USE") {
         setError("Ten email jest już zajęty");
       } else if (code === "EMAIL_SAME_AS_CURRENT") {
@@ -129,18 +119,11 @@ export const ChangeEmailModal = ({ onClose }) => {
   useEffect(() => {
     if (!confirmEmail) {
       setEmailMismatch(false);
-      setEmailMatchOk(false);
       return;
     }
 
     const timeout = setTimeout(() => {
-      if (newEmail === confirmEmail) {
-        setEmailMismatch(false);
-        setEmailMatchOk(true);
-      } else {
-        setEmailMismatch(true);
-        setEmailMatchOk(false);
-      }
+      setEmailMismatch(newEmail !== confirmEmail);
     }, 1000);
 
     return () => clearTimeout(timeout);
@@ -170,143 +153,128 @@ export const ChangeEmailModal = ({ onClose }) => {
   }, []);
 
   return (
-    <div className={styles.changeEmail__overlay}>
-      <div className={styles.changeEmail__modal}>
-        <h2 className={styles.changeEmail__title}>
-          Zmiana email
-          <AtSign />
-        </h2>
-
+    <div className={styles.overlay}>
+      <div className={styles.modal}>
         {success ? (
-          <div className={styles.changeEmail__successWrapper}>
-            <div className={styles.changeEmail__success}>
-              Link potwierdzający został wysłany na nowy adres email.
-              <br />
-              Sprawdź skrzynkę i kliknij link, aby zakończyć zmianę.
+          <div className={styles.successWrapper}>
+            <div className={`${styles.iconWrapper} ${styles.success}`}>
+              <MdCheckCircle />
             </div>
+
+            <h1 className={styles.successTitle}>
+              Prośba o zmianę email została wysłana
+            </h1>
+
+            <p className={styles.message}>
+              Link potwierdzający został wysłany na nowy adres email.
+            </p>
+
+            <p className={styles.secondaryMessage}>
+              Sprawdź skrzynkę i kliknij link, aby zakończyć zmianę.
+            </p>
 
             <button
               type="button"
               onClick={handleClose}
-              className={styles.changeEmail__button}
+              className={styles.button}
             >
-              <Cancel />
+              <MdClose />
               Zamknij
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit}>
-            {error && <div className={styles.changeEmail__error}>{error}</div>}
+          <>
+            <h2 className={styles.title}>Zmiana email</h2>
+            <form onSubmit={handleSubmit} className={styles.form}>
+              {error && <div className={styles.error}>{error}</div>}
 
-            <div
-              className={`${styles.changeEmail__inputContainer} ${shake ? styles.changeEmail__shake : ""}`}
-            >
-              <Lock className={styles.changeEmail__icon} />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Aktualne hasło"
-                value={currentPassword}
-                ref={passwordRef}
-                className={`${styles.changeEmail__input}  ${
-                  passwordError ? styles["changeEmail__input--error"] : ""
-                }`}
-                onChange={(e) => {
-                  setCurrentPassword(e.target.value);
-                  clearServerErrors();
-                  if (passwordError) setPasswordError("");
-                }}
-                required
+              <div className={styles.inputContainer}>
+                <MdLock className={styles.icon} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Aktualne hasło"
+                  value={currentPassword}
+                  className={`${styles.input}  ${
+                    passwordError ? styles.inputError : ""
+                  }`}
+                  onChange={(e) => {
+                    setCurrentPassword(e.target.value);
+                    clearServerErrors();
+                    if (passwordError) setPasswordError("");
+                  }}
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.showPassword}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
+                >
+                  {showPassword ? <MdVisibility /> : <MdVisibilityOff />}
+                </button>
+              </div>
+
+              <div className={styles.inputContainer}>
+                <MdAlternateEmail className={styles.icon} />
+
+                <input
+                  type="email"
+                  placeholder="Nowy email"
+                  value={newEmail}
+                  className={`${styles.input} ${
+                    emailMismatch || sameAsCurrentError ? styles.inputError : ""
+                  }`}
+                  onChange={(e) => {
+                    setNewEmail(e.target.value.replace(/\s/g, ""));
+                    clearServerErrors();
+                  }}
+                  required
+                />
+              </div>
+
+              <div className={styles.inputContainer}>
+                <MdAlternateEmail className={styles.icon} />
+
+                <input
+                  type="email"
+                  placeholder="Potwierdź email"
+                  value={confirmEmail}
+                  className={`${styles.input} ${
+                    emailMismatch || sameAsCurrentError ? styles.inputError : ""
+                  }`}
+                  onChange={(e) => {
+                    setConfirmEmail(e.target.value.replace(/\s/g, ""));
+                    clearServerErrors();
+                  }}
+                  required
+                />
+              </div>
+              <Captcha
+                onVerify={setCaptchaToken}
+                onExpire={() => setCaptchaToken(null)}
+                ref={captchaRef}
               />
-              <button
-                type="button"
-                className={styles.changeEmail__showPassword}
-                onClick={() => setShowPassword((prev) => !prev)}
-                aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
-              >
-                {showPassword ? <Eye /> : <EyeOff />}
-              </button>
-            </div>
+              <div className={styles.actions}>
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className={styles.button}
+                >
+                  <MdCheckCircle />
+                  {loading ? "Wysyłanie..." : "Zmień email"}
+                </button>
 
-            <div className={styles.changeEmail__inputContainer}>
-              <AtSign
-                className={`${styles.changeEmail__icon} ${
-                  sameAsCurrentError
-                    ? styles[`changeEmail__icon--error`]
-                    : emailMismatch
-                      ? ""
-                      : emailMatchOk
-                        ? styles[`changeEmail__icon--success`]
-                        : ""
-                }`}
-              />
-
-              <input
-                type="email"
-                placeholder="Nowy email"
-                value={newEmail}
-                className={`${styles.changeEmail__input} ${
-                  emailMismatch ? styles["changeEmail__input--error"] : ""
-                }`}
-                onChange={(e) => {
-                  setNewEmail(e.target.value.replace(/\s/g, ""));
-                  clearServerErrors();
-                }}
-                required
-              />
-            </div>
-
-            <div className={styles.changeEmail__inputContainer}>
-              <AtSign
-                className={`${styles.changeEmail__icon} ${
-                  sameAsCurrentError
-                    ? styles[`changeEmail__icon--error`]
-                    : emailMismatch
-                      ? ""
-                      : emailMatchOk
-                        ? styles[`changeEmail__icon--success`]
-                        : ""
-                }`}
-              />
-
-              <input
-                type="email"
-                placeholder="Potwierdź email"
-                value={confirmEmail}
-                className={`${styles.changeEmail__input} ${
-                  emailMismatch ? styles["changeEmail__input--error"] : ""
-                }`}
-                onChange={(e) => {
-                  setConfirmEmail(e.target.value.replace(/\s/g, ""));
-                  clearServerErrors();
-                }}
-                required
-              />
-            </div>
-            <Captcha
-              onVerify={setCaptchaToken}
-              onExpire={() => setCaptchaToken(null)}
-              ref={captchaRef}
-            />
-            <div className={styles.changeEmail__actions}>
-              <button
-                type="submit"
-                disabled={!canSubmit}
-                className={styles.changeEmail__button}
-              >
-                <CheckCircle />
-                {loading ? "Wysyłanie..." : "Zmień email"}
-              </button>
-
-              <button
-                type="button"
-                onClick={handleClose}
-                className={styles.changeEmail__button}
-              >
-                <Cancel />
-                Anuluj
-              </button>
-            </div>
-          </form>
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className={styles.button}
+                >
+                  <MdClose />
+                  Anuluj
+                </button>
+              </div>
+            </form>
+          </>
         )}
       </div>
     </div>

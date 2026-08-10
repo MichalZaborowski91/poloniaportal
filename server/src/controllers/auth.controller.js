@@ -930,6 +930,9 @@ export const requestEmailChange = async (req, res) => {
 
     const changeLink = `${process.env.FRONTEND_URL}/${country}/confirm-email-change?token=${token}`;
 
+    console.log("EMAIL CHANGE - sending email to:", emailNormalized);
+    console.log("EMAIL CHANGE - link:", changeLink);
+
     await sendEmailChangeVerification({
       to: emailNormalized,
       changeLink,

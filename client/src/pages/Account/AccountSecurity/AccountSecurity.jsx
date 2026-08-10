@@ -6,7 +6,7 @@ import { VerifyEmailMessage } from "../../../components/VerifyEmailMessage/Verif
 import { ResendVerifyEmailButton } from "../../../components/ResendVerifyEmailButton/ResendVerifyEmailButton";
 import { ChangeEmailModal } from "../../../components/ChangeEmailModal/ChangeEmailModal";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { logoutAllDevices } from "../../../api/auth";
 import { ChangePasswordModal } from "../../../components/ChangePasswordModal/ChangePasswordModal";
 import styles from "../AccountSecurity/AccountSecurity.module.scss";
@@ -30,6 +30,27 @@ export const AccountSecurity = () => {
 
   const emailChangePending =
     user?.emailChangeExpires && new Date(user.emailChangeExpires) > new Date();
+
+  useEffect(() => {
+    if (!emailChangePending || !user?.emailChangeExpires) {
+      return;
+    }
+
+    const expiresAt = new Date(user.emailChangeExpires).getTime();
+    const now = Date.now();
+    const delay = expiresAt - now;
+
+    if (delay <= 0) {
+      refreshUser();
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      refreshUser();
+    }, delay);
+
+    return () => clearTimeout(timeout);
+  }, [emailChangePending, user?.emailChangeExpires, refreshUser]);
 
   const handleLogoutAll = async () => {
     try {

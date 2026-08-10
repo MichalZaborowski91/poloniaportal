@@ -15,7 +15,6 @@ import {
   MdVisibilityOff,
   MdCheckCircle,
   MdClose,
-  MdKey,
 } from "react-icons/md";
 import { Spinner } from "../Spinner/Spinner";
 
@@ -49,7 +48,6 @@ export const ChangePasswordModal = ({ onClose }) => {
   const {
     touched: passwordTouched,
     mismatch: passwordMismatch,
-    matchOk: passwordMatchOk,
     checks: passwordChecks,
     strength: passwordStrength,
     valid: passwordValid,
@@ -103,7 +101,7 @@ export const ChangePasswordModal = ({ onClose }) => {
         navigate(routes.login(country), {
           replace: true,
         });
-      }, 1500);
+      }, 5000);
     } catch (error) {
       const code = error?.code;
 
@@ -132,6 +130,25 @@ export const ChangePasswordModal = ({ onClose }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSuccessClose = async () => {
+    try {
+      await logout();
+      await refreshUser();
+    } catch (err) {
+      console.error("Logout after password change failed:", err);
+    }
+
+    toast.success("Zaloguj się ponownie.");
+
+    onClose();
+
+    sessionStorage.setItem("passwordChanged", "true");
+
+    navigate(routes.login(country), {
+      replace: true,
+    });
   };
 
   const handleClose = useCallback(() => {
@@ -172,155 +189,163 @@ export const ChangePasswordModal = ({ onClose }) => {
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <h2 className={styles.title}>
-          Zmiana hasła
-          <MdKey />
-        </h2>
-
         {success ? (
-          <div className={styles.successText}>Hasło zostało zmienione</div>
+          <div className={styles.successWrapper}>
+            <div className={`${styles.iconWrapper} ${styles.success}`}>
+              <MdCheckCircle />
+            </div>
+
+            <h1 className={styles.successTitle}>Hasło zostało zmienione</h1>
+
+            <p className={styles.message}>
+              Twoje hasło zostało pomyślnie zmienione.
+            </p>
+
+            <p className={styles.secondaryMessage}>
+              Ze względów bezpieczeństwa wszystkie aktywne sesje zostały
+              zakończone.
+            </p>
+
+            <button
+              type="button"
+              onClick={handleSuccessClose}
+              className={styles.button}
+            >
+              <MdClose />
+              Zamknij
+            </button>
+
+            <p className={styles.redirect}>
+              Za chwilę zostaniesz przekierowany na stronę logowania...
+            </p>
+          </div>
         ) : (
-          <form onSubmit={handleSubmit} className={styles.form}>
-            {error && <div className={styles.error}>{error}</div>}
-            <div className={styles.inputContainer}>
-              <MdLock className={styles.icon} />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Aktualne hasło"
-                value={currentPassword}
-                ref={passwordRef}
-                className={`${styles.input}  ${
-                  passwordError ? styles.inputError : ""
-                }`}
-                onChange={(e) => {
-                  setCurrentPassword(e.target.value);
-                  clearServerErrors();
-                }}
-                required
+          <>
+            <h2 className={styles.title}>Zmiana hasła</h2>
+            <form onSubmit={handleSubmit} className={styles.form}>
+              {error && <div className={styles.error}>{error}</div>}
+              <div className={styles.inputContainer}>
+                <MdLock className={styles.icon} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Aktualne hasło"
+                  value={currentPassword}
+                  ref={passwordRef}
+                  className={`${styles.input}  ${
+                    passwordError ? styles.inputError : ""
+                  }`}
+                  onChange={(e) => {
+                    setCurrentPassword(e.target.value);
+                    clearServerErrors();
+                  }}
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.showPassword}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
+                >
+                  {showPassword ? <MdVisibility /> : <MdVisibilityOff />}
+                </button>
+              </div>
+              <div className={styles.inputContainer}>
+                <MdLock className={styles.icon} />
+
+                <input
+                  className={`${styles.input} ${
+                    passwordMismatch || sameAsOldError ? styles.inputError : ""
+                  }`}
+                  type={showNewPassword ? "text" : "password"}
+                  placeholder="Nowe hasło"
+                  value={newPassword}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\s/g, ""); //SPACE DELETE !
+                    setNewPassword(value);
+                    clearServerErrors();
+                  }}
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.showPassword}
+                  onClick={() => setShowNewPassword((prev) => !prev)}
+                  aria-label={showNewPassword ? "Ukryj hasło" : "Pokaż hasło"}
+                >
+                  {showNewPassword ? <MdVisibility /> : <MdVisibilityOff />}
+                </button>
+              </div>
+
+              <div className={styles.inputContainer}>
+                <MdLock className={styles.icon} />
+                <input
+                  className={`${styles.input} ${
+                    passwordMismatch || sameAsOldError ? styles.inputError : ""
+                  }`}
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Potwierdź hasło"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\s/g, ""); //SPACE DELETE !
+                    setConfirmPassword(value);
+                    clearServerErrors();
+                  }}
+                  required
+                />
+
+                <button
+                  type="button"
+                  className={styles.showPassword}
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  aria-label={
+                    showConfirmPassword ? "Ukryj hasło" : "Pokaż hasło"
+                  }
+                >
+                  {showConfirmPassword ? <MdVisibility /> : <MdVisibilityOff />}
+                </button>
+              </div>
+
+              <PasswordStrength
+                touched={passwordTouched}
+                strength={passwordStrength}
+                mismatch={passwordMismatch}
+                checks={passwordChecks}
+                variant="modal"
               />
-              <button
-                type="button"
-                className={styles.showPassword}
-                onClick={() => setShowPassword((prev) => !prev)}
-                aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
-              >
-                {showPassword ? <MdVisibility /> : <MdVisibilityOff />}
-              </button>
-            </div>
-            <div className={styles.inputContainer}>
-              <MdLock
-                className={`${styles.icon} ${
-                  sameAsOldError
-                    ? styles.iconError
-                    : passwordMismatch
-                      ? ""
-                      : passwordMatchOk
-                        ? styles.iconSuccess
-                        : ""
-                }`}
+
+              <Captcha
+                onVerify={setCaptchaToken}
+                onExpire={() => setCaptchaToken(null)}
+                ref={captchaRef}
               />
 
-              <input
-                className={`${styles.input} ${
-                  passwordMismatch ? styles.inputError : ""
-                }`}
-                type={showNewPassword ? "text" : "password"}
-                placeholder="Nowe hasło"
-                value={newPassword}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\s/g, ""); //SPACE DELETE !
-                  setNewPassword(value);
-                  clearServerErrors();
-                }}
-                required
-              />
-              <button
-                type="button"
-                className={styles.showPassword}
-                onClick={() => setShowNewPassword((prev) => !prev)}
-                aria-label={showNewPassword ? "Ukryj hasło" : "Pokaż hasło"}
-              >
-                {showNewPassword ? <MdVisibility /> : <MdVisibilityOff />}
-              </button>
-            </div>
+              <div className={styles.actions}>
+                <button
+                  type="submit"
+                  className={styles.button}
+                  disabled={
+                    !passwordValid ||
+                    !currentPassword ||
+                    !passwordsMatch ||
+                    !captchaToken ||
+                    loading
+                  }
+                >
+                  {loading ? <Spinner /> : <MdCheckCircle />}
+                  {loading ? "Zapisywanie..." : "Zmień hasło"}
+                </button>
 
-            <div className={styles.inputContainer}>
-              <MdLock
-                className={`${styles.icon} ${
-                  sameAsOldError
-                    ? styles.iconError
-                    : passwordMismatch
-                      ? ""
-                      : passwordMatchOk
-                        ? styles.iconSuccess
-                        : ""
-                }`}
-              />
-              <input
-                className={`${styles.input} ${
-                  passwordMismatch ? styles.inputError : ""
-                }`}
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Potwierdź hasło"
-                value={confirmPassword}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\s/g, ""); //SPACE DELETE !
-                  setConfirmPassword(value);
-                  clearServerErrors();
-                }}
-                required
-              />
-
-              <button
-                type="button"
-                className={styles.showPassword}
-                onClick={() => setShowConfirmPassword((prev) => !prev)}
-                aria-label={showConfirmPassword ? "Ukryj hasło" : "Pokaż hasło"}
-              >
-                {showConfirmPassword ? <MdVisibility /> : <MdVisibilityOff />}
-              </button>
-            </div>
-
-            <PasswordStrength
-              touched={passwordTouched}
-              strength={passwordStrength}
-              mismatch={passwordMismatch}
-              checks={passwordChecks}
-              variant="modal"
-            />
-
-            <Captcha
-              onVerify={setCaptchaToken}
-              onExpire={() => setCaptchaToken(null)}
-              ref={captchaRef}
-            />
-
-            <div className={styles.actions}>
-              <button
-                type="submit"
-                className={styles.button}
-                disabled={
-                  !passwordValid ||
-                  !currentPassword ||
-                  !passwordsMatch ||
-                  !captchaToken ||
-                  loading
-                }
-              >
-                {loading ? <Spinner /> : <MdCheckCircle />}
-                {loading ? "Zapisywanie..." : "Zmień hasło"}
-              </button>
-
-              <button
-                type="button"
-                onClick={handleClose}
-                className={styles.button}
-              >
-                <MdClose />
-                Anuluj
-              </button>
-            </div>
-          </form>
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className={styles.button}
+                >
+                  <MdClose />
+                  Anuluj
+                </button>
+              </div>
+            </form>
+          </>
         )}
       </div>
     </div>
