@@ -146,7 +146,11 @@ export const Layout = () => {
         onClose={handlePanelClose}
       />
 
-      <main className={styles.main}>
+      <main
+        className={`${styles.main} ${
+          !showDesktopAuthLayout ? styles.mainWithHeader : ""
+        }`}
+      >
         <Outlet />
       </main>
       <Footer onCountryMenuToggle={handleCountryMenuToggle} />

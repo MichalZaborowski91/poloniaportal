@@ -34,5 +34,5 @@ export const routes = {
   contact: (c) => `/${c}/contact`,
   faq: (c) => `/${c}/faq`,
   reportProblem: (c) => `/${c}/report-problem`,
-  accountSettings: (c) => `/${c}/settings`,
+  accountSettings: (c) => `/${c}/account/settings`,
 };

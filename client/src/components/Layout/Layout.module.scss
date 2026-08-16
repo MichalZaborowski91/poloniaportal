@@ -27,6 +27,22 @@
   flex: 1;
 }
 
+.mainWithHeader {
+  padding-top: var(--header-height-mobile);
+}
+
+@include tablet {
+  .mainWithHeader {
+    padding-top: var(--header-height-mobile);
+  }
+}
+
+@include desktop {
+  .mainWithHeader {
+    padding-top: var(--header-height-mobile);
+  }
+}
+
 .backdrop {
   position: fixed;
   inset: var(--header-height-mobile) 0 0 0;

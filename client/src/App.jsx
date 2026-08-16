@@ -40,6 +40,7 @@ import { MyEvents } from "./pages/Events/MyEvents/MyEvents";
 import { PublicEvents } from "./pages/Events/PublicEvents/PublicEvents";
 import { EventDetails } from "./pages/Events/EventDetails/EventDetails";
 import { EditEvent } from "./pages/Events/EditEvent/EditEvent";
+import { AccountSettings } from "./pages/Account/AccountSettings/AccountSettings";
 
 export const App = () => {
   return (
@@ -89,6 +90,7 @@ export const App = () => {
         >
           <Route index element={<AccountProfile />} />
           <Route path="security" element={<AccountSecurity />} />
+          <Route path="settings" element={<AccountSettings />} />
         </Route>
         <Route
           path="account/companies"

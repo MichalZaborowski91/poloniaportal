@@ -3,13 +3,15 @@ import { deleteAccount } from "../../api/auth";
 import { Captcha } from "../Captcha/Captcha";
 import toast from "react-hot-toast";
 import styles from "../DeleteAccountSection/DeleteAccountSection.module.scss";
-import Lock from "../../assets/icons/lock.svg?react";
-import Eye from "../../assets/icons/eye.svg?react";
-import EyeOff from "../../assets/icons/eye-off.svg?react";
-import Cancel from "../../assets/icons/x.svg?react";
-import ArrowRightCircle from "../../assets/icons/arrow-right-circle.svg?react";
-import CheckCircle from "../../assets/icons/check-circle.svg?react";
-import UserDelete from "../../assets/icons/user-x.svg?react";
+
+import {
+  MdLock,
+  MdVisibility,
+  MdVisibilityOff,
+  MdClose,
+  MdArrowForward,
+  MdDeleteForever,
+} from "react-icons/md";
 
 export const DeleteAccountSection = ({ onDeleted, onClose }) => {
   const [password, setPassword] = useState("");
@@ -19,16 +21,14 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
   const [captchaToken, setCaptchaToken] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
-  const [shake, setShake] = useState(false);
 
-  const passwordRef = useRef(null);
   const captchaRef = useRef(null);
 
   const handleDelete = async () => {
     setPasswordError("");
+
     if (!password.trim()) {
       setPasswordError("Wymagane hasło");
-      triggerShake();
       return;
     }
 
@@ -40,10 +40,14 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
     try {
       setLoading(true);
 
-      await deleteAccount({ password, captchaToken });
+      await deleteAccount({
+        password,
+        captchaToken,
+      });
 
       captchaRef.current?.resetCaptcha();
       setCaptchaToken(null);
+
       toast.success("Konto zostało usunięte.");
 
       if (onDeleted) {
@@ -53,22 +57,27 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
       onClose();
     } catch (error) {
       const code = error?.code;
+
       if (code === "INVALID_PASSWORD") {
         setPasswordError("Niewłaściwe hasło");
-        triggerShake();
+
         captchaRef.current?.resetCaptcha();
         setCaptchaToken(null);
+
         return;
       }
 
       if (code === "CAPTCHA_INVALID") {
         captchaRef.current?.resetCaptcha();
         setCaptchaToken(null);
+
         toast.error("Weryfikacja captcha nie powiodła się");
+
         return;
       }
 
       toast.error(error.message || "Nie udało się usunąć konta");
+
       captchaRef.current?.resetCaptcha();
       setCaptchaToken(null);
     } finally {
@@ -78,18 +87,16 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
 
   const handleClose = useCallback(() => {
     captchaRef.current?.resetCaptcha();
+
     setPassword("");
     setStep("info");
     setCaptchaToken(null);
     setConfirmed(false);
+    setPasswordError("");
+    setShowPassword(false);
+
     onClose();
   }, [onClose]);
-
-  const triggerShake = () => {
-    setShake(true);
-    passwordRef.current?.focus();
-    setTimeout(() => setShake(false), 400);
-  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -99,6 +106,7 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
     };
 
     document.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
@@ -106,6 +114,7 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
 
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
 
     return () => {
@@ -114,18 +123,13 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
   }, []);
 
   return (
-    <div className={styles.deleteAccountSection__overlay}>
-      <div
-        className={styles.deleteAccountSection__modal}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className={styles.overlay}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {step === "info" && (
-          <div className={styles.deleteAccountSection}>
-            <h2 className={styles.deleteAccountSection__title}>
-              Usunięcie konta
-              <UserDelete />
-            </h2>
-            <p className={styles.deleteAccountSection__description}>
+          <div className={styles.deleteAccount}>
+            <h2 className={styles.title}>Usuń konto</h2>
+
+            <p className={styles.description}>
               Twoje konto zostanie dezaktywowane.
               <br />
               Możesz je odzyskać, logując się ponownie w ciągu{" "}
@@ -134,35 +138,37 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
               Po tym czasie konto i wszystkie dane zostaną{" "}
               <u>trwale usunięte</u>.
             </p>
-            <p className={styles.deleteAccountSection__greetings}>
+
+            <p className={styles.greetings}>
               Dziękujemy za korzystanie z naszego serwisu.
             </p>
-            <label className={styles.deleteAccountSection__checkbox}>
+
+            <label className={styles.checkbox}>
               <input
                 type="checkbox"
                 checked={confirmed}
                 onChange={(e) => setConfirmed(e.target.checked)}
-                required
               />
               Rozumiem konsekwencje usunięcia konta.
             </label>
 
-            <div className={styles.deleteAccountSection__actions}>
+            <div className={styles.actions}>
               <button
-                className={styles.deleteAccountSection__button}
+                type="button"
+                className={styles.button}
                 onClick={() => setStep("confirm")}
                 disabled={!confirmed || loading}
               >
-                <ArrowRightCircle />
+                <MdArrowForward />
                 Kontynuuj
               </button>
 
               <button
                 type="button"
                 onClick={handleClose}
-                className={styles.deleteAccountSection__button}
+                className={styles.button}
               >
-                <Cancel />
+                <MdClose />
                 Anuluj
               </button>
             </div>
@@ -170,69 +176,71 @@ export const DeleteAccountSection = ({ onDeleted, onClose }) => {
         )}
 
         {step === "confirm" && (
-          <div className={styles.deleteAccountSection}>
-            <h2 className={styles.deleteAccountSection__title}>
-              Potwierdź usunięcie
-            </h2>
-            <p className={styles.deleteAccountSection__description}>
+          <div className={styles.deleteAccount}>
+            <h2 className={styles.title}>Potwierdź usunięcie</h2>
+
+            <p className={styles.description}>
               Podaj hasło, aby potwierdzić operację.
             </p>
+
             {passwordError && (
-              <div className={styles.deleteAccountSection__error}>
-                {passwordError}
-              </div>
+              <div className={styles.error}>{passwordError}</div>
             )}
-            <div
-              className={`${styles.deleteAccountSection__inputContainer} ${shake ? styles.deleteAccountSection__shake : ""}`}
-            >
-              <Lock className={styles.deleteAccountSection__icon} />
+
+            <div className={styles.inputContainer}>
+              <MdLock className={styles.icon} />
+
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Aktualne hasło"
                 value={password}
-                ref={passwordRef}
-                className={`${styles.deleteAccountSection__input}  ${
-                  passwordError
-                    ? styles["deleteAccountSection__input--error"]
-                    : ""
+                className={`${styles.input} ${
+                  passwordError ? styles.inputError : ""
                 }`}
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  if (passwordError) setPasswordError("");
+
+                  if (passwordError) {
+                    setPasswordError("");
+                  }
                 }}
                 required
               />
+
               <button
                 type="button"
-                className={styles.deleteAccountSection__showPassword}
+                className={styles.showPassword}
                 onClick={() => setShowPassword((prev) => !prev)}
                 aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
               >
-                {showPassword ? <Eye /> : <EyeOff />}
+                {showPassword ? <MdVisibility /> : <MdVisibilityOff />}
               </button>
             </div>
+
             <Captcha
               onVerify={setCaptchaToken}
               onExpire={() => setCaptchaToken(null)}
               ref={captchaRef}
             />
 
-            <div className={styles.deleteAccountSection__actions}>
+            <div className={styles.actions}>
               <button
-                className={styles.deleteAccountSection__button}
+                type="button"
+                className={`${styles.button} ${styles.deleteButton}`}
                 onClick={handleDelete}
                 disabled={!password || !captchaToken || loading}
               >
-                <CheckCircle />
-                {loading ? "Usuwanie..." : "Potwierdź"}
+                <MdDeleteForever />
+
+                {loading ? "Usuwanie..." : "Potwierdź usunięcie"}
               </button>
 
               <button
                 type="button"
                 onClick={handleClose}
-                className={styles.deleteAccountSection__button}
+                className={styles.button}
               >
-                <Cancel />
+                <MdClose />
                 Anuluj
               </button>
             </div>

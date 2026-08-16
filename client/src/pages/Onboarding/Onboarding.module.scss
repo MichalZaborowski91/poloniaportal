@@ -1,5 +1,28 @@
 .onboarding {
-  &__components {
-    margin-bottom: 16px;
+  width: calc(100% - var(--space-6));
+  max-width: 720px;
+
+  margin: var(--space-6) auto;
+
+  padding: var(--space-6);
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  box-shadow: var(--shadow-sm);
+
+  box-sizing: border-box;
+
+  h2 {
+    margin: 0 0 var(--space-6);
+
+    color: var(--color-text);
+
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+
+    text-align: center;
   }
 }

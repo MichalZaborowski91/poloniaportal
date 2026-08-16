@@ -1,0 +1,155 @@
+.card {
+  display: flex;
+  flex-direction: column;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  box-shadow: var(--shadow-sm);
+
+  overflow: hidden;
+}
+
+.header {
+  padding: var(--space-3);
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  margin-bottom: var(--space-2);
+}
+
+.titleRow h1 {
+  margin: 0;
+
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+}
+
+.titleRow svg {
+  font-size: 28px;
+  color: var(--color-text);
+}
+
+.header p {
+  margin: 0;
+
+  color: var(--color-text-secondary);
+
+  line-height: 1.6;
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-5);
+
+  padding: var(--space-6);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-4);
+
+  padding-bottom: var(--space-6);
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--color-border);
+  }
+}
+
+.groupTitle {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.groupContent {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-4);
+}
+
+.settingsContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: var(--space-3);
+
+  width: 100%;
+}
+
+.warning {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: var(--space-3) var(--space-4);
+
+  margin: 0;
+
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-surface);
+
+  color: var(--color-text);
+
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.deleteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-2);
+
+  min-height: 38px;
+
+  padding: 0 var(--space-4);
+
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-sm);
+
+  background: var(--color-background);
+
+  color: var(--color-error);
+
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+
+  &:hover {
+    background: var(--color-error);
+    border-color: var(--color-error);
+    color: white;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
