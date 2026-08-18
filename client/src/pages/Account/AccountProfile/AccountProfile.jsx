@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { AccountInfoForm } from "../../../components/AccountInfoForm/AccountInfoForm";
 import styles from "../AccountProfile/AccountProfile.module.scss";
-import User from "../../../assets/icons/user.svg?react";
 import { MdPerson } from "react-icons/md";
 
 export const AccountProfile = () => {

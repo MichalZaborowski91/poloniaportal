@@ -141,29 +141,23 @@ export const Footer = ({ onCountryMenuToggle }) => {
             <p>Stworzone z</p> <HeartIcon />
             <p>dla Polonii</p>
           </div>
-          <a
-            href={routes.copyrights()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.copyright}
-          >
-            {" "}
-            &#xa9; 2026 All Rights Reserved
-          </a>
+          <Link to={routes.copyrights(country)} className={styles.copyright}>
+            © 2026 All Rights Reserved
+          </Link>
           <nav className={styles.legalNav}>
             <ul className={styles.legalList}>
               <li className={styles.legalItem}>
-                <Link to={routes.terms()} className={styles.legalLink}>
+                <Link to={routes.terms(country)} className={styles.legalLink}>
                   Regulamin
                 </Link>
               </li>
               <li className={styles.legalItem}>
-                <Link to={routes.privacy()} className={styles.legalLink}>
+                <Link to={routes.privacy(country)} className={styles.legalLink}>
                   Polityka Prywatności
                 </Link>
               </li>
               <li className={styles.legalItem}>
-                <Link to={routes.cookie()} className={styles.legalLink}>
+                <Link to={routes.cookies(country)} className={styles.legalLink}>
                   Cookie
                 </Link>
               </li>

@@ -33,12 +33,12 @@
 }
 
 .mobileList {
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   max-height: 0;
 
   margin: 0;
-
   padding: 0;
 
   list-style: none;
@@ -53,7 +53,9 @@
 
 .mobileListOpen {
   margin-top: -1px;
-  max-height: 300px;
+
+  max-height: 60vh;
+
   padding: var(--space-2);
 
   border: 1px solid var(--color-border);
@@ -63,17 +65,17 @@
   border-bottom-right-radius: var(--radius-sm);
 
   background: var(--color-surface);
-
   box-shadow: var(--shadow-sm);
 
   opacity: 1;
+
+  overflow-y: auto;
 }
 .sidebar {
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 280px;
-  height: fit-content;
 
   padding: var(--space-6);
 
@@ -83,7 +85,6 @@
 
   box-shadow: var(--shadow-sm);
 }
-
 .title {
   margin: 0 0 var(--space-5);
 
@@ -107,8 +108,11 @@
 
 .link {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-3);
+
+  width: 100%;
+  box-sizing: border-box;
 
   padding: var(--space-3) var(--space-4);
 
@@ -117,7 +121,9 @@
   color: var(--color-text-secondary);
   text-decoration: none;
 
-  transition: all var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
 }
 .link:hover {
   background: var(--color-background);
@@ -134,15 +140,22 @@
 }
 .linkContent {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-3);
+
+  min-width: 0;
+  flex: 1;
 }
 
 .chevron {
-  margin-left: auto;
+  flex-shrink: 0;
 
   width: 20px;
+  min-width: 20px;
   height: 20px;
+  min-height: 20px;
+
+  margin-left: auto;
 
   color: inherit;
 }
@@ -168,10 +181,25 @@
   }
 }
 
+@include tablet {
+  .sidebar {
+    position: sticky;
+    top: calc(var(--header-height-tablet) + var(--space-6));
+
+    max-height: calc(100vh - var(--header-height-tablet) - var(--space-8));
+
+    overflow-y: auto;
+  }
+}
+
 @include desktop {
   .sidebar {
     position: sticky;
     top: calc(var(--header-height-desktop) + var(--space-6));
+
+    max-height: calc(100vh - var(--header-height-desktop) - var(--space-8));
+
+    overflow-y: auto;
   }
 
   .link {

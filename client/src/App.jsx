@@ -41,6 +41,7 @@ import { PublicEvents } from "./pages/Events/PublicEvents/PublicEvents";
 import { EventDetails } from "./pages/Events/EventDetails/EventDetails";
 import { EditEvent } from "./pages/Events/EditEvent/EditEvent";
 import { AccountSettings } from "./pages/Account/AccountSettings/AccountSettings";
+import { Cookies } from "./pages/Cookies/Cookies";
 
 export const App = () => {
   return (
@@ -60,6 +61,10 @@ export const App = () => {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="about" element={<About />} />
+        <Route path="copyrights" element={<Copyrights />} />
+        <Route path="terms" element={<Terms />} />
+        <Route path="privacy" element={<Privacy />} />
+        <Route path="cookies" element={<Cookies />} />
         <Route path="reset-password/:token" element={<ResetPassword />} />
         <Route path="confirm-email-change" element={<ConfirmEmailChange />} />
         <Route path="pricing" element={<Pricing />} />
@@ -174,9 +179,6 @@ export const App = () => {
 
         <Route path="*" element={<h2>Not Found</h2>} />
       </Route>
-      <Route path="/terms" element={<Terms />} />
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/copyrights" element={<Copyrights />} />
     </Routes>
   );
 };
