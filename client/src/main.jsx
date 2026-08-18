@@ -8,16 +8,23 @@ import { AuthProvider } from "./context/AuthProvider";
 import { Toaster } from "react-hot-toast";
 import "./styles/index.scss";
 import { ScrollToTop } from "./components/ScrollToTop/ScrollToTop";
+import { CookieBanner } from "./components/CookieBanner/CookieBanner";
+import { CookieSettingsModal } from "./components/CookieSettingsModal/CookieSettingsModal";
+import { CookieSettingsProvider } from "./context/CookieSettingsContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <Provider store={store}>
-        <BrowserRouter>
-          <ScrollToTop />
-          <App />
-          <Toaster position="top-center" />
-        </BrowserRouter>
+        <CookieSettingsProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <App />
+            <CookieBanner />
+            <CookieSettingsModal />
+            <Toaster position="top-center" />
+          </BrowserRouter>
+        </CookieSettingsProvider>
       </Provider>
     </AuthProvider>
   </React.StrictMode>,

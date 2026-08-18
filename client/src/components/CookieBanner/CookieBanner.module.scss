@@ -1,0 +1,64 @@
+.banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  padding: 20px;
+  background: white;
+  border-top: 1px solid #ddd;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.iconWrapper {
+  flex-shrink: 0;
+}
+
+.text {
+  flex: 1;
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.secondaryButton,
+.primaryButton {
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.secondaryButton {
+  background: transparent;
+  border: 1px solid #ccc;
+}
+
+.primaryButton {
+  border: none;
+  background: #222;
+  color: white;
+}

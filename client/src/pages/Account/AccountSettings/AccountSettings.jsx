@@ -5,10 +5,12 @@ import { routes } from "../../../app/routes";
 import { useAuth } from "../../../hooks/useAuth";
 import { DeleteAccountSection } from "../../../components/DeleteAccountSection/DeleteAccountSection";
 import styles from "./AccountSettings.module.scss";
-import { MdSettings, MdDelete } from "react-icons/md";
+import { MdSettings, MdDelete, MdCookie } from "react-icons/md";
+import { useCookieSettings } from "@/context/CookieSettingsContext";
 
 export const AccountSettings = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { openCookieSettings } = useCookieSettings();
 
   const navigate = useNavigate();
   const country = useCountry();
@@ -49,6 +51,27 @@ export const AccountSettings = () => {
               >
                 <MdDelete />
                 Usuń konto
+              </button>
+            </div>
+          </div>
+        </section>
+        <section className={styles.group}>
+          <h3 className={styles.groupTitle}>Prywatność i cookies</h3>
+
+          <div className={styles.groupContent}>
+            <div className={styles.settingsContent}>
+              <p className={styles.description}>
+                Zarządzaj swoimi preferencjami dotyczącymi plików cookies.
+                Możesz w każdej chwili zmienić zakres udzielonych zgód.
+              </p>
+
+              <button
+                type="button"
+                className={styles.cookieButton}
+                onClick={openCookieSettings}
+              >
+                <MdCookie />
+                Ustawienia cookies
               </button>
             </div>
           </div>

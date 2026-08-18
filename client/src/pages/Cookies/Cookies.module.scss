@@ -102,6 +102,44 @@
   margin-top: var(--space-4);
 }
 
+.cookieButtonWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.cookieButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 12px 22px;
+
+  border-radius: 4px;
+
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: white;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
 /* Tablet */
 
 @media (max-width: 767px) {
